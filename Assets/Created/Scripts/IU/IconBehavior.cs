@@ -1,13 +1,12 @@
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class IconBehavior : MonoBehaviour
 {
     public PanelBehavior panel;
 
-    public void OnButtonClick()
+    public void ActivePanel()
     {
-        panel.ActivePanel(panel.GetSide());
+        UIManager.Instance.ShowPanel(panel);
     }
     
     
