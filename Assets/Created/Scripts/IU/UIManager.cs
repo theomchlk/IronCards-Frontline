@@ -1,14 +1,15 @@
+using System;
 using UnityEngine;
 
 public class UIManager : MonoBehaviour
 {
     public static UIManager Instance;
+    public static event Action<PanelBehavior> OnActivatePanel;
 
-    private PanelBehavior _lastLeftPanel;
-    private PanelBehavior _lastRightPanel;
+    private PanelBehavior _lastPanel;
 
-    [SerializeField] private PanelBehavior defaultLeftPanel;
-    [SerializeField] private PanelBehavior defaultRightPanel;
+    [SerializeField] private PanelBehavior defaultPanel;
+
 
     public void Awake()
     {
@@ -17,23 +18,17 @@ public class UIManager : MonoBehaviour
 
     private void Start()
     {
-        if (defaultLeftPanel != null) defaultLeftPanel.gameObject.SetActive(true);
-        if (defaultRightPanel != null) defaultRightPanel.gameObject.SetActive(true);
+        if (defaultPanel == null) return;
+        ShowPanel(defaultPanel);
     }
 
     public void ShowPanel(PanelBehavior panel)
     {
-        if (panel.GetSide() == PanelBehavior.Side.Left)
-        {
-            if (_lastLeftPanel != null) _lastLeftPanel.Hide();
-            _lastLeftPanel = panel;
-        }
-        else if (panel.GetSide() == PanelBehavior.Side.Right)
-        {
-            if (_lastRightPanel != null) _lastRightPanel.Hide();
-            _lastRightPanel = panel;
-        }
+        if (panel == null || panel == _lastPanel) return;
+        if (_lastPanel != null) _lastPanel.Hide();
+        _lastPanel = panel;
         panel.Show();
+        OnActivatePanel?.Invoke(panel);
     }
 }
 
