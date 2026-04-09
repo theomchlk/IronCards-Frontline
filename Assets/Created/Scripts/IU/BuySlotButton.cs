@@ -10,11 +10,5 @@ public class BuySlotButton : MonoBehaviour
     {
         playerShop.BuyItem(slotShop);
     }
-
-    public void OnConnectedToServer()
-    {
-        playerShop = FindFirstObjectByType<PlayerShop>();
-        slotShop = FindFirstObjectByType<SlotShop>();
-        
-    }
+    
 }

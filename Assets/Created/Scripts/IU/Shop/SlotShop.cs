@@ -12,10 +12,16 @@ public class SlotShop : NetworkBehaviour, IPurchasableItem
     [SerializeField] private GameObject slotPrefab;
     [SerializeField] private GameObject slotHand;
 
+    public override void OnStartServer()
+    {
+        base.OnStartServer();
+        _nbSlot = nbSlotByDefault;
+    }
+    
     [Server]
     public void TryBuyItem(NetworkConnection conn)
     {
-        if (nbSlotMax <= nbSlotByDefault)
+        if (_nbSlot >= nbSlotMax)
         {
             BuyFailed(conn,"You have reach the maximum number of slots");  
             return;
@@ -45,8 +51,15 @@ public class SlotShop : NetworkBehaviour, IPurchasableItem
 
     private void AddNewSlot()
     {
-        slotHand = Instantiate(slotPrefab, slotHand.transform);
+        Instantiate(slotPrefab, slotHand.transform);
+        AnimationNewSlot();
+    }
+
+    private void AnimationNewSlot()
+    {
         //Mettre ici une animation d'instantiation pour le feel good du genre grandit et fait un bruit 
+
+        return;
     }
         
 }
