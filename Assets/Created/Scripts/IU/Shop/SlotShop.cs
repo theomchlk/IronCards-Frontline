@@ -2,20 +2,36 @@ using FishNet.Connection;
 using FishNet.Object;
 using UnityEngine;
 
+
 public class SlotShop : NetworkBehaviour, IPurchasableItem
 {
-    private int _cost;
     [SerializeField] private PlayerWallet playerWallet;
     [SerializeField] private int nbSlotByDefault;
     [SerializeField] private int nbSlotMax;
     private int _nbSlot;
-    [SerializeField] private GameObject slotPrefab;
-    [SerializeField] private GameObject slotHand;
-
+    [SerializeField] private UISlotShop uiSlotShop;
+    [SerializeField] private int slotPrice;
+    [SerializeField] private int slotPriceMultiplier;
+    
     public override void OnStartServer()
     {
         base.OnStartServer();
         _nbSlot = nbSlotByDefault;
+        
+    }
+
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+        
+        if (IsOwner)
+            ServerInitSlotShop();
+    }
+
+    [ServerRpc]
+    private void ServerInitSlotShop()
+    {
+        TargetInitSlotShop(Owner, _nbSlot, slotPrice);
     }
     
     [Server]
@@ -26,40 +42,42 @@ public class SlotShop : NetworkBehaviour, IPurchasableItem
             BuyFailed(conn,"You have reach the maximum number of slots");  
             return;
         }
-        if (!playerWallet.CanAfford(_cost))
+        if (!playerWallet.CanAfford(slotPrice))
         {
             BuyFailed(conn, "You do not have enough money to buy this item.");
             return;
         }
-        playerWallet.RemoveMoney(_cost);
-        _nbSlot++;
-        BuySucceeded(conn, "Item purchased !");
-    }
-
-    [TargetRpc]
-    public void BuyFailed(NetworkConnection conn, string msg)
-    {
-        Debug.Log(msg);
-    }
-
-    [TargetRpc]
-    public void BuySucceeded(NetworkConnection conn, string msg)
-    {
-        Debug.Log(msg);
-        AddNewSlot();
-    }
-
-    private void AddNewSlot()
-    {
-        Instantiate(slotPrefab, slotHand.transform);
-        AnimationNewSlot();
-    }
-
-    private void AnimationNewSlot()
-    {
-        //Mettre ici une animation d'instantiation pour le feel good du genre grandit et fait un bruit 
-
-        return;
-    }
         
+        /*int currentSlotPrice = GetCurrentSlotPrice();*/
+        //On enleve au joueur le prix d'un slot
+        playerWallet.RemoveMoney(slotPrice);
+        //On ajoute un slot apres l'achat
+        _nbSlot++;
+        //On augmente le prix du slot (a voir comment on fait pour l'instant)
+        slotPrice += slotPrice * slotPriceMultiplier;
+        //On effectue les changements en local
+        TargetBuySucceeded(conn, slotPrice);
+    }
+
+    [TargetRpc]
+    private void BuyFailed(NetworkConnection conn, string msg)
+    {
+        Debug.Log(msg);
+    }
+
+    [TargetRpc]
+    private void TargetBuySucceeded(NetworkConnection conn, int newSlotPrice)
+    {
+        uiSlotShop.OnBuySlotSucceeded("Item purchased !", newSlotPrice);
+    }
+
+   
+    [TargetRpc]
+    private void TargetInitSlotShop(NetworkConnection target, int nbSlots, int slotsPrice)
+    {
+        uiSlotShop.InitSlot(nbSlots, slotsPrice);
+    }
+    
+    private int GetCurrentSlotPrice() => slotPrice;
+
 }
