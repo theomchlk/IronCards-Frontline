@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 79c2a364d1f716546b4dbb465fd5e61a, type: 3}
+  m_Name: Archer
+  m_EditorClassIdentifier: Assembly-CSharp::CardsSO
+  cardID: carte_archer
+  cardName: Archer
+  cost: 7
+  dps: 2
+  health: 10
+  range: 10
+  movementSpeed: 2
+  nbSoldiers: 5
+  soldierPrefab: {fileID: 5320034138374105494, guid: 6574ec18c2ecd3445a560f89d24bc4c7, type: 3}
+  cardSprite: {fileID: -794707472, guid: 9c937b4e1eeb9f34eab2e144bc97a418, type: 3}

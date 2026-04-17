@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 79c2a364d1f716546b4dbb465fd5e61a, type: 3}
+  m_Name: Horseman
+  m_EditorClassIdentifier: Assembly-CSharp::CardsSO
+  cardID: 
+  cardName: 
+  cost: 0
+  dps: 0
+  health: 0
+  range: 0
+  movementSpeed: 0
+  nbSoldiers: 0
+  soldierPrefab: {fileID: 0}
+  cardSprite: {fileID: 0}

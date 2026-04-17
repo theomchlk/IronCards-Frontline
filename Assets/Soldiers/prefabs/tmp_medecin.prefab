@@ -452,7 +452,7 @@ MonoBehaviour:
   maxHealth: 30
   health: 30
   moveSpeed: 4
-  healingAmount: 8
+  healingAmount: 9
   attackSpeed: 2
   range: 2
   targetType: 0

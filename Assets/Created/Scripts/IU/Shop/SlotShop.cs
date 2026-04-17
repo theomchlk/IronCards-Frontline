@@ -1,3 +1,4 @@
+using System;
 using FishNet.Connection;
 using FishNet.Object;
 using UnityEngine;
@@ -11,7 +12,7 @@ public class SlotShop : NetworkBehaviour, IPurchasableItem
     private int _nbSlot;
     [SerializeField] private UISlotShop uiSlotShop;
     [SerializeField] private int slotPrice;
-    [SerializeField] private int slotPriceMultiplier;
+    [SerializeField] private float slotPriceMultiplier;
     
     public override void OnStartServer()
     {
@@ -54,7 +55,7 @@ public class SlotShop : NetworkBehaviour, IPurchasableItem
         //On ajoute un slot apres l'achat
         _nbSlot++;
         //On augmente le prix du slot (a voir comment on fait pour l'instant)
-        slotPrice += slotPrice * slotPriceMultiplier;
+        slotPrice = NewSlotPrice(slotPrice, slotPriceMultiplier);
         //On effectue les changements en local
         TargetBuySucceeded(conn, slotPrice);
     }
@@ -79,5 +80,10 @@ public class SlotShop : NetworkBehaviour, IPurchasableItem
     }
     
     private int GetCurrentSlotPrice() => slotPrice;
+
+    private int NewSlotPrice(int price, float multiplier)
+    {
+        return (int) Math.Ceiling(price * multiplier);
+    }
 
 }

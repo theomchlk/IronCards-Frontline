@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b22d49d1a12e4542a7f807481819482, type: 3}
+  m_Name: CardStall_Level1
+  m_EditorClassIdentifier: Assembly-CSharp::CardStallSO
+  cardStallID: stall_level_1
+  cardStallName: Cards level 1
+  cardsSo:
+  - {fileID: 11400000, guid: 71ce5dbfe09e6a447a5050f2de6579f1, type: 2}
+  - {fileID: 11400000, guid: cf62a6e62166a904e8e8523d03670787, type: 2}
+  - {fileID: 11400000, guid: a1a434cfb88095f45b83b9f8e9098be9, type: 2}
+  - {fileID: 11400000, guid: 686c6c96d00b25c4c94700cec1b58d5f, type: 2}
+  - {fileID: 11400000, guid: 7fe6127315e23b842ae593c2f8186660, type: 2}
