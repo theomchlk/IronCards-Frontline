@@ -5,12 +5,10 @@ using UnityEditor;
 
 
 [CreateAssetMenu(fileName = "CardsSO", menuName = "CardsSO")]
-public class CardsSO : ScriptableObject
+public class CardsSO : ItemSO
 {
-    public string cardID;
     //DATA
     public string cardName;
-    public int cost;
     public float dps;
     public float health;
     /*public float armor;*/

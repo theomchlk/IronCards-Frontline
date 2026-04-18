@@ -4,17 +4,17 @@ using UnityEngine;
 
 public class PlayerShop : NetworkBehaviour
 {
-    public void BuyItem(IPurchasableItem purchasableItem)
+    public void BuyItem(AItem item)
     {
-        BuyItemServerRpc((NetworkBehaviour) purchasableItem);
+        BuyItemServerRpc((NetworkBehaviour) item);
     }
 
     [ServerRpc] 
     private void BuyItemServerRpc(NetworkBehaviour item, NetworkConnection conn = null)
     {
-        if (item is IPurchasableItem purchasableItem)
+        if (item is AItem)
         {
-            purchasableItem.TryBuyItem(conn);
+            item.TryBuyItem(conn);
         }
     }
 }

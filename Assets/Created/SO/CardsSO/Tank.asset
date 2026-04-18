@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 79c2a364d1f716546b4dbb465fd5e61a, type: 3}
   m_Name: Tank
   m_EditorClassIdentifier: Assembly-CSharp::CardsSO
-  cardID: carte_tank
+  cardID: card_tank
   cardName: Tank
   cost: 12
   dps: 2

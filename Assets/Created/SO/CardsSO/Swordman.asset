@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 79c2a364d1f716546b4dbb465fd5e61a, type: 3}
   m_Name: Swordman
   m_EditorClassIdentifier: Assembly-CSharp::CardsSO
-  cardID: carte_swordman
+  cardID: card_swordman
   cardName: Swordman
   cost: 5
   dps: 3

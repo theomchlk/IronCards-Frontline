@@ -3,12 +3,12 @@ using UnityEngine;
 
 public class BuySlotButton : MonoBehaviour
 {
-    [SerializeField] PlayerShop playerShop;
-    [SerializeField] SlotShop slotShop;
+    [SerializeField] private ShopItem shopItem;
+    
     
     public void OnClickBuySlot()
     {
-        playerShop.BuyItem(slotShop);
+        shopItem.BuyItem("slot");
     }
     
 }

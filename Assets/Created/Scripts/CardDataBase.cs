@@ -4,7 +4,7 @@ using System.Linq;
 
 public class CardDataBase : MonoBehaviour
 {
-    public static CardDataBase Instance;
+    /*public static CardDataBase Instance;
     
     [SerializeField] private List<CardsSO> cardsSo;
 
@@ -16,5 +16,5 @@ public class CardDataBase : MonoBehaviour
         _cardsDictionary = cardsSo.ToDictionary(c => c.cardID, c => c);
     }
 
-    public CardsSO GetCard(string cardID) => _cardsDictionary[cardID];
+    public CardsSO GetCard(string cardID) => _cardsDictionary[cardID];*/
 }
