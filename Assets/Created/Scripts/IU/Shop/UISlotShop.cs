@@ -2,10 +2,10 @@ using UnityEngine;
 using TMPro;
 using System.Linq;
 using System.Collections.Generic;
+using FishNet.Object;
 
 public class UISlotShop : MonoBehaviour
 {
-    public static UISlotShop Instance;
     [SerializeField] private SlotShop slotShop;
     [SerializeField] private GameObject slotPrefab;
     [SerializeField] private GameObject slotsHand;
@@ -14,9 +14,35 @@ public class UISlotShop : MonoBehaviour
 
     private void Awake()
     {
-        Instance = this;
-        ResetHand();
+        var netObj = GetComponentInParent<NetworkObject>();
+
+        if (netObj != null && netObj.IsOwner)
+        {
+            _slots = new List<SlotItem>();  
+            ResetHand();
+        }
+        else
+        {
+            gameObject.SetActive(false);
+        }
     }
+    
+    public void OnSetUI()
+    {
+        UIManager.Instance.OnSetUIsItems += SetUI;
+    }
+
+    public void OnUnSetUI()
+    {
+        UIManager.Instance.OnSetUIsItems -= SetUI;
+    }
+
+    private void SetUI()
+    {
+        ResetHand();
+        InitSlot(PlayerState.Local.nbSlots.Value, PlayerState.Local.slotCost.Value);
+    }
+
     
     public SlotItem GetSlotFree()
     {
@@ -25,11 +51,11 @@ public class UISlotShop : MonoBehaviour
     
     public int GetSlotCount() => _slots.Count;
     
-    public void OnBuySlotSucceeded(string msg, int newSlotPrice)
+    public void BuyNewSlot(SlotItem slot)
     {
-        Debug.Log(msg);
+        Debug.Log("Slot purchased !");
         AddNewSlot();
-        ChangeSlotPriceText(newSlotPrice);
+        ChangeSlotPriceText(PlayerState.Local.slotCost.Value);
     }
 
     private void AddNewSlot()

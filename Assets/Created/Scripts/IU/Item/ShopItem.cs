@@ -4,33 +4,40 @@ using UnityEngine;
 
 public class ShopItem : NetworkBehaviour
 {
-    [SerializeField] private PlayerWallet playerWallet;
 
-    
-    public void BuyItem(string id)
+    public override void OnStartClient()
     {
-        BuyItemServerRpc(id);
+        base.OnStartClient();
+
+        if (IsOwner)
+        {
+            ServerInitUIsItems();
+        }
     }
     
     [ServerRpc] 
-    private void BuyItemServerRpc(string id, NetworkConnection conn = null)
+    public void BuyItemServerRpc(string id, NetworkConnection conn)
     {
-        var itemData = DataBaseItem.Instance.GetItem(id);
+        var itemData = DataBaseItem.Instance.GetDataItem(id);
         var item = itemData.aItem;
         
-        if (item == null) return;
-        if (item.CanBePurchased())
+        //Ici context est un objet temporaire rataché à aucun objet. Il permet juste de récuperer des références au 
+        //contexte du joueur -> voir Context Object Pattern
+        var context = PurchaseContext.FromPlayer(conn.FirstObject);
+        
+        
+
+        if (item == null)
         {
-            /*int currentSlotPrice = GetCurrentSlotPrice();*/
-            //On enleve au joueur le prix de l'item
-            playerWallet.RemoveMoney(itemData.cost);
-            //On ajoute un slot apres l'achat
-            _nbSlot++;
-            //On augmente le prix du slot (a voir comment on fait pour l'instant)
-            slotPrice = NewSlotPrice(slotPrice, slotPriceMultiplier);
-            //On effectue les changements en local
-            TargetBuySucceeded(conn, slotPrice);
+            Debug.Log("This item doesn't exist in the database.");
+            return;
         }
+
+        if (!item.CanBePurchased(context)) return;
+
+        item.Purchase(context);
+        
+        TargetBuySucceeded(conn, id);
     }
     
 
@@ -41,22 +48,30 @@ public class ShopItem : NetworkBehaviour
     }
 
     [TargetRpc]
-    private void TargetBuySucceeded(NetworkConnection conn, int newSlotPrice)
+    private void TargetBuySucceeded(NetworkConnection conn, string id)
     {
-        uiSlotShop.OnBuySlotSucceeded("Item purchased !", newSlotPrice);
+        var uiManager = conn.FirstObject.GetComponent<UIManager>();
+        uiManager.OnBuyItemSucceeded(id);
+    }
+
+    [ServerRpc]
+    private void ServerInitUIsItems()
+    {
+        TargetInitUIsItems(Owner);
+    }
+
+    [TargetRpc]
+    private void TargetInitUIsItems(NetworkConnection conn)
+    {
+        var uiManager = conn.FirstObject.GetComponent<UIManager>();
+        uiManager.SetUIsItems();
     }
 
    
-    [TargetRpc]
+    /*[TargetRpc]
     private void TargetInitSlotShop(NetworkConnection target, int nbSlots, int slotsPrice)
     {
         uiSlotShop.InitSlot(nbSlots, slotsPrice);
     }
-    
-    private int GetCurrentSlotPrice() => slotPrice;
-
-    private int NewSlotPrice(int price, float multiplier)
-    {
-        return (int) Math.Ceiling(price * multiplier);
-    }
+    */
 }

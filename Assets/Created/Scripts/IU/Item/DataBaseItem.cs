@@ -16,5 +16,5 @@ public class DataBaseItem : MonoBehaviour
         _dict = itemSO.ToDictionary(i => i.aItem.Id, i => i);
     }
 
-    public ItemSO GetItem(string id) => _dict[id];
+    public ItemSO GetDataItem(string id) => _dict[id];
 }

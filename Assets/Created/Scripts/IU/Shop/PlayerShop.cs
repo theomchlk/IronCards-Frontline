@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class PlayerShop : NetworkBehaviour
 {
-    public void BuyItem(AItem item)
+    //Pas sûr que je l'utilise encore...
+    
+    /*public void BuyItem(AItem item)
     {
         BuyItemServerRpc((NetworkBehaviour) item);
     }
@@ -16,5 +18,5 @@ public class PlayerShop : NetworkBehaviour
         {
             item.TryBuyItem(conn);
         }
-    }
+    }*/
 }

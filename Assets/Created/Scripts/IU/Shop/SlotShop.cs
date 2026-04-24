@@ -57,7 +57,7 @@ public class SlotShop : NetworkBehaviour, IPurchasableItem
         //On augmente le prix du slot (a voir comment on fait pour l'instant)
         slotPrice = NewSlotPrice(slotPrice, slotPriceMultiplier);
         //On effectue les changements en local
-        TargetBuySucceeded(conn, slotPrice);
+        /*TargetBuySucceeded(conn, slotPrice);*/
     }
 
     [TargetRpc]
@@ -66,11 +66,12 @@ public class SlotShop : NetworkBehaviour, IPurchasableItem
         Debug.Log(msg);
     }
 
-    [TargetRpc]
+    /*[TargetRpc]
     private void TargetBuySucceeded(NetworkConnection conn, int newSlotPrice)
     {
         uiSlotShop.OnBuySlotSucceeded("Item purchased !", newSlotPrice);
     }
+    */
 
    
     [TargetRpc]

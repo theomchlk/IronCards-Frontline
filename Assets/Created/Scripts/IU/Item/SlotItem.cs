@@ -5,31 +5,24 @@ using FishNet.Object;
 
 public class SlotItem : AItem
 {
-    private bool _isFree;
+    private bool _isFree = true;
     [SerializeField] private SlotSO data;
-    private int _slotCost;
-    private int _nbSlots;
-    public override string Id => "slot";
-    public override int Cost => _slotCost;
 
-    private void Awake()
-    {
-        _slotCost = data.cost;
-        _nbSlots = data.nbSlotByDefault
-    }
+    public override string Id => "slot";
+    public override int Cost(PurchaseContext context) => context.playerState.slotCost.Value;
     
     public bool IsFree() => _isFree;
     public void ChangeFreeState() => _isFree = !_isFree;
 
     [Server]
-    public override bool CanBePurchased()
+    public override bool CanBePurchased(PurchaseContext context)
     {
-        if (!playerWallet.CanAfford(Cost))
+        if (!context.playerWallet.CanAfford(Cost(context)))
         {
             Debug.Log("Not enough money to afford");
             return false;
         }
-        if (data.nbSlotMax <= _nbSlots)
+        if (data.nbSlotMax <= context.playerState.slotCost.Value)
         {
             Debug.Log("Max slots reached");
             return false;
@@ -40,17 +33,18 @@ public class SlotItem : AItem
     }
 
     [Server]
-    public override void Purchase()
+    public override void Purchase(PurchaseContext context)
     {
-        UISlotShop ui = UISlotShop.Instance;
-        _slotCost = NewSlotPrice(_slotCost, data.costMultiplier);
-        _nbSlots++;
-        ui.OnBuySlotSucceeded("Slot Purchased !", _slotCost);
+        context.playerWallet.RemoveMoney(Cost(context));
+        context.playerState.NewCostItemByMultiplier(context.playerState.slotCost,data.costMultiplier);
+        context.playerState.nbSlots.Value++;
+        context.playerState.nbFreeSlots.Value++;
     }
-    
-    private int NewSlotPrice(int price, float multiplier)
+
+    public override void Accept(IItemVisitor visitor)
     {
-        return (int) Math.Ceiling(price * multiplier);
+        visitor.Visit(this);
     }
+
 }
   
