@@ -1,4 +1,3 @@
-using System.Globalization;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
@@ -12,7 +11,8 @@ public class CardUI : MonoBehaviour
     [SerializeField] private TMP_Text cardNbText;
     [SerializeField] private TMP_Text cardMSText;
     [SerializeField] private Image cardImage;
-    
+    [SerializeField] private Sprite cardSprite;
+    //DATA
     [SerializeField] private CardsSO data;
 
 
@@ -24,7 +24,7 @@ public class CardUI : MonoBehaviour
         cardRangeText.text = data.range.ToString("F0");
         cardNbText.text = data.nbSoldiers.ToString("F0");
         cardMSText.text = data.movementSpeed.ToString("F0");
-        cardImage.sprite = data.cardSprite;
+        cardImage.sprite = cardSprite;
 
 
     }

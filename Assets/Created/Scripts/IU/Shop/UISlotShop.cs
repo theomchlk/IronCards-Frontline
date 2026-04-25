@@ -6,13 +6,20 @@ using FishNet.Object;
 
 public class UISlotShop : MonoBehaviour
 {
+    public static UISlotShop Local;
+    
     [SerializeField] private SlotShop slotShop;
     [SerializeField] private GameObject slotPrefab;
     [SerializeField] private GameObject slotsHand;
     [SerializeField] private TMP_Text slotPriceText;
     private List<SlotItem> _slots;
 
-    private void Awake()
+    void Awake()
+    {
+        Local = this;
+    }
+
+    /*private void Awake()
     {
         var netObj = GetComponentInParent<NetworkObject>();
 
@@ -25,14 +32,14 @@ public class UISlotShop : MonoBehaviour
         {
             gameObject.SetActive(false);
         }
-    }
+    }*/
     
-    public void OnSetUI()
+    public void OnEnable()
     {
         UIManager.Instance.OnSetUIsItems += SetUI;
     }
 
-    public void OnUnSetUI()
+    public void OnDisable()
     {
         UIManager.Instance.OnSetUIsItems -= SetUI;
     }

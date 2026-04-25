@@ -15,6 +15,7 @@ public class UIManager : MonoBehaviour, IItemVisitor
     [SerializeField] private UISlotShop uiSlotShop;
     [SerializeField] private UICardShop uiCardShop;
     [SerializeField] private UIMillShop uiMillShop;
+
     
     public void Awake()
     {
@@ -25,6 +26,7 @@ public class UIManager : MonoBehaviour, IItemVisitor
     {
         if (defaultPanel == null) return;
         ShowPanel(defaultPanel);
+        
     }
 
     public void ShowPanel(PanelBehavior panel)

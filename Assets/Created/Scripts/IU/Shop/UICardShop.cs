@@ -1,9 +1,24 @@
+using Created.Scripts.IU.Shop;
 using UnityEngine;
 
 public class UICardShop : MonoBehaviour
 {
-    
-    [SerializeField] private
+    public static UICardShop Local;
+
+    [SerializeField] private Transform cardStallsLocation;
+    [SerializeField] private Transform cardsLocation;
+
+    public void Awake()
+    {
+        Local = this;
+    }
+
+    public void BuyNewCard(CardItem card)
+    {
+        var slotFree = UISlotShop.Local.GetSlotFree();
+        Instantiate(card.gameObject, slotFree.transform);
+        slotFree.ChangeFreeState();
+    }
 
     public void OnEnable()
     {
@@ -17,14 +32,26 @@ public class UICardShop : MonoBehaviour
 
     private void SetUI()
     {
-        ChangeMillCostText(PlayerState.Local.millCost.Value);
-        ChangeNbMillText(PlayerState.Local.nbMills.Value);
+        ResetCardShop();
+        foreach (var cs in CardStallTable.Instance.cardStallsOnTable)
+        {
+            SetCardStall(cs);
+        }
     }
 
     private void ResetCardShop()
     {
         foreach (Transform child in transform)
             Destroy(child.gameObject);
+    }
+
+    private void SetCardStall(CardStallSO cs)
+    {
+        Instantiate(cs.cardStallPrefab, cardStallsLocation);
+        foreach (var cSO in cs.cardsSo)
+        {
+            Instantiate(cSO.cardPrefab, cardsLocation);
+        }
     }
     
 

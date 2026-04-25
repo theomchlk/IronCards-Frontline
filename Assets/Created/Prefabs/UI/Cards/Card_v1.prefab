@@ -486,7 +486,8 @@ MonoBehaviour:
   cardRangeText: {fileID: 7168821218958429166}
   cardNbText: {fileID: 5365860020875779690}
   cardMSText: {fileID: 7324730400056174207}
-  cardImage: {fileID: 0}
+  cardImage: {fileID: 1957736785016439720}
+  cardSprite: {fileID: 0}
   data: {fileID: 0}
 --- !u!1 &3036255525525208329
 GameObject:

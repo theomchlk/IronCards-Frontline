@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using Unity.Collections;
-using UnityEditor;
+
 
 
 [CreateAssetMenu(fileName = "CardsSO", menuName = "CardsSO")]
@@ -16,8 +16,6 @@ public class CardsSO : ItemSO
     public float movementSpeed;
     public int nbSoldiers;
     public GameObject soldierPrefab;
+    public GameObject cardPrefab;
     /*public List<Skills> skills;*/
-    //UI
-    public Sprite cardSprite;
-
 }
