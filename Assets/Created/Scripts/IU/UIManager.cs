@@ -11,6 +11,7 @@ public class UIManager : MonoBehaviour, IItemVisitor
     private PanelBehavior _lastPanel;
 
     [SerializeField] private PanelBehavior defaultPanel;
+    public MoneyUI moneyUI;
     
     [SerializeField] private UISlotShop uiSlotShop;
     [SerializeField] private UICardShop uiCardShop;
@@ -47,7 +48,7 @@ public class UIManager : MonoBehaviour, IItemVisitor
     //Visitor Pattern
     public void OnBuyItemSucceeded(string id)
     {
-        var item = DataBaseItem.Instance.GetDataItem(id).aItem;
+        var item = DataBaseItem.Instance.GetDataItem(id).goItem.GetComponent<AItem>();
         item.Accept(this);
     }
 

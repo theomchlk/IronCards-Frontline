@@ -8,14 +8,14 @@ namespace Created.Scripts.IU
     {
         [SerializeField] private TMP_Text cardStallNameText;
         [SerializeField] private Image cardStallImage;
-        //DATA
-        
-        [SerializeField] private CardStallSO data;
+        public Transform cardsContainer;
 
-        public void Awake()
+        public void SetCardStall(CardStallSO data)
         {
+            
             cardStallNameText.text = data.cardStallName;
             cardStallImage.color = data.cardStallColor;
         }
+        
     }
 }

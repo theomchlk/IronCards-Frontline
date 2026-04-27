@@ -12,7 +12,7 @@ namespace Created.Scripts.IU.Shop
         public static CardStallTable Instance;
         
         [SerializeField] private List<CardStallSO> cardStallsByDefault;
-        public readonly SyncList<CardStallSO> cardStallsOnTable;
+        public readonly SyncList<CardStallSO> cardStallsOnTable = new SyncList<CardStallSO>();
 
         void Awake()
         {
@@ -30,6 +30,11 @@ namespace Created.Scripts.IU.Shop
         {
             base.OnStartServer();
             SetAllDefaultStalls();
+        }
+
+        private void OnChangeCardStallsOnTable()
+        {
+            
         }
         
 

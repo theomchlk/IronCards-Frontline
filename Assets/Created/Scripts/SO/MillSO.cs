@@ -4,5 +4,5 @@ using UnityEngine;
 public class MillSO : ItemSO
 {
     public int nbMillsByDefault;
-    public int costMultiplier;
+    public float costMultiplier;
 }

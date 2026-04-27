@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 79c2a364d1f716546b4dbb465fd5e61a, type: 3}
   m_Name: Horseman
   m_EditorClassIdentifier: Assembly-CSharp::CardsSO
-  cardID: card_horseman
-  cardName: Horseman
+  id: card_horseman
   cost: 15
+  goItem: {fileID: 3619349539578284426, guid: 9abce9390d586714bb03c05a017916cf, type: 3}
+  cardName: Horseman
   dps: 5
   health: 10
   range: 2
   movementSpeed: 6
   nbSoldiers: 5
   soldierPrefab: {fileID: 0}
-  cardSprite: {fileID: 0}

@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 7570784967608569724}
   - component: {fileID: 8878991784035679652}
   - component: {fileID: 8959662150525172568}
+  - component: {fileID: 6246460685377594851}
   m_Layer: 5
   m_Name: Slot
   m_TagString: Untagged
@@ -75,3 +76,19 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &6246460685377594851
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1365167524238765840}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe282f55c2217ab4595b9d0920fe4045, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SlotItem
+  _componentIndexCache: 0
+  _addedNetworkObject: {fileID: 0}
+  _networkObjectCache: {fileID: 0}
+  data: {fileID: 11400000, guid: 4bb93295d23632f42bcd8e5a8463496f, type: 2}

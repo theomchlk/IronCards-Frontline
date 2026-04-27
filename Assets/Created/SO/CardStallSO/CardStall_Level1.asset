@@ -14,9 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CardStallSO
   cardStallID: stall_level_1
   cardStallName: Cards level 1
+  cardStallColor: {r: 0.38993704, g: 0.16460744, b: 0.050274875, a: 0}
   cardsSo:
   - {fileID: 11400000, guid: 71ce5dbfe09e6a447a5050f2de6579f1, type: 2}
   - {fileID: 11400000, guid: cf62a6e62166a904e8e8523d03670787, type: 2}
   - {fileID: 11400000, guid: a1a434cfb88095f45b83b9f8e9098be9, type: 2}
   - {fileID: 11400000, guid: 686c6c96d00b25c4c94700cec1b58d5f, type: 2}
   - {fileID: 11400000, guid: 7fe6127315e23b842ae593c2f8186660, type: 2}
+  cardStallPrefab: {fileID: 0}

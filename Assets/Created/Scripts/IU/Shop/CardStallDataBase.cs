@@ -9,13 +9,13 @@ using System.Linq;
 public class CardStallDataBase : MonoBehaviour
 {
     public static CardStallDataBase Instance;
-    [SerializeField] private List<CardStallSO> cards;
+    [SerializeField] private List<CardStallSO> cardStalls;
     private Dictionary<string, CardStallSO> _stallDictionary;
 
     void Awake()
     {
         Instance = this;
-        _stallDictionary = cards.ToDictionary(cs => cs.cardStallID, cs => cs);
+        _stallDictionary = cardStalls.ToDictionary(cs => cs.cardStallID, cs => cs);
     }
     
     public CardStallSO GetCardStall(string cardStallID) => _stallDictionary[cardStallID];

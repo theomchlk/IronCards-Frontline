@@ -2811,8 +2811,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d80471b47f039ca4f83b1a2a659f8305, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BuySlotButton
-  playerShop: {fileID: 241121334103368112}
-  slotShop: {fileID: 1487924173695990459}
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 5975761700738981242}
+  _networkObjectCache: {fileID: 0}
+  shopItem: {fileID: 0}
 --- !u!1 &3589972428971112366
 GameObject:
   m_ObjectHideFlags: 0
@@ -5929,9 +5931,8 @@ GameObject:
   - component: {fileID: 5118351596399119218}
   - component: {fileID: 6447517956579833173}
   - component: {fileID: 5415191697956128229}
-  - component: {fileID: 241121334103368112}
-  - component: {fileID: 1487924173695990459}
   - component: {fileID: 7022405448392809005}
+  - component: {fileID: 2856468909933935388}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -5971,7 +5972,6 @@ MonoBehaviour:
   _addedNetworkObject: {fileID: 5415191697956128229}
   _networkObjectCache: {fileID: 5415191697956128229}
   money: 900
-  moneyText: {fileID: 1525863175117069158}
 --- !u!114 &5415191697956128229
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6019,8 +6019,8 @@ MonoBehaviour:
   <PredictedOwner>k__BackingField: {fileID: 0}
   NetworkBehaviours:
   - {fileID: 6447517956579833173}
-  - {fileID: 241121334103368112}
-  - {fileID: 1487924173695990459}
+  - {fileID: 0}
+  - {fileID: 0}
   InitializedParentNetworkBehaviour: {fileID: 0}
   InitializedNestedNetworkObjects:
   - {fileID: 5975761700738981242}
@@ -6033,42 +6033,6 @@ MonoBehaviour:
   _preventDespawnOnDisconnect: 0
   _defaultDespawnType: 0
   _initializedTimestamp: -8584258736999049821
---- !u!114 &241121334103368112
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7008539839022486043}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 520d1a3b5f6c9c5409fa694382a31ebf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerShop
-  _componentIndexCache: 1
-  _addedNetworkObject: {fileID: 5415191697956128229}
-  _networkObjectCache: {fileID: 5415191697956128229}
---- !u!114 &1487924173695990459
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7008539839022486043}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9f01dd33ef194e64f8d5088033612632, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SlotShop
-  _componentIndexCache: 2
-  _addedNetworkObject: {fileID: 5415191697956128229}
-  _networkObjectCache: {fileID: 5415191697956128229}
-  playerWallet: {fileID: 6447517956579833173}
-  nbSlotByDefault: 3
-  nbSlotMax: 10
-  uiSlotShop: {fileID: 518113942949600832}
-  slotPrice: 3
-  slotPriceMultiplier: 1
 --- !u!114 &7022405448392809005
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6085,6 +6049,21 @@ MonoBehaviour:
   _addedNetworkObject: {fileID: 5415191697956128229}
   _networkObjectCache: {fileID: 0}
   playerCanvas: {fileID: 4281316721746295660}
+--- !u!114 &2856468909933935388
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7008539839022486043}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa3bc7d8b13558d448bfb4bfeae2894c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ShopItem
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 5415191697956128229}
+  _networkObjectCache: {fileID: 0}
 --- !u!1 &7036540227206972476
 GameObject:
   m_ObjectHideFlags: 0
@@ -9530,9 +9509,33 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 564083314546418567, guid: ffbf7b95b59386c44a81ea012e6de806, type: 3}
+      propertyPath: m_fontSize
+      value: 7.4
+      objectReference: {fileID: 0}
     - target: {fileID: 2843788935119677876, guid: ffbf7b95b59386c44a81ea012e6de806, type: 3}
       propertyPath: m_Name
       value: Card_v1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5104820208887920687, guid: ffbf7b95b59386c44a81ea012e6de806, type: 3}
+      propertyPath: m_fontSize
+      value: 3.85
+      objectReference: {fileID: 0}
+    - target: {fileID: 5365860020875779690, guid: ffbf7b95b59386c44a81ea012e6de806, type: 3}
+      propertyPath: m_fontSize
+      value: 10.35
+      objectReference: {fileID: 0}
+    - target: {fileID: 6842418803744052433, guid: ffbf7b95b59386c44a81ea012e6de806, type: 3}
+      propertyPath: m_fontSize
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 7168821218958429166, guid: ffbf7b95b59386c44a81ea012e6de806, type: 3}
+      propertyPath: m_fontSize
+      value: 10.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 7324730400056174207, guid: ffbf7b95b59386c44a81ea012e6de806, type: 3}
+      propertyPath: m_fontSize
+      value: 10.35
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -9566,6 +9569,7 @@ MonoBehaviour:
   cardNbText: {fileID: 0}
   cardMSText: {fileID: 0}
   cardImage: {fileID: 0}
+  cardSprite: {fileID: 0}
   data: {fileID: 0}
 --- !u!224 &3959726994108747906 stripped
 RectTransform:
@@ -10474,7 +10478,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b93fc434e70562439dbdcceea2f5518, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UISlotShop
-  slotShop: {fileID: 1487924173695990459}
+  slotShop: {fileID: 0}
   slotPrefab: {fileID: 1365167524238765840, guid: 8e8baf7c204d48a4c99e1aae7d84b5b0, type: 3}
   slotsHand: {fileID: 6537525737560107245}
   slotPriceText: {fileID: 6479158472507412407}

@@ -1,3 +1,4 @@
+using Created.Scripts.IU;
 using Created.Scripts.IU.Shop;
 using UnityEngine;
 
@@ -6,7 +7,6 @@ public class UICardShop : MonoBehaviour
     public static UICardShop Local;
 
     [SerializeField] private Transform cardStallsLocation;
-    [SerializeField] private Transform cardsLocation;
 
     public void Awake()
     {
@@ -47,10 +47,13 @@ public class UICardShop : MonoBehaviour
 
     private void SetCardStall(CardStallSO cs)
     {
-        Instantiate(cs.cardStallPrefab, cardStallsLocation);
+
+        var slotSO = DataBaseItem.Instance.GetDataItem("slot");
+        var csUI = Instantiate(cs.cardStallPrefab, cardStallsLocation).GetComponent<CardStallUI>();
         foreach (var cSO in cs.cardsSo)
         {
-            Instantiate(cSO.cardPrefab, cardsLocation);
+            var slotGO = Instantiate(slotSO.goItem, csUI.transform);
+            Instantiate(cSO.goItem, slotGO.transform);
         }
     }
     

@@ -1,5 +1,6 @@
 using FishNet.Object;
 using FishNet.Connection;
+using UnityEditor;
 using UnityEngine;
 
 public class ShopItem : NetworkBehaviour
@@ -19,7 +20,7 @@ public class ShopItem : NetworkBehaviour
     public void BuyItemServerRpc(string id, NetworkConnection conn)
     {
         var itemData = DataBaseItem.Instance.GetDataItem(id);
-        var item = itemData.aItem;
+        var item = itemData.goItem.GetComponent<AItem>();
         
         //Ici context est un objet temporaire rataché à aucun objet. Il permet juste de récuperer des références au 
         //contexte du joueur -> voir Context Object Pattern

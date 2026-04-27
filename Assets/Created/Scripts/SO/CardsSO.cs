@@ -16,6 +16,6 @@ public class CardsSO : ItemSO
     public float movementSpeed;
     public int nbSoldiers;
     public GameObject soldierPrefab;
-    public GameObject cardPrefab;
     /*public List<Skills> skills;*/
+
 }

@@ -8,7 +8,6 @@ using System.Collections.Generic;
 public class PlayerState : NetworkBehaviour
 {
     public static PlayerState Local;
-    public DataBaseItem databaseItem;
     //Partie
     /*public SyncVar<int> hp;*/
     
@@ -37,13 +36,13 @@ public class PlayerState : NetworkBehaviour
     {
         base.OnStartServer();
         
-        var itemSo = databaseItem.GetDataItem("slot");
+        var itemSo = DataBaseItem.Instance.GetDataItem("slot");
         if (itemSo is SlotSO slotSo)
         {
             nbSlots.Value = slotSo.nbSlotByDefault;
             slotCost.Value = slotSo.cost;
         }
-        itemSo = databaseItem.GetDataItem("mill");
+        itemSo = DataBaseItem.Instance.GetDataItem("mill");
         if (itemSo is MillSO millSo)
         {
             nbMills.Value = millSo.nbMillsByDefault;
@@ -63,9 +62,6 @@ public class PlayerState : NetworkBehaviour
         return nbFreeSlots.Value > 0;
     }
 
-    private static void OnNbMillsChanged(PlayerState ps, int newCost)
-    {
-        
-    }
+
     
 }
