@@ -30,7 +30,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -2005781954413798021, guid: ffbf7b95b59386c44a81ea012e6de806, type: 3}
       propertyPath: SerializedTransformProperties.Position.x
-      value: -0.000015258789
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 378120100398527764, guid: ffbf7b95b59386c44a81ea012e6de806, type: 3}
       propertyPath: m_Pivot.x
@@ -94,7 +94,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 378120100398527764, guid: ffbf7b95b59386c44a81ea012e6de806, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -0.000015258789
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 378120100398527764, guid: ffbf7b95b59386c44a81ea012e6de806, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -114,27 +114,31 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 564083314546418567, guid: ffbf7b95b59386c44a81ea012e6de806, type: 3}
       propertyPath: m_fontSize
-      value: 7.4
+      value: 72
       objectReference: {fileID: 0}
     - target: {fileID: 2843788935119677876, guid: ffbf7b95b59386c44a81ea012e6de806, type: 3}
       propertyPath: m_Name
       value: card_tank Variant
       objectReference: {fileID: 0}
+    - target: {fileID: 2843788935119677876, guid: ffbf7b95b59386c44a81ea012e6de806, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5104820208887920687, guid: ffbf7b95b59386c44a81ea012e6de806, type: 3}
       propertyPath: m_fontSize
-      value: 3.85
+      value: 54.9
       objectReference: {fileID: 0}
     - target: {fileID: 5365860020875779690, guid: ffbf7b95b59386c44a81ea012e6de806, type: 3}
       propertyPath: m_fontSize
-      value: 10.35
+      value: 72
       objectReference: {fileID: 0}
     - target: {fileID: 6842418803744052433, guid: ffbf7b95b59386c44a81ea012e6de806, type: 3}
       propertyPath: m_fontSize
-      value: 7
+      value: 72
       objectReference: {fileID: 0}
     - target: {fileID: 7168821218958429166, guid: ffbf7b95b59386c44a81ea012e6de806, type: 3}
       propertyPath: m_fontSize
-      value: 10.25
+      value: 72
       objectReference: {fileID: 0}
     - target: {fileID: 7215947127805431320, guid: ffbf7b95b59386c44a81ea012e6de806, type: 3}
       propertyPath: data
@@ -146,7 +150,7 @@ PrefabInstance:
       objectReference: {fileID: 2124728754, guid: 9c937b4e1eeb9f34eab2e144bc97a418, type: 3}
     - target: {fileID: 7324730400056174207, guid: ffbf7b95b59386c44a81ea012e6de806, type: 3}
       propertyPath: m_fontSize
-      value: 10.35
+      value: 72
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

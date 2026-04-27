@@ -9,7 +9,7 @@ public class BuyItemButton : NetworkBehaviour
     
     public void OnClickBuySlot(AItem aItem)
     {
-        shopItem.BuyItemServerRpc(aItem.Id, Owner);
+        shopItem.BuyItemServerRpc(aItem.GetIdentifier(), Owner);
     }
     
 }

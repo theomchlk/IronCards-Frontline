@@ -12,8 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c30a73c8c97c87e4f93552086db842bc, type: 3}
   m_Name: New Mill SO
   m_EditorClassIdentifier: Assembly-CSharp::MillSO
-  id: 
   cost: 3
-  goItem: {fileID: 0}
+  goItem: {fileID: 8911988903483209706, guid: 5580baba07f6d2a499bfc00cba107450, type: 3}
   nbMillsByDefault: 1
   costMultiplier: 2

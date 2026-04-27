@@ -13,9 +13,9 @@ public class UIManager : MonoBehaviour, IItemVisitor
     [SerializeField] private PanelBehavior defaultPanel;
     public MoneyUI moneyUI;
     
-    [SerializeField] private UISlotShop uiSlotShop;
-    [SerializeField] private UICardShop uiCardShop;
-    [SerializeField] private UIMillShop uiMillShop;
+    public UISlotShop uiSlotShop;
+    public UICardShop uiCardShop;
+    public UIMillShop uiMillShop;
 
     
     public void Awake()

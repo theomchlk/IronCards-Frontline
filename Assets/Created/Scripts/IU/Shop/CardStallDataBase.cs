@@ -19,4 +19,6 @@ public class CardStallDataBase : MonoBehaviour
     }
     
     public CardStallSO GetCardStall(string cardStallID) => _stallDictionary[cardStallID];
+
+    public List<string> GetAllCardsStall() => _stallDictionary.Keys.ToList();
 }

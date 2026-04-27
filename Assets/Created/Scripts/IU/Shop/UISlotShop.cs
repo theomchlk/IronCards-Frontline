@@ -6,18 +6,11 @@ using FishNet.Object;
 
 public class UISlotShop : MonoBehaviour
 {
-    public static UISlotShop Local;
-    
-    [SerializeField] private SlotShop slotShop;
+    /*[SerializeField] private SlotShop slotShop;*/
     [SerializeField] private GameObject slotPrefab;
-    [SerializeField] private GameObject slotsHand;
+    [SerializeField] private Transform slotsHand;
     [SerializeField] private TMP_Text slotPriceText;
-    private List<SlotItem> _slots;
-
-    void Awake()
-    {
-        Local = this;
-    }
+    private List<SlotItem> _slots = new List<SlotItem>();
 
     /*private void Awake()
     {

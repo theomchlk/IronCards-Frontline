@@ -13,7 +13,7 @@ public class DataBaseItem : MonoBehaviour
     void Awake()
     {
         Instance = this;
-        _dict = itemSO.ToDictionary(i => i.goItem.GetComponent<AItem>().Id, i => i);
+        _dict = itemSO.ToDictionary(i => i.Id, i => i);
     }
 
     public ItemSO GetDataItem(string id) => _dict[id];

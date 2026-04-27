@@ -21,8 +21,16 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -2005781954413798021, guid: ffbf7b95b59386c44a81ea012e6de806, type: 3}
+      propertyPath: <PrefabId>k__BackingField
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: -2005781954413798021, guid: ffbf7b95b59386c44a81ea012e6de806, type: 3}
       propertyPath: <AssetPathHash>k__BackingField
       value: 8064525581058651028
+      objectReference: {fileID: 0}
+    - target: {fileID: -2005781954413798021, guid: ffbf7b95b59386c44a81ea012e6de806, type: 3}
+      propertyPath: SerializedTransformProperties.Position.x
+      value: -0.000015258789
       objectReference: {fileID: 0}
     - target: {fileID: 378120100398527764, guid: ffbf7b95b59386c44a81ea012e6de806, type: 3}
       propertyPath: m_Pivot.x

@@ -1,3 +1,4 @@
+/*
 using System;
 using FishNet.Connection;
 using FishNet.Object;
@@ -49,7 +50,7 @@ public class SlotShop : NetworkBehaviour, IPurchasableItem
             return;
         }
         
-        /*int currentSlotPrice = GetCurrentSlotPrice();*/
+        /*int currentSlotPrice = GetCurrentSlotPrice();#1#
         //On enleve au joueur le prix d'un slot
         playerWallet.RemoveMoney(slotPrice);
         //On ajoute un slot apres l'achat
@@ -57,7 +58,7 @@ public class SlotShop : NetworkBehaviour, IPurchasableItem
         //On augmente le prix du slot (a voir comment on fait pour l'instant)
         slotPrice = NewSlotPrice(slotPrice, slotPriceMultiplier);
         //On effectue les changements en local
-        /*TargetBuySucceeded(conn, slotPrice);*/
+        /*TargetBuySucceeded(conn, slotPrice);#1#
     }
 
     [TargetRpc]
@@ -71,7 +72,7 @@ public class SlotShop : NetworkBehaviour, IPurchasableItem
     {
         uiSlotShop.OnBuySlotSucceeded("Item purchased !", newSlotPrice);
     }
-    */
+    #1#
 
    
     [TargetRpc]
@@ -88,3 +89,4 @@ public class SlotShop : NetworkBehaviour, IPurchasableItem
     }
 
 }
+*/

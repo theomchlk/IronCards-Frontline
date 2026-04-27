@@ -7,6 +7,7 @@ using Unity.Collections;
 [CreateAssetMenu(fileName = "CardsSO", menuName = "CardsSO")]
 public class CardsSO : ItemSO
 {
+    public string id;
     //DATA
     public string cardName;
     public float dps;
@@ -15,7 +16,8 @@ public class CardsSO : ItemSO
     public float range;
     public float movementSpeed;
     public int nbSoldiers;
-    public GameObject soldierPrefab;
+    /*public GameObject soldierPrefab;*/
     /*public List<Skills> skills;*/
 
+    public override string Id => id;
 }

@@ -10,9 +10,7 @@ namespace Created.Scripts.IU.Shop
     public class CardStallTable : NetworkBehaviour
     {
         public static CardStallTable Instance;
-        
-        [SerializeField] private List<CardStallSO> cardStallsByDefault;
-        public readonly SyncList<CardStallSO> cardStallsOnTable = new SyncList<CardStallSO>();
+        public readonly SyncList<string> cardStallsOnTable = new ();
 
         void Awake()
         {
@@ -22,14 +20,13 @@ namespace Created.Scripts.IU.Shop
         [Server]
         private void AddNewCardStall(string id)
         {
-            var cardStall = CardStallDataBase.Instance.GetCardStall(id);
-            cardStallsOnTable.Add(cardStall);
+            cardStallsOnTable.Add(id);
         }
 
         public override void OnStartServer()
         {
             base.OnStartServer();
-            SetAllDefaultStalls();
+            SetStallsByDataBase();
         }
 
         private void OnChangeCardStallsOnTable()
@@ -39,9 +36,9 @@ namespace Created.Scripts.IU.Shop
         
 
         [Server]
-        private void SetAllDefaultStalls()
+        private void SetStallsByDataBase()
         {
-            foreach (var cardStall in cardStallsByDefault)
+            foreach (var cardStall in CardStallDataBase.Instance.GetAllCardsStall())
             {
                 cardStallsOnTable.Add(cardStall);
             }

@@ -1,8 +1,8 @@
 using UnityEngine;
 
-public class ItemSO : ScriptableObject
+public abstract class ItemSO : ScriptableObject
 {
-    public string id;
+    public abstract string Id { get; }
     public int cost;
     public GameObject goItem;
 }

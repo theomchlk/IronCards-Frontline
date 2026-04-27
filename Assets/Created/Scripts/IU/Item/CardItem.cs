@@ -5,14 +5,13 @@ using UnityEngine;
 public class CardItem : AItem
 {
     [SerializeField] private CardsSO data;
-
-    public override string Id => data.id;
+    
     public override int Cost(PurchaseContext context) => data.cost;
 
     [Server]
     public override bool CanBePurchased(PurchaseContext context)
     {
-        if (!context.playerWallet.CanAfford(Cost(null))) return false;
+        if (!context.playerState.CanAfford(Cost(null))) return false;
         if (!context.playerState.HaveFreeSlot()) return false;
         return true;
     }
@@ -20,12 +19,17 @@ public class CardItem : AItem
     [Server]
     public override void Purchase(PurchaseContext context)
     {
-        context.playerWallet.RemoveMoney(Cost(null));
-        CardCollection.AddCard(context.playerState.cardsOwned,Id);
+        context.playerState.RemoveMoney(Cost(null));
+        CardCollection.AddCard(context.playerState.cardsOwned,data.Id);
     }
 
     public override void Accept(IItemVisitor visitor)
     {
         visitor.Visit(this);
+    }
+    
+    public override string GetIdentifier()
+    {
+        return data.Id;
     }
 }

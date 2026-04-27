@@ -4,18 +4,13 @@ using UnityEngine;
 
 public class UICardShop : MonoBehaviour
 {
-    public static UICardShop Local;
 
     [SerializeField] private Transform cardStallsLocation;
-
-    public void Awake()
-    {
-        Local = this;
-    }
+    [SerializeField] private GameObject cardStallContainer;
 
     public void BuyNewCard(CardItem card)
     {
-        var slotFree = UISlotShop.Local.GetSlotFree();
+        var slotFree = UIManager.Instance.uiSlotShop.GetSlotFree();
         Instantiate(card.gameObject, slotFree.transform);
         slotFree.ChangeFreeState();
     }
@@ -32,9 +27,11 @@ public class UICardShop : MonoBehaviour
 
     private void SetUI()
     {
-        ResetCardShop();
-        foreach (var cs in CardStallTable.Instance.cardStallsOnTable)
+        /*ResetCardShop();*/
+        
+        foreach (var csID in CardStallTable.Instance.cardStallsOnTable)
         {
+            var cs = CardStallDataBase.Instance.GetCardStall(csID);
             SetCardStall(cs);
         }
     }
@@ -47,14 +44,17 @@ public class UICardShop : MonoBehaviour
 
     private void SetCardStall(CardStallSO cs)
     {
-
-        var slotSO = DataBaseItem.Instance.GetDataItem("slot");
         var csUI = Instantiate(cs.cardStallPrefab, cardStallsLocation).GetComponent<CardStallUI>();
         foreach (var cSO in cs.cardsSo)
         {
-            var slotGO = Instantiate(slotSO.goItem, csUI.transform);
-            Instantiate(cSO.goItem, slotGO.transform);
+            var csc = Instantiate(cardStallContainer, csUI.transform).GetComponent<CardStallContainer>();
+            /*SetCardInSlot(cSO, csc.SlotLocation);*/
         }
+    }
+    
+    private void SetCardInSlot(CardsSO cSO, Transform location)
+    {
+        Instantiate(cSO.goItem, location);
     }
     
 
