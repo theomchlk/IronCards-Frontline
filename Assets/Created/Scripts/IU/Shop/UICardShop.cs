@@ -32,7 +32,7 @@ public class UICardShop : MonoBehaviour
         foreach (var csID in CardStallTable.Instance.cardStallsOnTable)
         {
             var cs = CardStallDataBase.Instance.GetCardStall(csID);
-            SetCardStall(cs);
+            /*SetCardStall(cs);*/
         }
     }
 

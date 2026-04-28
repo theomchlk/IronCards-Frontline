@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 79c2a364d1f716546b4dbb465fd5e61a, type: 3}
   m_Name: Tank
   m_EditorClassIdentifier: Assembly-CSharp::CardsSO
-  id: card_tank
   cost: 12
   goItem: {fileID: 7216441661094861325, guid: bce0f05d1e0e47741875c9e312b9ea57, type: 3}
+  aIetm: {fileID: 0}
+  id: card_tank
   cardName: Tank
   dps: 2
   health: 20
   range: 1
   movementSpeed: 1
   nbSoldiers: 5
-  soldierPrefab: {fileID: 8647004473666833213, guid: c6f7ca5017b87d148bb593ac063326d0, type: 3}

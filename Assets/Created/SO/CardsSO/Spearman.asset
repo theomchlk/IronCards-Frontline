@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 79c2a364d1f716546b4dbb465fd5e61a, type: 3}
   m_Name: Spearman
   m_EditorClassIdentifier: Assembly-CSharp::CardsSO
-  id: card_spearman
   cost: 7
   goItem: {fileID: 7908326443045880289, guid: 7dca110dddd69e147a5b72415554acf0, type: 3}
+  aIetm: {fileID: 0}
+  id: card_spearman
   cardName: Spearman
   dps: 3
   health: 10
   range: 3
   movementSpeed: 2
   nbSoldiers: 5
-  soldierPrefab: {fileID: 5833649680864250963, guid: 75b887577a0e3604a982d5967a452d52, type: 3}

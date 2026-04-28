@@ -1,4 +1,5 @@
 using System;
+using FishNet;
 using UnityEngine;
 using FishNet.Connection;
 using FishNet.Object;
@@ -31,6 +32,24 @@ public class SlotItem : AItem
 
     }
 
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+
+        if (IsOwner)
+        {
+            TestSpawn(Owner);
+        }
+    }
+
+    private void TestSpawn(NetworkConnection conn)
+    {
+        //Test
+        GameObject go = Instantiate(data.goItem, transform);
+        go.name = "truc";
+        InstanceFinder.ServerManager.Spawn(go, conn);
+    }
+
     [Server]
     public override void Purchase(PurchaseContext context)
     {
@@ -38,6 +57,8 @@ public class SlotItem : AItem
         context.playerState.NewCostItemByMultiplier(context.playerState.slotCost,data.costMultiplier);
         context.playerState.nbSlots.Value++;
         context.playerState.nbFreeSlots.Value++;
+        
+ 
     }
 
     public override void Accept(IItemVisitor visitor)

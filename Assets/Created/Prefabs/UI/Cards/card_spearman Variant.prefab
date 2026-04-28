@@ -8,6 +8,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -8371395920548912974, guid: ffbf7b95b59386c44a81ea012e6de806, type: 3}
+      propertyPath: <AssetPathHash>k__BackingField
+      value: 6101403349566357260
+      objectReference: {fileID: 0}
     - target: {fileID: -2040241451606925767, guid: ffbf7b95b59386c44a81ea012e6de806, type: 3}
       propertyPath: data
       value: 
@@ -120,6 +124,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: card_spearman Variant
       objectReference: {fileID: 0}
+    - target: {fileID: 4970400316536924938, guid: ffbf7b95b59386c44a81ea012e6de806, type: 3}
+      propertyPath: data
+      value: 
+      objectReference: {fileID: 11400000, guid: cf62a6e62166a904e8e8523d03670787, type: 2}
     - target: {fileID: 5104820208887920687, guid: ffbf7b95b59386c44a81ea012e6de806, type: 3}
       propertyPath: m_fontSize
       value: 3.85

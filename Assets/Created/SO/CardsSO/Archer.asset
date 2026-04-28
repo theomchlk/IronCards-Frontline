@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 79c2a364d1f716546b4dbb465fd5e61a, type: 3}
   m_Name: Archer
   m_EditorClassIdentifier: Assembly-CSharp::CardsSO
-  id: card_archer
   cost: 7
   goItem: {fileID: 9162053609322602273, guid: 122a041de66782b4e977a79f25a6f538, type: 3}
+  aIetm: {fileID: 0}
+  id: card_archer
   cardName: Archer
   dps: 2
   health: 10
   range: 10
   movementSpeed: 2
   nbSoldiers: 5
-  soldierPrefab: {fileID: 5320034138374105494, guid: 6574ec18c2ecd3445a560f89d24bc4c7, type: 3}
