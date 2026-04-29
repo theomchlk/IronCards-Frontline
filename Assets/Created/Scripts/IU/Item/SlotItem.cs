@@ -4,25 +4,30 @@ using UnityEngine;
 using FishNet.Connection;
 using FishNet.Object;
 
-public class SlotItem : AItem
+public class SlotItem : ASpawnableItem, IItem
 {
     private bool _isFree = true;
-    [SerializeField] private SlotSO data;
+    private SlotSO _data;
     
-    public override int Cost(PurchaseContext context) => context.playerState.slotCost.Value;
+    public int Cost(PurchaseContext context) => context.playerState.slotCost.Value;
     
     public bool IsFree() => _isFree;
     public void ChangeFreeState() => _isFree = !_isFree;
+    
+    public override void OnStartServer()
+    {
+        _data = (SlotSO)DataBaseItem.Instance.GetDataItem("slot");
+    }
 
     [Server]
-    public override bool CanBePurchased(PurchaseContext context)
+    public bool CanBePurchased(PurchaseContext context)
     {
         if (!context.playerState.CanAfford(Cost(context)))
         {
             Debug.Log("Not enough money to afford");
             return false;
         }
-        if (data.nbSlotMax <= context.playerState.slotCost.Value)
+        if (_data.nbSlotMax <= context.playerState.slotCost.Value)
         {
             Debug.Log("Max slots reached");
             return false;
@@ -32,7 +37,7 @@ public class SlotItem : AItem
 
     }
 
-    public override void OnStartClient()
+    /*public override void OnStartClient()
     {
         base.OnStartClient();
 
@@ -48,28 +53,47 @@ public class SlotItem : AItem
         GameObject go = Instantiate(data.goItem, transform);
         go.name = "truc";
         InstanceFinder.ServerManager.Spawn(go, conn);
-    }
+    }*/
 
     [Server]
-    public override void Purchase(PurchaseContext context)
+    public void Purchase(PurchaseContext context)
     {
         context.playerState.RemoveMoney(Cost(context));
-        context.playerState.NewCostItemByMultiplier(context.playerState.slotCost,data.costMultiplier);
+        context.playerState.NewCostItemByMultiplier(context.playerState.slotCost,_data.costMultiplier);
         context.playerState.nbSlots.Value++;
         context.playerState.nbFreeSlots.Value++;
         
- 
+        SpawnItem(Owner);
+    }
+    
+    [Server]
+    public override void SpawnItem(NetworkConnection conn)
+    {
+        var nob = Instantiate(_data.goItem).GetComponent<SlotItem>();
+        InstanceFinder.ServerManager.Spawn(nob.gameObject, conn);
+        TargetSpawnItem(conn,nob);
     }
 
-    public override void Accept(IItemVisitor visitor)
+    [TargetRpc]
+    public void TargetSpawnItem(NetworkConnection conn, SlotItem slotItem)
+    {
+        var uiManager = conn.FirstObject.GetComponent<UIManager>();
+        uiManager.uiSlotShop.BuyNewSlot(slotItem);
+    }
+
+    public void Accept(IItemVisitor visitor)
     {
         visitor.Visit(this);
     }
 
-    public override string GetIdentifier()
+    public string GetIdentifier()
     {
-        return data.Id;
+        return _data.Id;
     }
+    
+    public SlotSO GetData() => _data;
+    
 
+    
 }
   

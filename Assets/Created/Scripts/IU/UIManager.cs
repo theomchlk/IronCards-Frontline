@@ -48,7 +48,7 @@ public class UIManager : MonoBehaviour, IItemVisitor
     //Visitor Pattern
     public void OnBuyItemSucceeded(string id)
     {
-        var item = DataBaseItem.Instance.GetDataItem(id).goItem.GetComponent<AItem>();
+        var item = DataBaseItem.Instance.GetDataItem(id).goItem.GetComponent<IItem>();
         item.Accept(this);
     }
 

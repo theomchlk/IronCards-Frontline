@@ -7,7 +7,7 @@ public class BuyItemButton : NetworkBehaviour
     [SerializeField] private ShopItem shopItem;
     
     
-    public void OnClickBuySlot(AItem aItem)
+    public void OnClickBuySlot(IItem aItem)
     {
         shopItem.BuyItemServerRpc(aItem.GetIdentifier(), Owner);
     }

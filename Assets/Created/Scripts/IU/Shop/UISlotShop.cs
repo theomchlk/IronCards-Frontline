@@ -7,7 +7,7 @@ using FishNet.Object;
 public class UISlotShop : MonoBehaviour
 {
     /*[SerializeField] private SlotShop slotShop;*/
-    [SerializeField] private GameObject slotPrefab;
+    /*[SerializeField] private GameObject slotPrefab;*/
     [SerializeField] private Transform slotsHand;
     [SerializeField] private TMP_Text slotPriceText;
     private List<SlotItem> _slots = new List<SlotItem>();
@@ -40,7 +40,6 @@ public class UISlotShop : MonoBehaviour
     private void SetUI()
     {
         ResetHand();
-        InitSlot(PlayerState.Local.nbSlots.Value, PlayerState.Local.slotCost.Value);
     }
 
     
@@ -54,14 +53,16 @@ public class UISlotShop : MonoBehaviour
     public void BuyNewSlot(SlotItem slot)
     {
         Debug.Log("Slot purchased !");
-        AddNewSlot();
+        AddNewSlot(slot);
         ChangeSlotPriceText(PlayerState.Local.slotCost.Value);
     }
 
-    private void AddNewSlot()
+    private void AddNewSlot(SlotItem slot)
     {
-        SlotItem slot = Instantiate(slotPrefab, slotsHand.transform).GetComponent<SlotItem>();
+        var slotPrefab = slot.GetData().goItemUI;
         _slots.Add(slot);
+        SlotUI slotUi = Instantiate(slotPrefab, slotsHand).GetComponent<SlotUI>();
+        slotUi.Bind(slot);
         AnimationNewSlot();
     }
 
@@ -77,14 +78,14 @@ public class UISlotShop : MonoBehaviour
         slotPriceText.text = amount.ToString();
     }
 
-    public void InitSlot(int nbSlots, int slotPrice)
+    /*public void InitSlot(int nbSlots, int slotPrice)
     {
         ChangeSlotPriceText(slotPrice);
         for (int i = 0; i < nbSlots; i++)
         {
             AddNewSlot();
         }
-    }
+    }*/
 
     private void ResetHand()
     {

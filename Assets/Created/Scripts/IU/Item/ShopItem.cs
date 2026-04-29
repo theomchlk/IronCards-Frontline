@@ -20,7 +20,7 @@ public class ShopItem : NetworkBehaviour
     public void BuyItemServerRpc(string id, NetworkConnection conn)
     {
         var itemData = DataBaseItem.Instance.GetDataItem(id);
-        var item = itemData.goItem.GetComponent<AItem>();
+        var item = itemData.goItem.GetComponent<IItem>();
         
         //Ici context est un objet temporaire rataché à aucun objet. Il permet juste de récuperer des références au 
         //contexte du joueur -> voir Context Object Pattern
@@ -38,7 +38,7 @@ public class ShopItem : NetworkBehaviour
 
         item.Purchase(context);
         
-        TargetBuySucceeded(conn, id);
+        /*TargetBuySucceeded(conn, id);*/
     }
     
 
@@ -48,12 +48,12 @@ public class ShopItem : NetworkBehaviour
         Debug.Log(msg);
     }
 
-    [TargetRpc]
+    /*[TargetRpc]
     private void TargetBuySucceeded(NetworkConnection conn, string id)
     {
         var uiManager = conn.FirstObject.GetComponent<UIManager>();
         uiManager.OnBuyItemSucceeded(id);
-    }
+    }*/
 
     [ServerRpc]
     private void ServerInitUIsItems()

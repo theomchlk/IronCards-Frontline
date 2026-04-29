@@ -4,6 +4,7 @@ using FishNet.Connection;
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
 using System.Collections.Generic;
+using FishNet;
 
 public class PlayerState : NetworkBehaviour
 {
@@ -52,6 +53,7 @@ public class PlayerState : NetworkBehaviour
         {
             nbSlots.Value = slotSo.nbSlotByDefault;
             slotCost.Value = slotSo.cost;
+            InitDefaultSlots(slotSo.goItem ,slotSo.nbSlotByDefault);
         }
         itemSo = DataBaseItem.Instance.GetDataItem("mill");
         if (itemSo is MillSO millSo)
@@ -60,7 +62,21 @@ public class PlayerState : NetworkBehaviour
             millCost.Value = millSo.cost;
         }
     }
+    
+    [Server]
+    private void InitDefaultSlots(GameObject prefab, int defaultValue)
+    {
+        for (int i = 0; i < defaultValue; i++)
+        {
+            var slot = Instantiate(prefab).GetComponent<SlotItem>();
+            InstanceFinder.ServerManager.Spawn(slot.gameObject, Owner);
+            slot.TargetSpawnItem(Owner, slot);
+        }
 
+        nbFreeSlots.Value = defaultValue;
+    }
+
+    
     [Server]
     public void NewCostItemByMultiplier(SyncVar<int> itemCost ,float multiplier)
     {
