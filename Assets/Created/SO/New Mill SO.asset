@@ -14,5 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MillSO
   cost: 3
   goItem: {fileID: 8911988903483209706, guid: 5580baba07f6d2a499bfc00cba107450, type: 3}
+  goItemUI: {fileID: 0}
   nbMillsByDefault: 1
   costMultiplier: 2

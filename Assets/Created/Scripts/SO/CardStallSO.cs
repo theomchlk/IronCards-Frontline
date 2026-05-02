@@ -11,6 +11,7 @@ public class CardStallSO : ScriptableObject
     public Color cardStallColor;
     public List<CardsSO> cardsSo;
     public GameObject cardStallPrefab;
+    public GameObject cardContainer;
 
 
 }

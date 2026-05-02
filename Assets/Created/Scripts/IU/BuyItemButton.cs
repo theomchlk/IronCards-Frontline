@@ -1,15 +1,16 @@
 using System;
-using FishNet.Object;
 using UnityEngine;
 
-public class BuyItemButton : NetworkBehaviour
+public class BuyItemButton : MonoBehaviour
 {
     [SerializeField] private ShopItem shopItem;
+    private IItem _item;
     
+    public void SetItem(IItem item) => _item = item;
     
-    public void OnClickBuySlot(IItem aItem)
+    public void OnClickBuyItem()
     {
-        shopItem.BuyItemServerRpc(aItem.GetIdentifier(), Owner);
+        shopItem.BuyItemServerRpc(_item.GetIdentifier());
     }
     
 }

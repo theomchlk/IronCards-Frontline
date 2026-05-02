@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Horseman
   m_EditorClassIdentifier: Assembly-CSharp::CardsSO
   cost: 15
-  goItem: {fileID: 3619349539578284426, guid: 9abce9390d586714bb03c05a017916cf, type: 3}
-  aIetm: {fileID: 0}
+  goItem: {fileID: 8673609080622784147, guid: 11be32c16567c2d498e5538167d54ecb, type: 3}
+  goItemUI: {fileID: 2843788935119677876, guid: ffbf7b95b59386c44a81ea012e6de806, type: 3}
   id: card_horseman
   cardName: Horseman
   dps: 5

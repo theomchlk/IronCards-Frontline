@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 244d0ca003e977449af1a6636b1ef6e9, type: 3}
   m_Name: New Slot
   m_EditorClassIdentifier: Assembly-CSharp::SlotSO
-  id: 
   cost: 5
-  goItem: {fileID: 1365167524238765840, guid: 8e8baf7c204d48a4c99e1aae7d84b5b0, type: 3}
+  goItem: {fileID: 1365167524238765840, guid: 25660413ddd5b9a4cb97c80d9c31107d, type: 3}
+  goItemUI: {fileID: 1365167524238765840, guid: 8e8baf7c204d48a4c99e1aae7d84b5b0, type: 3}
   nbSlotMax: 10
   nbSlotByDefault: 4
   costMultiplier: 1

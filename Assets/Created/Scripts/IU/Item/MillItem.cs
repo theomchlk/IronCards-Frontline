@@ -4,21 +4,29 @@ using FishNet.Object;
 
 public class MillItem : IItem
 {
-    [SerializeField] private MillSO data;
-    public int Cost(PurchaseContext context) => context.playerState.millCost.Value;
+    private MillSO _data;
+    
+    
+    public void SetData(MillSO data) => _data = data;
+    
+    public int Cost(PurchaseContext context, ItemSO itemData) => context.playerState.millCost.Value;    
 
-    [Server]
-    public bool CanBePurchased(PurchaseContext context)
+    public bool CanBePurchased(PurchaseContext context, ItemSO itemData)
     {
-        return context.playerState.CanAfford(context.playerState.millCost.Value);
+        return context.playerState.CanAfford(Cost(context, itemData));
     }
 
-    [Server]
-    public void Purchase(PurchaseContext context)
+    public void Purchase(PurchaseContext context, ItemSO itemData)
     {
-        context.playerState.RemoveMoney(context.playerState.millCost.Value);
+        if (itemData is not MillSO data)
+        {
+            Debug.LogWarning("itemData is not a MillSO");
+            return;
+        }
+        context.playerState.RemoveMoney(Cost(context, data));
         context.playerState.NewCostItemByMultiplier(context.playerState.millCost,data.costMultiplier);
-        context.playerState.nbMills.Value++;
+        context.playerState.IncreaseNbItem(context.playerState.nbMills);
+        
     }
 
     public void Accept(IItemVisitor visitor)
@@ -28,7 +36,7 @@ public class MillItem : IItem
     
     public string GetIdentifier()
     {
-        return data.Id;
+        return _data.Id;
     }
     
 }

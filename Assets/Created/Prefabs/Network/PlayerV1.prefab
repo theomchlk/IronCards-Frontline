@@ -53,7 +53,6 @@ MonoBehaviour:
   _componentIndexCache: 1
   _addedNetworkObject: {fileID: 9212670185691083737}
   _networkObjectCache: {fileID: 9212670185691083737}
-  data: {fileID: 11400000, guid: 4bb93295d23632f42bcd8e5a8463496f, type: 2}
 --- !u!1 &873847797707447712
 GameObject:
   m_ObjectHideFlags: 0
@@ -405,10 +404,10 @@ MonoBehaviour:
   - {fileID: 987295808739517072}
   - {fileID: 6438568966194031798}
   - {fileID: 3136271971920396597}
-  - {fileID: 4821415546036399625}
+  - {fileID: 0}
   InitializedParentNetworkBehaviour: {fileID: 5495445565985175453}
   InitializedNestedNetworkObjects:
-  - {fileID: 8757196963784216026}
+  - {fileID: 0}
   RuntimeParentNetworkBehaviour: {fileID: 0}
   RuntimeChildNetworkBehaviours: []
   _isNetworked: 1
@@ -1176,11 +1175,11 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 4821415546036399625}
         m_TargetAssemblyTypeName: BuyItemButton, Assembly-CSharp
-        m_MethodName: OnClickBuySlot
-        m_Mode: 2
+        m_MethodName: OnClickBuyItem
+        m_Mode: 1
         m_Arguments:
-          m_ObjectArgument: {fileID: 6438568966194031798}
-          m_ObjectArgumentAssemblyTypeName: AItem, Assembly-CSharp
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -1198,9 +1197,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d80471b47f039ca4f83b1a2a659f8305, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BuySlotButton
-  _componentIndexCache: 3
-  _addedNetworkObject: {fileID: 9212670185691083737}
-  _networkObjectCache: {fileID: 9212670185691083737}
   shopItem: {fileID: 838987558728041247}
 --- !u!1 &6585194718931952944
 GameObject:
@@ -2605,7 +2601,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b93fc434e70562439dbdcceea2f5518, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UISlotShop
-  slotPrefab: {fileID: 1365167524238765840, guid: 8e8baf7c204d48a4c99e1aae7d84b5b0, type: 3}
   slotsHand: {fileID: 5248136268002330228}
   slotPriceText: {fileID: 785742587255592459}
 --- !u!224 &5187775585306252956 stripped
@@ -3054,11 +3049,11 @@ PrefabInstance:
     - target: {fileID: 2130636874832452850, guid: 5580baba07f6d2a499bfc00cba107450, type: 3}
       propertyPath: _networkObjectCache
       value: 
-      objectReference: {fileID: 8757196963784216026}
+      objectReference: {fileID: 0}
     - target: {fileID: 2511677585927518403, guid: 5580baba07f6d2a499bfc00cba107450, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgument
       value: 
-      objectReference: {fileID: 6346943305691524998}
+      objectReference: {fileID: 0}
     - target: {fileID: 3086944315826053689, guid: 5580baba07f6d2a499bfc00cba107450, type: 3}
       propertyPath: _addedNetworkObject
       value: 
@@ -3066,7 +3061,7 @@ PrefabInstance:
     - target: {fileID: 3086944315826053689, guid: 5580baba07f6d2a499bfc00cba107450, type: 3}
       propertyPath: _networkObjectCache
       value: 
-      objectReference: {fileID: 8757196963784216026}
+      objectReference: {fileID: 0}
     - target: {fileID: 7743334551318399699, guid: 5580baba07f6d2a499bfc00cba107450, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -3147,6 +3142,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8630071570652946230, guid: 5580baba07f6d2a499bfc00cba107450, type: 3}
+      propertyPath: buyMillButton
+      value: 
+      objectReference: {fileID: 8021564879859929421}
     - target: {fileID: 8911988903483209706, guid: 5580baba07f6d2a499bfc00cba107450, type: 3}
       propertyPath: m_Name
       value: Mill
@@ -3172,28 +3171,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 7743334551318399699, guid: 5580baba07f6d2a499bfc00cba107450, type: 3}
   m_PrefabInstance: {fileID: 8269691045268180415}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &6346943305691524998 stripped
+--- !u!114 &8021564879859929421 stripped
 MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 3086944315826053689, guid: 5580baba07f6d2a499bfc00cba107450, type: 3}
+  m_CorrespondingSourceObject: {fileID: 2130636874832452850, guid: 5580baba07f6d2a499bfc00cba107450, type: 3}
   m_PrefabInstance: {fileID: 8269691045268180415}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 91299a8d0b3a96d4cab9250c1ccb22b5, type: 3}
+  m_Script: {fileID: 11500000, guid: d80471b47f039ca4f83b1a2a659f8305, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MillItem
---- !u!114 &8757196963784216026 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: -8411589350800981915, guid: 5580baba07f6d2a499bfc00cba107450, type: 3}
-  m_PrefabInstance: {fileID: 8269691045268180415}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 26b716c41e9b56b4baafaf13a523ba2e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: FishNet.Runtime::FishNet.Object.NetworkObject
+  m_EditorClassIdentifier: Assembly-CSharp::BuySlotButton
 --- !u!1001 &8619364070325834275
 PrefabInstance:
   m_ObjectHideFlags: 0

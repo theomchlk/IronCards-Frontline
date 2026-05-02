@@ -20,4 +20,5 @@ public class CardsSO : ItemSO
     /*public List<Skills> skills;*/
 
     public override string Id => id;
+    
 }

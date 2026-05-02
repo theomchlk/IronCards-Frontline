@@ -6,4 +6,5 @@ public class MillSO : ItemSO
     public int nbMillsByDefault;
     public float costMultiplier;
     public override string Id => "mill";
+    
 }

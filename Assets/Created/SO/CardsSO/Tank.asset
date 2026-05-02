@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Tank
   m_EditorClassIdentifier: Assembly-CSharp::CardsSO
   cost: 12
-  goItem: {fileID: 7216441661094861325, guid: bce0f05d1e0e47741875c9e312b9ea57, type: 3}
-  aIetm: {fileID: 0}
+  goItem: {fileID: 8673609080622784147, guid: 11be32c16567c2d498e5538167d54ecb, type: 3}
+  goItemUI: {fileID: 2843788935119677876, guid: ffbf7b95b59386c44a81ea012e6de806, type: 3}
   id: card_tank
   cardName: Tank
   dps: 2

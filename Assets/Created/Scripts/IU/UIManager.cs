@@ -46,10 +46,11 @@ public class UIManager : MonoBehaviour, IItemVisitor
     
     
     //Visitor Pattern
+    //pas sur qu'on l'utilise encore maintenant
     public void OnBuyItemSucceeded(string id)
     {
-        var item = DataBaseItem.Instance.GetDataItem(id).goItem.GetComponent<IItem>();
-        item.Accept(this);
+        /*var item = DataBaseItem.Instance.GetDataItem(id).goItem.GetComponent<IItem>();
+        item.Accept(this);*/
     }
 
     public void Visit(SlotItem item)
@@ -64,7 +65,7 @@ public class UIManager : MonoBehaviour, IItemVisitor
 
     public void Visit(MillItem item)
     {
-        uiMillShop.BuyNewMill(item);
+        /*uiMillShop.BuyNewMill(item);*/
     }
 }
 

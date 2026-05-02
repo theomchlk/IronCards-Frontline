@@ -124,11 +124,11 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 2130636874832452850}
         m_TargetAssemblyTypeName: BuyItemButton, Assembly-CSharp
-        m_MethodName: OnClickBuySlot
-        m_Mode: 2
+        m_MethodName: OnClickBuyItem
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: AItem, Assembly-CSharp
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -146,9 +146,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d80471b47f039ca4f83b1a2a659f8305, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BuySlotButton
-  _componentIndexCache: 1
-  _addedNetworkObject: {fileID: 0}
-  _networkObjectCache: {fileID: 0}
   shopItem: {fileID: 0}
 --- !u!1 &5842457849153539155
 GameObject:
@@ -434,7 +431,6 @@ GameObject:
   m_Component:
   - component: {fileID: 7743334551318399699}
   - component: {fileID: 8630071570652946230}
-  - component: {fileID: 3086944315826053689}
   m_Layer: 5
   m_Name: Mill
   m_TagString: Untagged
@@ -477,19 +473,3 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UIMillShop
   millCostText: {fileID: 2997619116276662627}
   nbMillText: {fileID: 5862725418878686098}
---- !u!114 &3086944315826053689
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8911988903483209706}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 91299a8d0b3a96d4cab9250c1ccb22b5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MillItem
-  _componentIndexCache: 0
-  _addedNetworkObject: {fileID: 0}
-  _networkObjectCache: {fileID: 0}
-  data: {fileID: 11400000, guid: 5d48ffd5af6063341ac9bd5891430568, type: 2}

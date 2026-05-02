@@ -17,9 +17,16 @@ public class ShopItem : NetworkBehaviour
     }
     
     [ServerRpc] 
-    public void BuyItemServerRpc(string id, NetworkConnection conn)
+    public void BuyItemServerRpc(string id, NetworkConnection conn = null)
     {
         var itemData = DataBaseItem.Instance.GetDataItem(id);
+        
+        /* Ici on recupere le script IItem des objets via la prefab goItem contenu dans ItemSO. Ce prefab va être
+         instantié par l'item si il est un ASpawnableObject. Cependant certains scripts ne sont pas des ASpawnableItem
+         mais doivent quand même avoir un goItem pour récuperer la référence de IItem, ce qui peut être déroutant.
+         On pourrait faire un proxy pour chaque ASpawnableItem qui ne serait que des IItem, et feraient spawn les 
+         ASpawnableObject, mais pas soucis de temps et de simplicité on restera comme cela
+         */
         var item = itemData.goItem.GetComponent<IItem>();
         
         //Ici context est un objet temporaire rataché à aucun objet. Il permet juste de récuperer des références au 
@@ -34,9 +41,9 @@ public class ShopItem : NetworkBehaviour
             return;
         }
 
-        if (!item.CanBePurchased(context)) return;
+        if (!item.CanBePurchased(context, itemData)) return;
 
-        item.Purchase(context);
+        item.Purchase(context, itemData);
         
         /*TargetBuySucceeded(conn, id);*/
     }

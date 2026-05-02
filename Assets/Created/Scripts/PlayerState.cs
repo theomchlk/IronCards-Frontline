@@ -31,17 +31,42 @@ public class PlayerState : NetworkBehaviour
         if (IsOwner)
         {
             Local = this;
-            money.OnChange += OnMoneyChanged;
-            UIManager.Instance.moneyUI.ChangeMoneyText(money.Value);
+            SetUiChangeMoney();
+            SetUiChangeMill();
         }
     }
 
-    public void OnDestroy()
+    private void OnDestroy()
     {
         if (IsOwner)
         {
-            money.OnChange -= OnMoneyChanged;
+            DestroyMoney();
+            DestroyMill();
         }
+    }
+
+    private void DestroyMoney()
+    {
+        money.OnChange -= OnMoneyChanged;
+    }
+
+    private void DestroyMill()
+    {
+        nbMills.OnChange -= OnMillCostOrNbChanged;
+        millCost.OnChange -= OnMillCostOrNbChanged;
+    }
+
+    private void SetUiChangeMoney()
+    {
+        money.OnChange += OnMoneyChanged;   
+        UIManager.Instance.moneyUI.ChangeMoneyText(money.Value);
+    }
+
+    private void SetUiChangeMill()
+    {
+        nbMills.OnChange += OnMillCostOrNbChanged;
+        millCost.OnChange += OnMillCostOrNbChanged;
+        UIManager.Instance.uiMillShop.SetUI(nbMills.Value, millCost.Value);
     }
 
     public override void OnStartServer()
@@ -76,6 +101,9 @@ public class PlayerState : NetworkBehaviour
         nbFreeSlots.Value = defaultValue;
     }
 
+    [Server]
+    public void IncreaseNbItem(SyncVar<int> item) => item.Value++;
+
     
     [Server]
     public void NewCostItemByMultiplier(SyncVar<int> itemCost ,float multiplier)
@@ -106,9 +134,17 @@ public class PlayerState : NetworkBehaviour
     
     private void OnMoneyChanged(int previous, int next, bool asServer)
     {
+        Debug.Log("Money changed");
         if (!IsOwner) return;
         UIManager.Instance.moneyUI.ChangeMoneyText(next);
     }
+    
+    private void OnMillCostOrNbChanged(int previous, int next, bool asServer)
+    {
+        Debug.Log("Mill changed");
+        if (!IsOwner) return;
+        UIManager.Instance.uiMillShop.SetUI(nbMills.Value, millCost.Value);
+    } 
 
 
     

@@ -15,6 +15,8 @@ public class CardUI : MonoBehaviour
     //DATA
     [SerializeField] private CardsSO data;
 
+    private CardItem _cardItem;
+
 
     void Awake()
     {
@@ -26,6 +28,7 @@ public class CardUI : MonoBehaviour
         cardMSText.text = data.movementSpeed.ToString("F0");
         cardImage.sprite = cardSprite;
 
-
     }
+    
+    public void Bind(CardItem cardItem) => _cardItem = cardItem;
 }
