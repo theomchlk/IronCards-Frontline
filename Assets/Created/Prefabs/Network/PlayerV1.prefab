@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1597108312834233934}
-  - component: {fileID: 6438568966194031798}
+  - component: {fileID: 7958258008643833650}
   m_Layer: 5
   m_Name: Slot
   m_TagString: Untagged
@@ -38,7 +38,7 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 130.6559, y: 53.4055}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &6438568966194031798
+--- !u!114 &7958258008643833650
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -47,12 +47,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 37691107346303507}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe282f55c2217ab4595b9d0920fe4045, type: 3}
+  m_Script: {fileID: 11500000, guid: 4b93fc434e70562439dbdcceea2f5518, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SlotItem
-  _componentIndexCache: 1
-  _addedNetworkObject: {fileID: 9212670185691083737}
-  _networkObjectCache: {fileID: 9212670185691083737}
+  m_EditorClassIdentifier: Assembly-CSharp::UISlotShop
+  slotsHand: {fileID: 5248136268002330228}
+  slotPriceText: {fileID: 785742587255592459}
 --- !u!1 &873847797707447712
 GameObject:
   m_ObjectHideFlags: 0
@@ -402,7 +401,7 @@ MonoBehaviour:
   <PredictedOwner>k__BackingField: {fileID: 0}
   NetworkBehaviours:
   - {fileID: 987295808739517072}
-  - {fileID: 6438568966194031798}
+  - {fileID: 0}
   - {fileID: 3136271971920396597}
   - {fileID: 0}
   InitializedParentNetworkBehaviour: {fileID: 5495445565985175453}
@@ -983,6 +982,7 @@ MonoBehaviour:
   _componentIndexCache: 2
   _addedNetworkObject: {fileID: 4350343371047122656}
   _networkObjectCache: {fileID: 4350343371047122656}
+  playerConfig: {fileID: 11400000, guid: 0034ef9e26a1c904abc06f38f5d85e03, type: 2}
 --- !u!114 &8218382974991641414
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -997,7 +997,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UIManager
   defaultPanel: {fileID: 7104400532607756724}
   moneyUI: {fileID: 752145897062780224}
-  uiSlotShop: {fileID: 4843797620458475426}
+  uiSlotShop: {fileID: 7958258008643833650}
   uiCardShop: {fileID: 2684032653656198589}
   uiMillShop: {fileID: 362527050214871689}
 --- !u!1 &6126251971469576049
@@ -1198,6 +1198,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BuySlotButton
   shopItem: {fileID: 838987558728041247}
+  itemData: {fileID: 11400000, guid: 4bb93295d23632f42bcd8e5a8463496f, type: 2}
 --- !u!1 &6585194718931952944
 GameObject:
   m_ObjectHideFlags: 0
@@ -2548,9 +2549,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 983952073287948322, guid: d8ef862fe880ff1418bb8e9d2929fa9e, type: 3}
       insertIndex: -1
       addedObject: {fileID: 427488324202610860}
-    - targetCorrespondingSourceObject: {fileID: 983952073287948322, guid: d8ef862fe880ff1418bb8e9d2929fa9e, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 4843797620458475426}
   m_SourcePrefab: {fileID: 100100000, guid: d8ef862fe880ff1418bb8e9d2929fa9e, type: 3}
 --- !u!1 &2091053529857651451 stripped
 GameObject:
@@ -2589,20 +2587,6 @@ MonoBehaviour:
   m_Spacing: {x: 5, y: 0}
   m_Constraint: 2
   m_ConstraintCount: 1
---- !u!114 &4843797620458475426
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2091053529857651451}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4b93fc434e70562439dbdcceea2f5518, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::UISlotShop
-  slotsHand: {fileID: 5248136268002330228}
-  slotPriceText: {fileID: 785742587255592459}
 --- !u!224 &5187775585306252956 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 6295459714317958213, guid: d8ef862fe880ff1418bb8e9d2929fa9e, type: 3}
@@ -3038,6 +3022,10 @@ PrefabInstance:
       propertyPath: InitializedParentNetworkBehaviour
       value: 
       objectReference: {fileID: 987295808739517072}
+    - target: {fileID: 2130636874832452850, guid: 5580baba07f6d2a499bfc00cba107450, type: 3}
+      propertyPath: itemData
+      value: 
+      objectReference: {fileID: 11400000, guid: 5d48ffd5af6063341ac9bd5891430568, type: 2}
     - target: {fileID: 2130636874832452850, guid: 5580baba07f6d2a499bfc00cba107450, type: 3}
       propertyPath: shopItem
       value: 

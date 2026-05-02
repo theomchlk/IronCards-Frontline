@@ -1,3 +1,4 @@
+using FishNet.Connection;
 using FishNet.Object;
 using UnityEngine;
 
@@ -5,12 +6,20 @@ using UnityEngine;
 public class PurchaseContext 
 {
     public PlayerState playerState;
+    public ShopItem shopItem;
+    public NetworkConnection connection;
 
     public static PurchaseContext FromPlayer(NetworkObject player)
     {
-        return new PurchaseContext()
+        var ps = player.GetComponent<PlayerState>();
+        var shop = player.GetComponent<ShopItem>();
+
+        return new PurchaseContext
         {
-            playerState = player.gameObject.GetComponent<PlayerState>()
+            playerState = ps,
+            shopItem = shop,
+            connection = player.Owner
         };
     }
+
 }

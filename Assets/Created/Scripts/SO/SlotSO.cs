@@ -1,3 +1,4 @@
+using UnityEditor;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "New Slot", menuName = "SO/Slot")]
@@ -7,4 +8,9 @@ public class SlotSO : ItemSO
     public int nbSlotByDefault;
     public float costMultiplier;
     public override string Id => "slot";
+
+    public override IItem CreateItemInstance()
+    {
+        return new SlotItemLogic(this);
+    }
 }

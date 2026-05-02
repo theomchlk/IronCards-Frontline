@@ -2,7 +2,7 @@ using System;
 using NUnit.Framework.Internal;
 using UnityEngine;
 
-public class UIManager : MonoBehaviour, IItemVisitor
+public class UIManager : MonoBehaviour
 {
     public static UIManager Instance;
     public static event Action<PanelBehavior> OnActivatePanel;
@@ -44,28 +44,5 @@ public class UIManager : MonoBehaviour, IItemVisitor
         OnSetUIsItems?.Invoke();
     }
     
-    
-    //Visitor Pattern
-    //pas sur qu'on l'utilise encore maintenant
-    public void OnBuyItemSucceeded(string id)
-    {
-        /*var item = DataBaseItem.Instance.GetDataItem(id).goItem.GetComponent<IItem>();
-        item.Accept(this);*/
-    }
-
-    public void Visit(SlotItem item)
-    {
-        uiSlotShop.BuyNewSlot(item);
-    }
-
-    public void Visit(CardItem item)
-    {
-        uiCardShop.BuyNewCard(item);
-    }
-
-    public void Visit(MillItem item)
-    {
-        /*uiMillShop.BuyNewMill(item);*/
-    }
 }
 

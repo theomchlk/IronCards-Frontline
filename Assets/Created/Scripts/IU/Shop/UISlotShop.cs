@@ -27,7 +27,7 @@ public class UISlotShop : MonoBehaviour
         }
     }*/
     
-    public void OnEnable()
+    /*public void OnEnable()
     {
         UIManager.Instance.OnSetUIsItems += SetUI;
     }
@@ -35,11 +35,11 @@ public class UISlotShop : MonoBehaviour
     public void OnDisable()
     {
         UIManager.Instance.OnSetUIsItems -= SetUI;
-    }
+    }*/
 
-    private void SetUI()
+    public void SetUI(int slotCost)
     {
-        ResetHand();
+        ChangeSlotPriceText(slotCost);
     }
 
     
@@ -54,12 +54,11 @@ public class UISlotShop : MonoBehaviour
     {
         Debug.Log("Slot purchased !");
         AddNewSlot(slot);
-        ChangeSlotPriceText(PlayerState.Local.slotCost.Value);
     }
 
     private void AddNewSlot(SlotItem slot)
     {
-        var slotPrefab = slot.GetData().goItemUI;
+        var slotPrefab = slot.Data.goItemUI;
         _slots.Add(slot);
         var slotUi = Instantiate(slotPrefab, slotsHand).GetComponent<SlotUI>();
         slotUi.Bind(slot);

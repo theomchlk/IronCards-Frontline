@@ -6,22 +6,8 @@ public class UIMillShop : MonoBehaviour
 {
     [SerializeField] private TMP_Text millCostText;
     [SerializeField] private TMP_Text nbMillText;
-    [SerializeField] private BuyItemButton buyMillButton;
-
-    void Awake()
-    {
-        var millItem = new MillItem();
-        /*ATTENTION : Ici par simplicité, on mets en dur GetDataItem("mill") ce qui n'est pas dérangeant vu qu'on ne
-         possède qu'un type de mill. Cependant  si on décide de mettre plusieurs type de mill (si il y a plusieurs espèce
-         et qu'on se dit que les humains produisent plus mais pour plus cher que les orcs) alors il faudra revoir
-         le système d'accès a la data par la DataBaseItem
-        */
-        
-        var millSO = (MillSO)DataBaseItem.Instance.GetDataItem("mill");
-        millItem.SetData(millSO);
-        buyMillButton.SetItem(millItem);
-    }
-
+    
+    
     /*public void BuyNewMill(MillItem item)
     {
         Debug.Log("New mill purchased !");

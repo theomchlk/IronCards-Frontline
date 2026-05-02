@@ -8,9 +8,10 @@ using FishNet;
 
 public class PlayerState : NetworkBehaviour
 {
-    public static PlayerState Local;
+    /*public static PlayerState Local;*/
+    [SerializeField] private PlayerSO playerConfig;
     //Partie
-    /*public SyncVar<int> hp;*/
+    public readonly SyncVar<int> hp = new SyncVar<int>();
     public readonly SyncVar<int> money = new SyncVar<int>();
     
     //Slot
@@ -30,12 +31,19 @@ public class PlayerState : NetworkBehaviour
         
         if (IsOwner)
         {
-            Local = this;
+            SetPlayerConfig();
             SetUiChangeMoney();
             SetUiChangeMill();
+            SetUiChangeSlot();
         }
     }
 
+    private void SetPlayerConfig()
+    {
+        hp.Value = playerConfig.hpByDefault;
+        money.Value = playerConfig.moneyByDefault;
+    }
+    
     private void OnDestroy()
     {
         if (IsOwner)
@@ -56,6 +64,11 @@ public class PlayerState : NetworkBehaviour
         millCost.OnChange -= OnMillCostOrNbChanged;
     }
 
+    private void DestroySlot()
+    {
+        slotCost.OnChange -= OnSlotCostChanged;
+    }
+
     private void SetUiChangeMoney()
     {
         money.OnChange += OnMoneyChanged;   
@@ -69,6 +82,12 @@ public class PlayerState : NetworkBehaviour
         UIManager.Instance.uiMillShop.SetUI(nbMills.Value, millCost.Value);
     }
 
+    private void SetUiChangeSlot()
+    {
+        nbSlots.OnChange += OnSlotCostChanged;
+        UIManager.Instance.uiSlotShop.SetUI(slotCost.Value);
+    }
+
     public override void OnStartServer()
     {
         base.OnStartServer();
@@ -78,7 +97,7 @@ public class PlayerState : NetworkBehaviour
         {
             nbSlots.Value = slotSo.nbSlotByDefault;
             slotCost.Value = slotSo.cost;
-            InitDefaultSlots(slotSo.goItem ,slotSo.nbSlotByDefault);
+            InitDefaultSlots(slotSo ,slotSo.nbSlotByDefault);
         }
         itemSo = DataBaseItem.Instance.GetDataItem("mill");
         if (itemSo is MillSO millSo)
@@ -89,13 +108,14 @@ public class PlayerState : NetworkBehaviour
     }
     
     [Server]
-    private void InitDefaultSlots(GameObject prefab, int defaultValue)
+    private void InitDefaultSlots(SlotSO data, int defaultValue)
     {
         for (int i = 0; i < defaultValue; i++)
         {
-            var slot = Instantiate(prefab).GetComponent<SlotItem>();
+            var slot = Instantiate(data.goItem).GetComponent<SlotItem>();
+            slot.Init(data);
             InstanceFinder.ServerManager.Spawn(slot.gameObject, Owner);
-            slot.TargetSpawnItem(Owner, slot);
+            slot.TargetSpawnItem(Owner);
         }
 
         nbFreeSlots.Value = defaultValue;
@@ -144,8 +164,15 @@ public class PlayerState : NetworkBehaviour
         Debug.Log("Mill changed");
         if (!IsOwner) return;
         UIManager.Instance.uiMillShop.SetUI(nbMills.Value, millCost.Value);
-    } 
+    }
 
+    private void OnSlotCostChanged(int previous, int next, bool asServer)
+    {
+        Debug.Log("Slot changed");
+        if (!IsOwner) return;
+        UIManager.Instance.uiSlotShop.SetUI(next);
+    }
+    
 
     
 }

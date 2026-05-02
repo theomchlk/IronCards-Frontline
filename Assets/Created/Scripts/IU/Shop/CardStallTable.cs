@@ -42,6 +42,7 @@ namespace Created.Scripts.IU.Shop
             {
                 cardStallsOnTable.Add(cardStall);
             }
+            Debug.Log("SyncList des cartes sur la table mis a jour");
         }
     }
 }

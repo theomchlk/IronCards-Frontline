@@ -11,7 +11,7 @@ public class UICardShop : MonoBehaviour
     public void BuyNewCard(CardItem card)
     {
         var slotFree = UIManager.Instance.uiSlotShop.GetSlotFree();
-        var cardPrefab = card.GetData().goItemUI;
+        var cardPrefab = card.Data.goItemUI;
         var cardUI= Instantiate(cardPrefab, slotFree.transform).GetComponent<CardUI>();
         cardUI.Bind(card);
         slotFree.ChangeFreeState();

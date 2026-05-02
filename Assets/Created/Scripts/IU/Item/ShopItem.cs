@@ -1,6 +1,6 @@
+using FishNet;
 using FishNet.Object;
 using FishNet.Connection;
-using UnityEditor;
 using UnityEngine;
 
 public class ShopItem : NetworkBehaviour
@@ -27,7 +27,8 @@ public class ShopItem : NetworkBehaviour
          On pourrait faire un proxy pour chaque ASpawnableItem qui ne serait que des IItem, et feraient spawn les 
          ASpawnableObject, mais pas soucis de temps et de simplicité on restera comme cela
          */
-        var item = itemData.goItem.GetComponent<IItem>();
+        /*var item = itemData.goItem.GetComponent<IItem>();*/
+        var item = itemData.CreateItemInstance();
         
         //Ici context est un objet temporaire rataché à aucun objet. Il permet juste de récuperer des références au 
         //contexte du joueur -> voir Context Object Pattern
@@ -41,9 +42,9 @@ public class ShopItem : NetworkBehaviour
             return;
         }
 
-        if (!item.CanBePurchased(context, itemData)) return;
+        if (!item.CanBePurchased(context)) return;
 
-        item.Purchase(context, itemData);
+        item.Purchase(context);
         
         /*TargetBuySucceeded(conn, id);*/
     }
@@ -82,4 +83,15 @@ public class ShopItem : NetworkBehaviour
         uiSlotShop.InitSlot(nbSlots, slotsPrice);
     }
     */
+
+    [Server]
+        public void SpawnItemForPlayer(NetworkConnection conn, ItemSO itemData)
+        {
+            var go = Instantiate(itemData.goItem);
+            var nob = go.GetComponent<ASpawnableItem>();
+            nob.Init(itemData);
+            
+            InstanceFinder.ServerManager.Spawn(go, conn);
+            nob.TargetSpawnItem(conn);
+        }
 }

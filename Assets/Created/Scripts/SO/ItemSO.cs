@@ -7,4 +7,6 @@ public abstract class ItemSO : ScriptableObject
 
     public GameObject goItem;
     public GameObject goItemUI;
+
+    public abstract IItem CreateItemInstance();
 }
