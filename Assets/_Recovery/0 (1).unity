@@ -337,7 +337,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CardStallDataBase
   cardStalls:
   - {fileID: 11400000, guid: 03c0068958dc34345b0e9df51a5b65cb, type: 2}
-  - {fileID: 11400000, guid: 9e89b7668d342bd4b857748b780b426a, type: 2}
 --- !u!4 &1266185324
 Transform:
   m_ObjectHideFlags: 0

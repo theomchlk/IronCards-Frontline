@@ -91,7 +91,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CardStallContainer
   cardCostText: {fileID: 6919488407775100366}
-  slotLocation: {fileID: 5129063801709454667}
+  cardLocation: {fileID: 5129063801709454667}
 --- !u!1 &2855187577196215314
 GameObject:
   m_ObjectHideFlags: 0
@@ -316,7 +316,7 @@ GameObject:
   - component: {fileID: 6126671714011518867}
   - component: {fileID: 5938508257223594351}
   m_Layer: 5
-  m_Name: Slot
+  m_Name: Location
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

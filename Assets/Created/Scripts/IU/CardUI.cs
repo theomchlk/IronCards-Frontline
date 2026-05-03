@@ -11,14 +11,13 @@ public class CardUI : MonoBehaviour
     [SerializeField] private TMP_Text cardNbText;
     [SerializeField] private TMP_Text cardMSText;
     [SerializeField] private Image cardImage;
-    [SerializeField] private Sprite cardSprite;
-    //DATA
-    [SerializeField] private CardsSO data;
+    [SerializeField] private TMP_Text cardNotFoundText;
+    
 
     private CardItem _cardItem;
 
 
-    void Awake()
+    public void SetCardUI(CardsSO data)
     {
         cardNameText.text = data.name;
         cardHPText.text = data.health.ToString("F0");
@@ -26,7 +25,8 @@ public class CardUI : MonoBehaviour
         cardRangeText.text = data.range.ToString("F0");
         cardNbText.text = data.nbSoldiers.ToString("F0");
         cardMSText.text = data.movementSpeed.ToString("F0");
-        cardImage.sprite = cardSprite;
+        if (data.sprite) cardImage.sprite = data.sprite;
+        else cardNotFoundText.gameObject.SetActive(true);
 
     }
     

@@ -18,6 +18,7 @@ public class CardsSO : ItemSO
     public int nbSoldiers;
     /*public GameObject soldierPrefab;*/
     /*public List<Skills> skills;*/
+    public Sprite sprite;
 
     public override string Id => id;
 

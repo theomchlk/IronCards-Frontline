@@ -10,13 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8b22d49d1a12e4542a7f807481819482, type: 3}
-  m_Name: CardStall_Level1
+  m_Name: Test new CardStall
   m_EditorClassIdentifier: Assembly-CSharp::CardStallSO
-  cardStallID: stall_level_1
-  cardStallName: Cards level 1
-  cardStallColor: {r: 0.38993704, g: 0.16460744, b: 0.050274875, a: 0}
+  cardStallID: stall_short_range
+  cardStallName: Short range
+  cardStallColor: {r: 0.21998452, g: 0.5849056, b: 0.16222852, a: 0}
   cardsSo:
-  - {fileID: 11400000, guid: 71ce5dbfe09e6a447a5050f2de6579f1, type: 2}
   - {fileID: 11400000, guid: cf62a6e62166a904e8e8523d03670787, type: 2}
   - {fileID: 11400000, guid: a1a434cfb88095f45b83b9f8e9098be9, type: 2}
   - {fileID: 11400000, guid: 686c6c96d00b25c4c94700cec1b58d5f, type: 2}

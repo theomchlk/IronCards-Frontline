@@ -50,6 +50,7 @@ public class PlayerState : NetworkBehaviour
         {
             DestroyMoney();
             DestroyMill();
+            DestroySlot();
         }
     }
 

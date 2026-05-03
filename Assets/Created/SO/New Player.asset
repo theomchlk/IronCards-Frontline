@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 68f3b80720bf00943b9a0129a4ef53d5, type: 3}
   m_Name: New Player
   m_EditorClassIdentifier: Assembly-CSharp::PlayerSO
-  moneyByDefault: 0
-  hpByDefault: 0
+  moneyByDefault: 30
+  hpByDefault: 20

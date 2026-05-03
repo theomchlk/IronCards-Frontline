@@ -295,4 +295,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Created.Scripts.IU.CardStallUI
   cardStallNameText: {fileID: 8912022408248792373}
   cardStallImage: {fileID: 2333918684968600084}
-  cardsContainer: {fileID: 3695819109381704898}
+  cardsContainerLocation: {fileID: 3695819109381704898}

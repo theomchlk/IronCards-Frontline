@@ -4,7 +4,12 @@ using TMPro;
 public class CardStallContainer : MonoBehaviour
 {
     [SerializeField] private TMP_Text cardCostText;
-    [SerializeField] private Transform slotLocation;
+    [SerializeField] private Transform cardLocation;
     
-    public Transform SlotLocation => slotLocation;
+    public Transform CardLocation => cardLocation;
+
+    public void SetCardStallContainer(int cardCost)
+    {
+        cardCostText.text = cardCost.ToString();
+    }
 }

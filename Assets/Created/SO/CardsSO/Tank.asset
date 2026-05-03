@@ -22,3 +22,4 @@ MonoBehaviour:
   range: 1
   movementSpeed: 1
   nbSoldiers: 5
+  sprite: {fileID: 2124728754, guid: 9c937b4e1eeb9f34eab2e144bc97a418, type: 3}
