@@ -10,7 +10,7 @@ public class UISlotShop : MonoBehaviour
     /*[SerializeField] private GameObject slotPrefab;*/
     [SerializeField] private Transform slotsHand;
     [SerializeField] private TMP_Text slotPriceText;
-    private List<SlotItem> _slots = new List<SlotItem>();
+    private List<SlotUI> _slots = new List<SlotUI>();
 
     /*private void Awake()
     {
@@ -43,7 +43,7 @@ public class UISlotShop : MonoBehaviour
     }
 
     
-    public SlotItem GetSlotFree()
+    public SlotUI GetSlotFree()
     {
         return _slots.FirstOrDefault(slot => slot.IsFree());
     }
@@ -59,8 +59,8 @@ public class UISlotShop : MonoBehaviour
     private void AddNewSlot(SlotItem slot)
     {
         var slotPrefab = slot.Data.goItemUI;
-        _slots.Add(slot);
         var slotUi = Instantiate(slotPrefab, slotsHand).GetComponent<SlotUI>();
+        _slots.Add(slotUi);
         slotUi.Bind(slot);
         AnimationNewSlot();
     }
@@ -92,7 +92,7 @@ public class UISlotShop : MonoBehaviour
             Destroy(child.gameObject);
     }
 
-    public void SetSlotAsUsed(SlotItem slot)
+    public void SetSlotAsUsed(SlotUI slot)
     {
         slot.ChangeFreeState();
     }

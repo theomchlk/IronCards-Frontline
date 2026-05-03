@@ -13,10 +13,10 @@ public class UIHand : MonoBehaviour
         Instance = this;
     }
 
-    public SlotItem GetSlotFree()
+    /*public SlotUI GetSlotFree()
     {
         return slots.FirstOrDefault(slot => slot.IsFree());
-    }
+    }*/
     
     public int GetSlotCount() => slots.Count;
 }

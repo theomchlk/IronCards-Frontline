@@ -137,6 +137,12 @@ public class PlayerState : NetworkBehaviour
     {
         return nbFreeSlots.Value > 0;
     }
+
+    [Server]
+    public void DecrementFreeSlot()
+    {
+        nbFreeSlots.Value--;
+    }
     
     [Server]
     public bool CanAfford(int price) => money.Value >= price ;

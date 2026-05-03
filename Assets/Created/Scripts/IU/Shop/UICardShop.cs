@@ -6,15 +6,19 @@ public class UICardShop : MonoBehaviour
 {
 
     [SerializeField] private Transform cardStallsLocation;
+    [SerializeField] private ShopItem shopItem;
     /*[SerializeField] private GameObject cardStallUI;
     [SerializeField] private GameObject cardContainerUI;*/
 
     public void BuyNewCard(CardItem card)
     {
         var slotFree = UIManager.Instance.uiSlotShop.GetSlotFree();
+        Debug.Log(slotFree.name);
         var cardPrefab = card.Data.goItemUI;
         var cardUI= Instantiate(cardPrefab, slotFree.transform).GetComponent<CardUI>();
         cardUI.Bind(card);
+        cardUI.SetCardUI(card.Data);
+        cardUI.EnableDragMode();
         slotFree.ChangeFreeState();
     }
 
@@ -68,7 +72,7 @@ public class UICardShop : MonoBehaviour
         csUI.SetCardStall(csSO);
         foreach (var cSO in csSO.cardsSo)
         {
-            csUI.SetNewCardContainer(csSO.cardContainer, cSO);
+            csUI.SetNewCardContainer(csSO.cardContainer, cSO, shopItem);
         }
     }
     

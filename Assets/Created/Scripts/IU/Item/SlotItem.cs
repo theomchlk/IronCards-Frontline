@@ -6,11 +6,10 @@ using FishNet.Object;
 
 public class SlotItem : ASpawnableItem
 {
-    private bool _isFree = true;
+
     private SlotSO _data;
     
-    public bool IsFree() => _isFree;
-    public void ChangeFreeState() => _isFree = !_isFree;
+
     
     [TargetRpc]
     public override void TargetSpawnItem(NetworkConnection conn)

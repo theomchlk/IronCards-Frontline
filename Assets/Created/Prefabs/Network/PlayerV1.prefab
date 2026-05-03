@@ -1197,8 +1197,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d80471b47f039ca4f83b1a2a659f8305, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BuySlotButton
-  shopItem: {fileID: 838987558728041247}
-  itemData: {fileID: 11400000, guid: 4bb93295d23632f42bcd8e5a8463496f, type: 2}
+  _shopItem: {fileID: 838987558728041247}
+  _itemData: {fileID: 11400000, guid: 4bb93295d23632f42bcd8e5a8463496f, type: 2}
 --- !u!1 &6585194718931952944
 GameObject:
   m_ObjectHideFlags: 0
@@ -1291,7 +1291,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UICardShop
   cardStallsLocation: {fileID: 8319626056793588851}
-  cardStallContainer: {fileID: 335300896698448989, guid: 14939c9581b538b49ba94711e41514db, type: 3}
+  shopItem: {fileID: 838987558728041247}
 --- !u!114 &3136271971920396597
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3028,6 +3028,14 @@ PrefabInstance:
       objectReference: {fileID: 11400000, guid: 5d48ffd5af6063341ac9bd5891430568, type: 2}
     - target: {fileID: 2130636874832452850, guid: 5580baba07f6d2a499bfc00cba107450, type: 3}
       propertyPath: shopItem
+      value: 
+      objectReference: {fileID: 838987558728041247}
+    - target: {fileID: 2130636874832452850, guid: 5580baba07f6d2a499bfc00cba107450, type: 3}
+      propertyPath: _itemData
+      value: 
+      objectReference: {fileID: 11400000, guid: 5d48ffd5af6063341ac9bd5891430568, type: 2}
+    - target: {fileID: 2130636874832452850, guid: 5580baba07f6d2a499bfc00cba107450, type: 3}
+      propertyPath: _shopItem
       value: 
       objectReference: {fileID: 838987558728041247}
     - target: {fileID: 2130636874832452850, guid: 5580baba07f6d2a499bfc00cba107450, type: 3}

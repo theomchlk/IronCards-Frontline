@@ -17,7 +17,7 @@ namespace Created.Scripts.IU
             cardStallImage.color = data.cardStallColor;
         }
 
-        public void SetNewCardContainer(GameObject cardContainer, CardsSO cardData)
+        public void SetNewCardContainer(GameObject cardContainer, CardsSO cardData, ShopItem shopItem)
         {
             var ccGO = Instantiate(cardContainer, cardsContainerLocation);
             var csc = ccGO.GetComponent<CardStallContainer>();
@@ -25,6 +25,8 @@ namespace Created.Scripts.IU
             var cGO = Instantiate(cardData.goItemUI, csc.CardLocation);
             var cUI = cGO.GetComponent<CardUI>();
             cUI.SetCardUI(cardData);
+            cUI.SetButton(cardData, shopItem);
+            cUI.EnableBuyMode();
         }
         
         

@@ -23,6 +23,7 @@ public class CardItemLogic : IItem
     {
         context.playerState.RemoveMoney(Cost(null));
         CardCollection.AddCard(context.playerState.cardsOwned, _data.Id);
+        context.playerState.DecrementFreeSlot();
         context.shopItem.SpawnItemForPlayer(context.connection,_data);
     }
 

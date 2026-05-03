@@ -19,7 +19,7 @@ public class SlotItemLogic : IItem
             Debug.Log("Not enough money to afford");
             return false;
         }
-        if (_data.nbSlotMax <= context.playerState.slotCost.Value)
+        if (_data.nbSlotMax <= context.playerState.nbSlots.Value)
         {
             Debug.Log("Max slots reached");
             return false;
