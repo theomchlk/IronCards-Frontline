@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class UIManager : MonoBehaviour
 {
-    public static UIManager Instance;
+    /*public static UIManager Instance;*/
     public static event Action<PanelBehavior> OnActivatePanel;
     public event Action OnSetUIsItems;
 
@@ -20,7 +20,7 @@ public class UIManager : MonoBehaviour
     
     public void Awake()
     {
-        Instance = this;
+        /*Instance = this;*/
     }
 
     private void Start()
@@ -42,6 +42,11 @@ public class UIManager : MonoBehaviour
     public void SetUIsItems()
     {
         OnSetUIsItems?.Invoke();
+    }
+
+    public void SetUpUI()
+    {
+        uiCardShop.Setup(this);
     }
     
 }

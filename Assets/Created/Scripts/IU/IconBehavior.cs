@@ -14,7 +14,7 @@ public class IconBehavior : MonoBehaviour
     
     public void ActivePanel()
     {
-        UIManager.Instance.ShowPanel(panel);
+        /*UIManager.Instance.ShowPanel(panel);*/
     }
 
     private void OnEnable()

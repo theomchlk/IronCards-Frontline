@@ -401,12 +401,9 @@ MonoBehaviour:
   <PredictedOwner>k__BackingField: {fileID: 0}
   NetworkBehaviours:
   - {fileID: 987295808739517072}
-  - {fileID: 0}
   - {fileID: 3136271971920396597}
-  - {fileID: 0}
   InitializedParentNetworkBehaviour: {fileID: 5495445565985175453}
-  InitializedNestedNetworkObjects:
-  - {fileID: 0}
+  InitializedNestedNetworkObjects: []
   RuntimeParentNetworkBehaviour: {fileID: 0}
   RuntimeChildNetworkBehaviours: []
   _isNetworked: 1
@@ -415,7 +412,7 @@ MonoBehaviour:
   _initializeOrder: 0
   _preventDespawnOnDisconnect: 0
   _defaultDespawnType: 0
-  _initializedTimestamp: -8584242952682919079
+  _initializedTimestamp: -8584236904763010517
 --- !u!114 &987295808739517072
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -905,7 +902,7 @@ MonoBehaviour:
   _spectatorInterpolation: 2
   _enableTeleport: 0
   _teleportThreshold: 1
-  <PrefabId>k__BackingField: 11
+  <PrefabId>k__BackingField: 9
   <SpawnableCollectionId>k__BackingField: 0
   <AssetPathHash>k__BackingField: 6327428683875275301
   SceneId: 0
@@ -935,7 +932,7 @@ MonoBehaviour:
   _initializeOrder: 0
   _preventDespawnOnDisconnect: 0
   _defaultDespawnType: 0
-  _initializedTimestamp: -8584242952682919079
+  _initializedTimestamp: -8584236904763010517
 --- !u!114 &5495445565985175453
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -983,6 +980,7 @@ MonoBehaviour:
   _addedNetworkObject: {fileID: 4350343371047122656}
   _networkObjectCache: {fileID: 4350343371047122656}
   playerConfig: {fileID: 11400000, guid: 0034ef9e26a1c904abc06f38f5d85e03, type: 2}
+  uiManager: {fileID: 8218382974991641414}
 --- !u!114 &8218382974991641414
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1304,7 +1302,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b388c3c4f6f84db3b7c729bcce834f56, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Created.Scripts.IU.Shop.CardStallTable
-  _componentIndexCache: 2
+  _componentIndexCache: 1
   _addedNetworkObject: {fileID: 9212670185691083737}
   _networkObjectCache: {fileID: 9212670185691083737}
 --- !u!1 &6717585247032437119

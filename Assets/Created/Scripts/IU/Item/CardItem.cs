@@ -8,10 +8,10 @@ public class CardItem : ASpawnableItem
     private CardsSO _data;
     
     [TargetRpc]
-    public override void TargetSpawnItem(NetworkConnection conn)
+    public override void TargetSpawnItem(NetworkConnection conn, string itemId)
     {
-       
-        var uiManager = conn.FirstObject.GetComponent<UIManager>();
+        Init(DataBaseItem.Instance.GetDataItem(itemId));
+        var uiManager = conn.FirstObject.GetComponent<PlayerState>().UIManager;
         uiManager.uiCardShop.BuyNewCard(this);
     }
     

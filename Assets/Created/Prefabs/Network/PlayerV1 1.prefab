@@ -953,18 +953,8 @@ MonoBehaviour:
   NetworkBehaviours:
   - {fileID: 987295808739517072}
   - {fileID: 6438568966194031798}
-  - {fileID: 0}
   InitializedParentNetworkBehaviour: {fileID: 5495445565985175453}
-  InitializedNestedNetworkObjects:
-  - {fileID: 0}
-  - {fileID: 7925553062557087321}
-  - {fileID: 0}
-  - {fileID: 1467044207497539666}
-  - {fileID: 370795036561553957}
-  - {fileID: 2230772088042296782}
-  - {fileID: 7353523674794722147}
-  - {fileID: 3761224680217533953}
-  - {fileID: 7660425399191982374}
+  InitializedNestedNetworkObjects: []
   RuntimeParentNetworkBehaviour: {fileID: 0}
   RuntimeChildNetworkBehaviours: []
   _isNetworked: 1
@@ -973,7 +963,7 @@ MonoBehaviour:
   _initializeOrder: 0
   _preventDespawnOnDisconnect: 0
   _defaultDespawnType: 0
-  _initializedTimestamp: -8584242952682919079
+  _initializedTimestamp: -8584236904763010517
 --- !u!114 &987295808739517072
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2196,7 +2186,7 @@ MonoBehaviour:
   _spectatorInterpolation: 2
   _enableTeleport: 0
   _teleportThreshold: 1
-  <PrefabId>k__BackingField: 5
+  <PrefabId>k__BackingField: 3
   <SpawnableCollectionId>k__BackingField: 0
   <AssetPathHash>k__BackingField: 4428089884120930159
   SceneId: 0
@@ -2226,7 +2216,7 @@ MonoBehaviour:
   _initializeOrder: 0
   _preventDespawnOnDisconnect: 0
   _defaultDespawnType: 0
-  _initializedTimestamp: -8584242952682919079
+  _initializedTimestamp: -8584236904763010517
 --- !u!114 &5495445565985175453
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2273,6 +2263,8 @@ MonoBehaviour:
   _componentIndexCache: 2
   _addedNetworkObject: {fileID: 4350343371047122656}
   _networkObjectCache: {fileID: 4350343371047122656}
+  playerConfig: {fileID: 0}
+  uiManager: {fileID: 0}
 --- !u!114 &8218382974991641414
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2882,7 +2874,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d80471b47f039ca4f83b1a2a659f8305, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BuySlotButton
-  shopItem: {fileID: 0}
+  _shopItem: {fileID: 0}
+  _itemData: {fileID: 0}
 --- !u!1 &6585194718931952944
 GameObject:
   m_ObjectHideFlags: 0
@@ -2977,7 +2970,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UICardShop
   cardStallsLocation: {fileID: 8319626056793588851}
-  cardStallContainer: {fileID: 0}
+  shopItem: {fileID: 0}
 --- !u!1 &6717585247032437119
 GameObject:
   m_ObjectHideFlags: 0
@@ -4830,7 +4823,7 @@ PrefabInstance:
     - target: {fileID: 6246460685377594851, guid: 8e8baf7c204d48a4c99e1aae7d84b5b0, type: 3}
       propertyPath: _networkObjectCache
       value: 
-      objectReference: {fileID: 3761224680217533953}
+      objectReference: {fileID: 0}
     - target: {fileID: 7570784967608569724, guid: 8e8baf7c204d48a4c99e1aae7d84b5b0, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -4932,17 +4925,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8e8baf7c204d48a4c99e1aae7d84b5b0, type: 3}
---- !u!114 &3761224680217533953 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4058238782650699477, guid: 8e8baf7c204d48a4c99e1aae7d84b5b0, type: 3}
-  m_PrefabInstance: {fileID: 892644291293712596}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 26b716c41e9b56b4baafaf13a523ba2e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: FishNet.Runtime::FishNet.Object.NetworkObject
 --- !u!224 &7310357663407841192 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 7570784967608569724, guid: 8e8baf7c204d48a4c99e1aae7d84b5b0, type: 3}
@@ -5425,7 +5407,7 @@ PrefabInstance:
     - target: {fileID: 6246460685377594851, guid: 8e8baf7c204d48a4c99e1aae7d84b5b0, type: 3}
       propertyPath: _networkObjectCache
       value: 
-      objectReference: {fileID: 2230772088042296782}
+      objectReference: {fileID: 0}
     - target: {fileID: 7570784967608569724, guid: 8e8baf7c204d48a4c99e1aae7d84b5b0, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -5527,17 +5509,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8e8baf7c204d48a4c99e1aae7d84b5b0, type: 3}
---- !u!114 &2230772088042296782 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4058238782650699477, guid: 8e8baf7c204d48a4c99e1aae7d84b5b0, type: 3}
-  m_PrefabInstance: {fileID: 2784501990817127195}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 26b716c41e9b56b4baafaf13a523ba2e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: FishNet.Runtime::FishNet.Object.NetworkObject
 --- !u!224 &5743317809277490279 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 7570784967608569724, guid: 8e8baf7c204d48a4c99e1aae7d84b5b0, type: 3}
@@ -5598,7 +5569,7 @@ PrefabInstance:
     - target: {fileID: 6246460685377594851, guid: 8e8baf7c204d48a4c99e1aae7d84b5b0, type: 3}
       propertyPath: _networkObjectCache
       value: 
-      objectReference: {fileID: 1467044207497539666}
+      objectReference: {fileID: 0}
     - target: {fileID: 7570784967608569724, guid: 8e8baf7c204d48a4c99e1aae7d84b5b0, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -5700,17 +5671,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8e8baf7c204d48a4c99e1aae7d84b5b0, type: 3}
---- !u!114 &1467044207497539666 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4058238782650699477, guid: 8e8baf7c204d48a4c99e1aae7d84b5b0, type: 3}
-  m_PrefabInstance: {fileID: 3173417352506424967}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 26b716c41e9b56b4baafaf13a523ba2e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: FishNet.Runtime::FishNet.Object.NetworkObject
 --- !u!224 &4979550260412658171 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 7570784967608569724, guid: 8e8baf7c204d48a4c99e1aae7d84b5b0, type: 3}
@@ -5771,7 +5731,7 @@ PrefabInstance:
     - target: {fileID: 6246460685377594851, guid: 8e8baf7c204d48a4c99e1aae7d84b5b0, type: 3}
       propertyPath: _networkObjectCache
       value: 
-      objectReference: {fileID: 370795036561553957}
+      objectReference: {fileID: 0}
     - target: {fileID: 7570784967608569724, guid: 8e8baf7c204d48a4c99e1aae7d84b5b0, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -5873,17 +5833,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8e8baf7c204d48a4c99e1aae7d84b5b0, type: 3}
---- !u!114 &370795036561553957 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4058238782650699477, guid: 8e8baf7c204d48a4c99e1aae7d84b5b0, type: 3}
-  m_PrefabInstance: {fileID: 4428330037126722800}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 26b716c41e9b56b4baafaf13a523ba2e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: FishNet.Runtime::FishNet.Object.NetworkObject
 --- !u!224 &6081058394692418444 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 7570784967608569724, guid: 8e8baf7c204d48a4c99e1aae7d84b5b0, type: 3}
@@ -5944,7 +5893,7 @@ PrefabInstance:
     - target: {fileID: 6246460685377594851, guid: 8e8baf7c204d48a4c99e1aae7d84b5b0, type: 3}
       propertyPath: _networkObjectCache
       value: 
-      objectReference: {fileID: 7660425399191982374}
+      objectReference: {fileID: 0}
     - target: {fileID: 7570784967608569724, guid: 8e8baf7c204d48a4c99e1aae7d84b5b0, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -6051,17 +6000,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 7570784967608569724, guid: 8e8baf7c204d48a4c99e1aae7d84b5b0, type: 3}
   m_PrefabInstance: {fileID: 5917324171358773235}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &7660425399191982374 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4058238782650699477, guid: 8e8baf7c204d48a4c99e1aae7d84b5b0, type: 3}
-  m_PrefabInstance: {fileID: 5917324171358773235}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 26b716c41e9b56b4baafaf13a523ba2e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: FishNet.Runtime::FishNet.Object.NetworkObject
 --- !u!1001 &6111003947120417931
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6247,7 +6185,7 @@ PrefabInstance:
     - target: {fileID: 6246460685377594851, guid: 8e8baf7c204d48a4c99e1aae7d84b5b0, type: 3}
       propertyPath: _networkObjectCache
       value: 
-      objectReference: {fileID: 7925553062557087321}
+      objectReference: {fileID: 0}
     - target: {fileID: 7570784967608569724, guid: 8e8baf7c204d48a4c99e1aae7d84b5b0, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -6338,17 +6276,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 7570784967608569724, guid: 8e8baf7c204d48a4c99e1aae7d84b5b0, type: 3}
   m_PrefabInstance: {fileID: 6173584269049510028}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &7925553062557087321 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4058238782650699477, guid: 8e8baf7c204d48a4c99e1aae7d84b5b0, type: 3}
-  m_PrefabInstance: {fileID: 6173584269049510028}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 26b716c41e9b56b4baafaf13a523ba2e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: FishNet.Runtime::FishNet.Object.NetworkObject
 --- !u!1001 &6671432731087980910
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6557,7 +6484,7 @@ PrefabInstance:
     - target: {fileID: 6246460685377594851, guid: 8e8baf7c204d48a4c99e1aae7d84b5b0, type: 3}
       propertyPath: _networkObjectCache
       value: 
-      objectReference: {fileID: 7353523674794722147}
+      objectReference: {fileID: 0}
     - target: {fileID: 7570784967608569724, guid: 8e8baf7c204d48a4c99e1aae7d84b5b0, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -6664,17 +6591,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 7570784967608569724, guid: 8e8baf7c204d48a4c99e1aae7d84b5b0, type: 3}
   m_PrefabInstance: {fileID: 6799648709078109622}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &7353523674794722147 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4058238782650699477, guid: 8e8baf7c204d48a4c99e1aae7d84b5b0, type: 3}
-  m_PrefabInstance: {fileID: 6799648709078109622}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 26b716c41e9b56b4baafaf13a523ba2e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: FishNet.Runtime::FishNet.Object.NetworkObject
 --- !u!1001 &7240131624665957308
 PrefabInstance:
   m_ObjectHideFlags: 0

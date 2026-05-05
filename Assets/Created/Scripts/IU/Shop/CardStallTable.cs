@@ -61,7 +61,11 @@ namespace Created.Scripts.IU.Shop
 
         private void OnCardStallsOnTableUpdated(SyncListOperation op, int index, string olditem, string newitem, bool asserver)
         {
-            var uiCardShop = UIManager.Instance.uiCardShop;
+            Debug.Log(Owner);
+            Debug.Log(Owner.FirstObject);
+            Debug.Log(Owner.FirstObject.GetComponent<PlayerState>());
+            var uiManager = Owner.FirstObject.GetComponent<PlayerState>().UIManager;
+            var uiCardShop = uiManager.uiCardShop;
             switch(op)
             {
                 case SyncListOperation.Add:

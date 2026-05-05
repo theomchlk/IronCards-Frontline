@@ -9,10 +9,13 @@ public class UICardShop : MonoBehaviour
     [SerializeField] private ShopItem shopItem;
     /*[SerializeField] private GameObject cardStallUI;
     [SerializeField] private GameObject cardContainerUI;*/
+    private UIManager _uIManager;
+    
+    public void Setup(UIManager uIManager) => uIManager = uIManager;
 
     public void BuyNewCard(CardItem card)
     {
-        var slotFree = UIManager.Instance.uiSlotShop.GetSlotFree();
+        var slotFree = _uIManager.uiSlotShop.GetSlotFree();
         Debug.Log(slotFree.name);
         var cardPrefab = card.Data.goItemUI;
         var cardUI= Instantiate(cardPrefab, slotFree.transform).GetComponent<CardUI>();

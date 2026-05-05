@@ -6,7 +6,7 @@ using UnityEngine;
 public class ShopItem : NetworkBehaviour
 {
 
-    public override void OnStartClient()
+    /*public override void OnStartClient()
     {
         base.OnStartClient();
 
@@ -14,7 +14,7 @@ public class ShopItem : NetworkBehaviour
         {
             ServerInitUIsItems();
         }
-    }
+    }*/
     
     [ServerRpc] 
     public void BuyItemServerRpc(string id, NetworkConnection conn = null)
@@ -55,6 +55,7 @@ public class ShopItem : NetworkBehaviour
         uiManager.OnBuyItemSucceeded(id);
     }*/
 
+    /*
     [ServerRpc]
     private void ServerInitUIsItems()
     {
@@ -67,6 +68,7 @@ public class ShopItem : NetworkBehaviour
         var uiManager = conn.FirstObject.GetComponent<UIManager>();
         uiManager.SetUIsItems();
     }
+    */
 
    
     /*[TargetRpc]
@@ -83,7 +85,7 @@ public class ShopItem : NetworkBehaviour
             var nob = go.GetComponent<ASpawnableItem>();
             nob.Init(itemData);
             
-            InstanceFinder.ServerManager.Spawn(go, conn);
-            nob.TargetSpawnItem(conn);
+            InstanceFinder.ServerManager.Spawn(go/*, conn*/);
+            nob.TargetSpawnItem(conn, itemData.Id);
         }
 }
