@@ -1,0 +1,70 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &4062194878946346643
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2873908820701188986}
+  - component: {fileID: 4673972295590209820}
+  - component: {fileID: 3898289054626193095}
+  m_Layer: 0
+  m_Name: DataBase
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2873908820701188986
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4062194878946346643}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1036.4177, y: 285.01294, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4673972295590209820
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4062194878946346643}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a88eb559d1939df4c87dc28c19677b92, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CardStallDataBase
+  cardStalls:
+  - {fileID: 11400000, guid: 03c0068958dc34345b0e9df51a5b65cb, type: 2}
+  - {fileID: 11400000, guid: 9e89b7668d342bd4b857748b780b426a, type: 2}
+--- !u!114 &3898289054626193095
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4062194878946346643}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f6580476232ed44d928360cbf7d7462, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DataBaseItem
+  itemSO:
+  - {fileID: 11400000, guid: 71ce5dbfe09e6a447a5050f2de6579f1, type: 2}
+  - {fileID: 11400000, guid: 7fe6127315e23b842ae593c2f8186660, type: 2}
+  - {fileID: 11400000, guid: cf62a6e62166a904e8e8523d03670787, type: 2}
+  - {fileID: 11400000, guid: a1a434cfb88095f45b83b9f8e9098be9, type: 2}
+  - {fileID: 11400000, guid: 686c6c96d00b25c4c94700cec1b58d5f, type: 2}
+  - {fileID: 11400000, guid: 4bb93295d23632f42bcd8e5a8463496f, type: 2}
+  - {fileID: 11400000, guid: 5d48ffd5af6063341ac9bd5891430568, type: 2}

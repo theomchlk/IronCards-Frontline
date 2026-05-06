@@ -45,6 +45,8 @@ public class PlayerState : NetworkBehaviour
             SetUiChangeSlot();
         }
     }
+    
+
 
     private void SetPlayerConfig()
     {

@@ -1,5 +1,6 @@
 using Created.Scripts.IU;
 using Created.Scripts.IU.Shop;
+using FishNet.Connection;
 using UnityEngine;
 
 public class UICardShop : MonoBehaviour
@@ -13,10 +14,10 @@ public class UICardShop : MonoBehaviour
     
     public void Setup(UIManager uIManager) => uIManager = uIManager;
 
-    public void BuyNewCard(CardItem card)
+    public void BuyNewCard(CardItem card, UISlotShop uiSlotShop)
     {
-        Debug.Log($"UICardShop UIManager{_uIManager}");
-        var slotFree = _uIManager.uiSlotShop.GetSlotFree();
+        
+        var slotFree = uiSlotShop.GetSlotFree();
         Debug.Log(slotFree.name);
         var cardPrefab = card.Data.goItemUI;
         var cardUI= Instantiate(cardPrefab, slotFree.transform).GetComponent<CardUI>();

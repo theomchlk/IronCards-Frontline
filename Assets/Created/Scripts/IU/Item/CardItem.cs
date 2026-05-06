@@ -12,7 +12,7 @@ public class CardItem : ASpawnableItem
     {
         Init(DataBaseItem.Instance.GetDataItem(itemId));
         var uiManager = conn.FirstObject.GetComponent<PlayerState>().UIManager;
-        uiManager.uiCardShop.BuyNewCard(this);
+        uiManager.uiCardShop.BuyNewCard(this, uiManager.uiSlotShop);
     }
     
     public override void Init(ItemSO itemData) => _data = (CardsSO)itemData;
