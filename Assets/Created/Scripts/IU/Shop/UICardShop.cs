@@ -15,6 +15,7 @@ public class UICardShop : MonoBehaviour
 
     public void BuyNewCard(CardItem card)
     {
+        Debug.Log($"UICardShop UIManager{_uIManager}");
         var slotFree = _uIManager.uiSlotShop.GetSlotFree();
         Debug.Log(slotFree.name);
         var cardPrefab = card.Data.goItemUI;

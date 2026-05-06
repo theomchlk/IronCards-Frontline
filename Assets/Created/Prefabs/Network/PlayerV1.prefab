@@ -412,7 +412,7 @@ MonoBehaviour:
   _initializeOrder: 0
   _preventDespawnOnDisconnect: 0
   _defaultDespawnType: 0
-  _initializedTimestamp: -8584236904763010517
+  _initializedTimestamp: -8584236118198568742
 --- !u!114 &987295808739517072
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -929,10 +929,10 @@ MonoBehaviour:
   _isNetworked: 1
   _isSpawnable: 1
   _isGlobal: 0
-  _initializeOrder: 0
+  _initializeOrder: -3
   _preventDespawnOnDisconnect: 0
   _defaultDespawnType: 0
-  _initializedTimestamp: -8584236904763010517
+  _initializedTimestamp: -8584236118198568742
 --- !u!114 &5495445565985175453
 MonoBehaviour:
   m_ObjectHideFlags: 0

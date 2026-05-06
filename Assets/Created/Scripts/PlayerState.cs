@@ -15,18 +15,18 @@ public class PlayerState : NetworkBehaviour
     
     public UIManager UIManager => uiManager;
         //Partie
-    public readonly SyncVar<int> hp = new SyncVar<int>();
-    public readonly SyncVar<int> money = new SyncVar<int>();
+    public readonly SyncVar<int> hp = new ();
+    public readonly SyncVar<int> money = new ();
     
     //Slot
-    public readonly SyncVar<int> nbSlots = new SyncVar<int>();
-    public readonly SyncVar<int> slotCost = new SyncVar<int>();
-    public readonly SyncVar<int> nbFreeSlots = new SyncVar<int>();
+    public readonly SyncVar<int> nbSlots = new ();
+    public readonly SyncVar<int> slotCost = new();
+    public readonly SyncVar<int> nbFreeSlots = new();
     //Cards
     public readonly SyncDictionary<string, int> cardsOwned = new();
     //Mill
-    public readonly SyncVar<int> nbMills = new SyncVar<int>();
-    public readonly SyncVar<int> millCost = new SyncVar<int>();
+    public readonly SyncVar<int> nbMills = new();
+    public readonly SyncVar<int> millCost = new();
     
     private List<SlotItem> _slotItems = new();
     private int _slotsReadyCount = 0;
