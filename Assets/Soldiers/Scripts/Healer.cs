@@ -17,7 +17,7 @@ public class Healer : Soldier
 
     
     public override void Action(Soldier target) {
-        if (IsInRange(target) && Time.time >= GetLastActionTime() + GetAttackSpeed()) {
+        if (IsInRange(target) && target.IsAlive() && Time.time >= GetLastActionTime() + GetAttackSpeed()) {
             SetLastActionTime(Time.time);
             //AudioSource.PlayClipAtPoint(sound, transform.position);
             target.Heal(GetDamage());
