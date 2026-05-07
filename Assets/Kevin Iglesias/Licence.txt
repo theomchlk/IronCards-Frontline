@@ -1,0 +1,18 @@
+LICENSE
+All my assets are licensed under the Standard Asset Store EULA, regardless of whether they are downloaded from the Unity Asset Store, itch.io, or Gumroad:
+
+SUMMARY OF USE RIGHTS (applies across all platforms)
+Royalty-free assets for commercial use
+Once you have purchased or downloaded one of my assets, you are free to use it in your games, apps, videos, movies or any other digital project. You can use these assets in digital projects for commercial use on a royalty-free basis. Even the free to download ones, enjoy!
+
+Credit is appreciated but is not required.
+
+Resale of assets restriction
+Assets cannot be distributed as standalone items, or as part of any asset pack, library, or similar product where the files are accessible or extractable for reuse. Assets must be incorporated into a larger end product that provides functionality beyond the asset itself, and where the asset is not the primary value of the product.
+
+These are the most relevant terms for my products (3D models and animations). You can check the full license for further details here:
+- Unity Asset Store EULA
+
+If you still have doubts about how to properly use my assets, feel free to contact me at: support@keviniglesias.com
+
+Last update: April 10, 2026
