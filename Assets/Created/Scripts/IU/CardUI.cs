@@ -22,7 +22,7 @@ public class CardUI : MonoBehaviour
     {
         cardNameText.text = data.name;
         cardHPText.text = data.health.ToString("F0");
-        cardDPSText.text = data.dps.ToString("F0");
+        cardDPSText.text = (data.damage * data.attackSpeed).ToString("F0");
         cardRangeText.text = data.range.ToString("F0");
         cardNbText.text = data.nbSoldiers.ToString("F0");
         cardMSText.text = data.movementSpeed.ToString("F0");

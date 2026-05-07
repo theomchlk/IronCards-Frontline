@@ -10,7 +10,8 @@ public class CardsSO : ItemSO
     public string id;
     //DATA
     public string cardName;
-    public float dps;
+    public float damage;
+    public float attackSpeed;
     public float health;
     /*public float armor;*/
     public float range;
