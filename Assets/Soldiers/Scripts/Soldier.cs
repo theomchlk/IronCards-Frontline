@@ -11,6 +11,8 @@ public abstract class Soldier : MonoBehaviour
     [SerializeField] private int ownerId;
     [SerializeField] private AudioClip sound;
     private Animator animator;
+    private Rigidbody[] ragdollRigidbodies;
+    private Collider[] ragdollColliders;
 
 
 
@@ -23,6 +25,7 @@ public abstract class Soldier : MonoBehaviour
     public float GetAttackSpeed() { return data.attackSpeed; }
     public float GetRange() { return data.range; }
     public Vector3 GetPosition() { return transform.position; }
+    public AudioClip GetSound() { return sound; }
 
 
     public float GetHealth() { return health; }
@@ -39,7 +42,7 @@ public abstract class Soldier : MonoBehaviour
 
         foreach (Soldier s in soldiers)
         {
-            if (s != this && s.CompareOwnerId(this))
+            if (s != this && s.CompareOwnerId(this) && s.GetHealth() > 0)
             {
                 float distance = Vector3.Distance(transform.position, s.GetPosition());
                 if (distance < shortestDistance)
@@ -62,6 +65,23 @@ public abstract class Soldier : MonoBehaviour
     // Setters
     public void SetPosition(Vector3 position) { 
         transform.position = position; 
+    }
+
+
+    private void SetRagdollState(bool state)
+    {
+        foreach (Rigidbody rb in ragdollRigidbodies)
+        {
+            rb.isKinematic = !state;
+        }
+        foreach (Collider col in ragdollColliders)
+        {
+            if (col.gameObject != gameObject) 
+                col.enabled = state;
+        }
+
+        GetComponent<Rigidbody>().isKinematic = state;
+        GetComponent<BoxCollider>().enabled = !state;
     }
 
 
@@ -101,7 +121,12 @@ public abstract class Soldier : MonoBehaviour
 
 
     public void Die() {
-        Destroy(gameObject);
+        if (animator != null) 
+            animator.enabled = false;
+
+        SetRagdollState(true);
+
+        Destroy(gameObject, 10f);
     }
 
 
@@ -109,6 +134,12 @@ public abstract class Soldier : MonoBehaviour
     {
         activationTime = Time.time + 2f;
         animator = GetComponent<Animator>();
+        health = GetMaxHealth();
+
+        ragdollRigidbodies = GetComponentsInChildren<Rigidbody>();
+        ragdollColliders = GetComponentsInChildren<Collider>();
+
+        SetRagdollState(false);
     }
 
 

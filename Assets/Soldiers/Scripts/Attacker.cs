@@ -21,7 +21,7 @@ public class Attacker : Soldier
     public override void Action(Soldier target) {
         if (IsInRange(target) && Time.time >= GetLastActionTime() + GetAttackSpeed()) {
             SetLastActionTime(Time.time);
-            //AudioSource.PlayClipAtPoint(sound, transform.position);
+            AudioSource.PlayClipAtPoint(GetSound(), transform.position);
             target.TakeDamage(this, GetDamage());
         }
     }
