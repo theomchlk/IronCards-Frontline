@@ -6,4 +6,5 @@ public class PlayerSO : ScriptableObject
 {
     public int moneyByDefault;
     public int hpByDefault;
+    public int moneyPerMills;
 }

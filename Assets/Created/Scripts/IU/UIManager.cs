@@ -13,6 +13,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private PanelBehavior defaultPanel;
     public MoneyUI moneyUI;
     
+    public ShopItemUI shopItemUI;
     public UISlotShop uiSlotShop;
     public UICardShop uiCardShop;
     public UIMillShop uiMillShop;
@@ -47,6 +48,11 @@ public class UIManager : MonoBehaviour
     public void SetUpUI()
     {
         uiCardShop.Setup(this);
+    }
+
+    public void SetPreparationStateUI()
+    {
+        shopItemUI.SetPreparationStateUI();
     }
     
 }

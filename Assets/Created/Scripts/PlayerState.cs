@@ -15,8 +15,10 @@ public class PlayerState : NetworkBehaviour
     
     public UIManager UIManager => uiManager;
         //Partie
-    public readonly SyncVar<int> hp = new ();
-    public readonly SyncVar<int> money = new ();
+    private readonly SyncVar<bool> isLobbyLeader = new ();
+    private readonly SyncVar<int> hp = new ();
+    private readonly SyncVar<int> money = new ();
+    private int _moneyPerMills;
     
     //Slot
     public readonly SyncVar<int> nbSlots = new ();
@@ -27,6 +29,7 @@ public class PlayerState : NetworkBehaviour
     //Mill
     public readonly SyncVar<int> nbMills = new();
     public readonly SyncVar<int> millCost = new();
+
     
     private List<SlotItem> _slotItems = new();
     private int _slotsReadyCount = 0;
@@ -48,10 +51,11 @@ public class PlayerState : NetworkBehaviour
     
 
 
-    private void SetPlayerConfig()
+    private void Awake()
     {
         hp.Value = playerConfig.hpByDefault;
         money.Value = playerConfig.moneyByDefault;
+        _moneyPerMills = playerConfig.moneyPerMills;
     }
     
     private void OnDestroy()
@@ -99,30 +103,10 @@ public class PlayerState : NetworkBehaviour
         uiManager.uiSlotShop.SetUI(slotCost.Value);
     }
 
-    public override void OnStartServer()
-    {
-        base.OnStartServer();
-        PlayerRegistry.Register(Owner, this);
-        SetPlayerConfig();
-        InitItemsFromDatabase();   // ← tout l'init est ici, côté serveur
-    
-        /*var itemSo = DataBaseItem.Instance.GetDataItem("slot");
-        if (itemSo is SlotSO slotSo)
-        {
-            nbSlots.Value = slotSo.nbSlotByDefault;
-            slotCost.Value = slotSo.cost;
-            InitDefaultSlots(slotSo ,slotSo.nbSlotByDefault);
-        }
-        itemSo = DataBaseItem.Instance.GetDataItem("mill");
-        if (itemSo is MillSO millSo)
-        {
-            nbMills.Value = millSo.nbMillsByDefault;
-            millCost.Value = millSo.cost;
-        }*/
-    }
+
 
     [Server]
-    private void InitItemsFromDatabase()
+    public void InitItemsFromDatabase()
     {
         var slotSo = DataBaseItem.Instance.GetDataItem("slot") as SlotSO;
         if (slotSo != null)
@@ -139,17 +123,25 @@ public class PlayerState : NetworkBehaviour
             millCost.Value = millSo.cost;
         }
     }
+    
+    public override void OnStartServer()
+    {
+        base.OnStartServer();
+        PlayerRegistry.Register(Owner, this);
+        GameStateController.Instance.CurrentState.OnPlayerEnter(this);
+    }
 
     public override void OnStopServer()
     {
         base.OnStopServer();
-        foreach (var slot in _slotItems)
+        GameStateController.Instance.CurrentState.OnPlayerExit(this);
+        /*foreach (var slot in _slotItems)
         {
-            if (slot != null && slot.IsSpawned /*&& slot.IsOwnerPlayerState(this)*/)
+            if (slot != null && slot.IsSpawned /*&& slot.IsOwnerPlayerState(this)#1#)
                 InstanceFinder.ServerManager.Despawn(slot.gameObject);
         }
 
-        _slotItems.Clear();
+        _slotItems.Clear();*/
 
         PlayerRegistry.Unregister(Owner);
     }
@@ -171,21 +163,13 @@ public class PlayerState : NetworkBehaviour
 
         nbFreeSlots.Value = count;
     }
-    
-    /*private void AddSlots(NetworkConnection conn)
+
+    [Server]
+    public void SetNewMoney()
     {
-        Debug.Log("Conn " + conn);
-        Debug.Log(slotItems.Count);
-        var ui = UIManager.uiSlotShop;
-        foreach (SlotItem slot in slotItems)
-        {
-            Debug.Log($"AddSlots + OwnerFirstObejct {Owner.FirstObject}");
-            slot.TargetSpawnItem(Owner,slot.Data.Id);
-            /*ui.BuyNewSlot(slot);#1#
-        }
-        
-        
-    }*/
+        var newMoney = nbMills.Value * _moneyPerMills; 
+        AddMoney(newMoney);
+    }
     
     [Server]
     public void OnSlotClientReady(SlotItem slot, NetworkConnection conn)
@@ -234,7 +218,7 @@ public class PlayerState : NetworkBehaviour
     }
 
     [Server]
-    public void AddMoney(int amount)
+    private void AddMoney(int amount)
     {
         money.Value += amount;
     }
@@ -259,7 +243,15 @@ public class PlayerState : NetworkBehaviour
         if (!IsOwner) return;
         uiManager.uiSlotShop.SetUI(next);
     }
-    
 
-    
+    [Server]
+    public void SetLobbyLeader()
+    {
+        isLobbyLeader.Value = true;
+    }
+
+    [Server]
+    public bool IsLobbyLeader() => isLobbyLeader.Value;
+
+
 }
