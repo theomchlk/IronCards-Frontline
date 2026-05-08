@@ -47,16 +47,9 @@ public class SlotItem : ASpawnableItem
             Debug.Log("C'est pas à toi mon poulet ça");
             return;
         }*/
-        Debug.Log($"TargetSpawnItem: conn {conn}");
-        Debug.Log($"PlayerRegistry.Get(conn) {ClientManager.Clients[conn.ClientId]}");
-        Debug.Log($"FirstObject {conn.FirstObject}");
-        Debug.Log($"  PlayerState {conn.FirstObject.GetComponent<PlayerState>()}");
-        Debug.Log($"  UIManager {conn.FirstObject.GetComponent<PlayerState>().UIManager}");
-        var uiSlotShop = conn.FirstObject.GetComponent<PlayerState>().UIManager.uiSlotShop;
+        var uiManager = UIManager.Instance;
         if (_data == null) _data = (SlotSO)DataBaseItem.Instance.GetDataItem(itemId);
-        Debug.Log("UISlotShop" + uiSlotShop);
-        Debug.Log("SlotItem data = " + _data);
-        uiSlotShop.BuyNewSlot(this);
+        uiManager. uiSlotShop.BuyNewSlot(this);
     }
     
     public override void Init(ItemSO itemData)

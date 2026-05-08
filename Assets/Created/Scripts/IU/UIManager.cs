@@ -1,10 +1,11 @@
 using System;
+using FishNet;
 using NUnit.Framework.Internal;
 using UnityEngine;
 
 public class UIManager : MonoBehaviour
 {
-    /*public static UIManager Instance;*/
+    public static UIManager Instance;
     public static event Action<PanelBehavior> OnActivatePanel;
     public event Action OnSetUIsItems;
 
@@ -17,18 +18,21 @@ public class UIManager : MonoBehaviour
     public UISlotShop uiSlotShop;
     public UICardShop uiCardShop;
     public UIMillShop uiMillShop;
+    
+    private PlayerState _ps;
 
     
     public void Awake()
     {
-        /*Instance = this;*/
+        Instance = this;
     }
 
     private void Start()
     {
+        _ps = PlayerRegistry.GetPlayerState(InstanceFinder.ClientManager.Connection);
         if (defaultPanel == null) return;
         ShowPanel(defaultPanel);
-        
+
     }
 
     public void ShowPanel(PanelBehavior panel)
@@ -49,11 +53,7 @@ public class UIManager : MonoBehaviour
     {
         uiCardShop.Setup(this);
     }
-
-    public void SetPreparationStateUI()
-    {
-        shopItemUI.SetPreparationStateUI();
-    }
+    
     
 }
 

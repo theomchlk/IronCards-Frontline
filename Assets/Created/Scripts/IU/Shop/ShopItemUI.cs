@@ -4,13 +4,14 @@ public class ShopItemUI : MonoBehaviour
 {
     [SerializeField] private GameObject shutter;
     
-    public void SetPreparationStateUI()
-    {
-        OpenShuttereUI();
-    }
 
-    private void OpenShuttereUI()
+    public void OpenShuttereUI()
     {
         shutter.SetActive(false);
+    }
+
+    public void CloseShuttereUI()
+    {
+        shutter.SetActive(true);
     }
 }

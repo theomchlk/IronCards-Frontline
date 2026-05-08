@@ -23,11 +23,11 @@ namespace Created.Scripts.IU.Shop
             cardStallsOnTable.Add(id);
         }*/
 
-        public override void OnStartServer()
+        /*public override void OnStartServer()
         {
             base.OnStartServer();
             SetCardStallsOnTableByDataBase();
-        }
+        }*/
 
         public override void OnStartClient()
         {
@@ -61,10 +61,8 @@ namespace Created.Scripts.IU.Shop
 
         private void OnCardStallsOnTableUpdated(SyncListOperation op, int index, string olditem, string newitem, bool asserver)
         {
-            Debug.Log(Owner);
-            Debug.Log(Owner.FirstObject);
-            Debug.Log(Owner.FirstObject.GetComponent<PlayerState>());
-            var uiManager = Owner.FirstObject.GetComponent<PlayerState>().UIManager;
+
+            var uiManager = UIManager.Instance;
             var uiCardShop = uiManager.uiCardShop;
             switch(op)
             {
@@ -126,7 +124,7 @@ namespace Created.Scripts.IU.Shop
         
 
         [Server]
-        private void SetCardStallsOnTableByDataBase()
+        public void SetCardStallsOnTableByDataBase()
         {
             foreach (var cardStall in CardStallDataBase.Instance.GetAllCardsStall())
             {

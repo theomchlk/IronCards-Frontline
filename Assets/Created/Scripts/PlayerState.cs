@@ -11,13 +11,13 @@ public class PlayerState : NetworkBehaviour
 {
     /*public static PlayerState Local;*/
     [SerializeField] private PlayerSO playerConfig;
-    [SerializeField] private UIManager uiManager;
+    /*[SerializeField] private UIManager uiManager;
     
-    public UIManager UIManager => uiManager;
+    public UIManager UIManager => uiManager;*/
         //Partie
     private readonly SyncVar<bool> isLobbyLeader = new ();
     private readonly SyncVar<int> hp = new ();
-    private readonly SyncVar<int> money = new ();
+    public readonly SyncVar<int> money = new ();
     private int _moneyPerMills;
     
     //Slot
@@ -34,75 +34,12 @@ public class PlayerState : NetworkBehaviour
     private List<SlotItem> _slotItems = new();
     private int _slotsReadyCount = 0;
 
-
-
-
-    public override void OnStartClient()
-    {
-        base.OnStartClient();
-        
-        if (IsOwner)
-        {
-            SetUiChangeMoney();
-            SetUiChangeMill();
-            SetUiChangeSlot();
-        }
-    }
-    
-
-
     private void Awake()
     {
         hp.Value = playerConfig.hpByDefault;
         money.Value = playerConfig.moneyByDefault;
         _moneyPerMills = playerConfig.moneyPerMills;
     }
-    
-    private void OnDestroy()
-    {
-        if (IsOwner)
-        {
-            DestroyMoney();
-            DestroyMill();
-            DestroySlot();
-        }
-    }
-
-    private void DestroyMoney()
-    {
-        money.OnChange -= OnMoneyChanged;
-    }
-
-    private void DestroyMill()
-    {
-        nbMills.OnChange -= OnMillCostOrNbChanged;
-        millCost.OnChange -= OnMillCostOrNbChanged;
-    }
-
-    private void DestroySlot()
-    {
-        slotCost.OnChange -= OnSlotCostChanged;
-    }
-
-    private void SetUiChangeMoney()
-    {
-        money.OnChange += OnMoneyChanged;   
-        uiManager.moneyUI.ChangeMoneyText(money.Value);
-    }
-
-    private void SetUiChangeMill()
-    {
-        nbMills.OnChange += OnMillCostOrNbChanged;
-        millCost.OnChange += OnMillCostOrNbChanged;
-        uiManager.uiMillShop.SetUI(nbMills.Value, millCost.Value);
-    }
-
-    private void SetUiChangeSlot()
-    {
-        nbSlots.OnChange += OnSlotCostChanged;
-        uiManager.uiSlotShop.SetUI(slotCost.Value);
-    }
-
 
 
     [Server]
@@ -129,12 +66,15 @@ public class PlayerState : NetworkBehaviour
         base.OnStartServer();
         PlayerRegistry.Register(Owner, this);
         GameStateController.Instance.CurrentState.OnPlayerEnter(this);
+        Debug.Log(InstanceFinder.ClientManager.Connection);
+        
     }
 
     public override void OnStopServer()
     {
         base.OnStopServer();
         GameStateController.Instance.CurrentState.OnPlayerExit(this);
+        Debug.Log($"OnStopServer: {InstanceFinder.ClientManager.Connection}");
         /*foreach (var slot in _slotItems)
         {
             if (slot != null && slot.IsSpawned /*&& slot.IsOwnerPlayerState(this)#1#)
@@ -222,27 +162,6 @@ public class PlayerState : NetworkBehaviour
     {
         money.Value += amount;
     }
-    
-    private void OnMoneyChanged(int previous, int next, bool asServer)
-    {
-        Debug.Log("Money changed");
-        if (!IsOwner) return;
-        uiManager.moneyUI.ChangeMoneyText(next);
-    }
-    
-    private void OnMillCostOrNbChanged(int previous, int next, bool asServer)
-    {
-        Debug.Log("Mill changed");
-        if (!IsOwner) return;
-        uiManager.uiMillShop.SetUI(nbMills.Value, millCost.Value);
-    }
-
-    private void OnSlotCostChanged(int previous, int next, bool asServer)
-    {
-        Debug.Log("Slot changed");
-        if (!IsOwner) return;
-        uiManager.uiSlotShop.SetUI(next);
-    }
 
     [Server]
     public void SetLobbyLeader()
@@ -252,6 +171,9 @@ public class PlayerState : NetworkBehaviour
 
     [Server]
     public bool IsLobbyLeader() => isLobbyLeader.Value;
+    
+
+
 
 
 }

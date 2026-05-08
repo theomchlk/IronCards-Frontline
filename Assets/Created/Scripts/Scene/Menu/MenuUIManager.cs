@@ -4,7 +4,15 @@ using UnityEngine;
 
 public class MenuUIManager : MonoBehaviour
 {
+    public static MenuUIManager Instance;
     [SerializeField] private GameObject buttonStartGame;
+
+    public void Awake()
+    {
+        Instance = this;
+    }
+    
+    
     
     public void OnClickCreateLobby()
     {
@@ -17,9 +25,24 @@ public class MenuUIManager : MonoBehaviour
         InstanceFinder.ClientManager.StartConnection(address);
     }
 
+    public void OnClickLeaveLobby()
+    {
+        InstanceFinder.ClientManager.StopConnection();
+    }
+
     public void OnClickStartGame()
     {
         GameStateController.Instance.ServerStartGame();
+    }
+
+    public void SetLobbyStateUI(bool isLobbyLeader)
+    {
+        buttonStartGame.SetActive(isLobbyLeader);
+    }
+
+    public void OnClickExitGame()
+    {
+        Application.Quit();
     }
 
 }

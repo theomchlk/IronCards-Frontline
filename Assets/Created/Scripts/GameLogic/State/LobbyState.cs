@@ -10,12 +10,19 @@ public class LobbyState : IGameState
 
     public void Exit()
     {
-        InstanceFinder.SceneManager.LoadGlobalScenes(new SceneLoadData("Théo"));
+        Debug.Log($"LobbyState Exit");
     }
 
     public void Enter()
     {
-        
+        Debug.Log($"LobbyState Enter");
+        if (InstanceFinder.ClientManager.Started)
+        {
+            foreach (var ps in PlayerRegistry.GetAll)
+            {
+                GameStateController.Instance.TargetEnterLobbyState(ps.Owner,ps.IsLobbyLeader());
+            }
+        }
     }
 
     public void Update()
@@ -25,12 +32,14 @@ public class LobbyState : IGameState
 
     public void OnPlayerEnter(PlayerState ps)
     {
-
+        Debug.Log($"LobbyState OnPlayerEnter");
+        GameStateController.Instance.ObserversSendMessage($"Player {InstanceFinder.ClientManager.Connection} connected");
     }
 
     public void OnPlayerExit(PlayerState playerState)
     {
-        throw new System.NotImplementedException();
+        Debug.Log($"LobbyState OnPlayerExit");
+        GameStateController.Instance.ObserversSendMessage($"Player {InstanceFinder.ClientManager.Connection} disconnected");
     }
 
 }
