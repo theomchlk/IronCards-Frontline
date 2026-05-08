@@ -1,4 +1,4 @@
-using System;
+using System.Collections;
 using UnityEngine;
 
 public class Attacker : Soldier
@@ -21,9 +21,27 @@ public class Attacker : Soldier
     public override void Action(Soldier target) {
         if (IsInRange(target) && target.IsAlive() && Time.time >= GetLastActionTime() + GetAttackSpeed()) {
             SetLastActionTime(Time.time);
-            AudioSource.PlayClipAtPoint(GetSound(), transform.position);
-            target.TakeDamage(this, GetDamage());
+
+            Animator animator = GetAnimator();
+            if (animator != null) {
+                animator.SetTrigger("Action");
+            }
+
+
+            StartCoroutine(DelayedSound());
+            StartCoroutine(DelayedDamage(target));
         }
+    }
+
+    private IEnumerator DelayedDamage(Soldier target) {
+        yield return new WaitForSeconds(GetAttackSpeed()-0.1f);
+        
+        CombatActionSO action = GetCombatAction();
+        if (action != null) {
+            action.Execute(this, target);
+        }
+        
+        target.TakeDamage(this, GetDamage());
     }
 
 }

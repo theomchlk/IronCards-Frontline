@@ -20,6 +20,8 @@ public class CardsSO : ItemSO
     /*public GameObject soldierPrefab;*/
     /*public List<Skills> skills;*/
     public Sprite sprite;
+    public AudioClip sound;
+    public CombatActionSO combatAction;
 
     public override string Id => id;
 

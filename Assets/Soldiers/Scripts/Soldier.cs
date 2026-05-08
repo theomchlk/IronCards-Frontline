@@ -1,13 +1,11 @@
-using Unity.VisualScripting;
+using System.Collections;
 using UnityEngine;
 
 public abstract class Soldier : MonoBehaviour
 {
     [Header("Data & Stats")]
     [SerializeField] private CardsSO data;
-    [SerializeField] private int ownerId;
-    [SerializeField] private AudioClip sound;
-    
+    [SerializeField] private int ownerId;    
     private float health;
     private Soldier target;
     private float activationTime;
@@ -28,11 +26,13 @@ public abstract class Soldier : MonoBehaviour
     public float GetAttackSpeed() => data.attackSpeed;
     public float GetRange() => data.range;
     public Vector3 GetPosition() => transform.position;
-    public AudioClip GetSound() => sound;
+    public AudioClip GetSound() => data.sound;
     public float GetHealth() => health;
     public float GetLastActionTime() => lastActionTime;
     public int GetOwnerId() => ownerId;
     public bool IsAlive() => health > 0;
+    public Animator GetAnimator() => animator;
+    public CombatActionSO GetCombatAction() => data.combatAction;
 
     // ==========================================
     // SETTERS
@@ -173,5 +173,18 @@ public abstract class Soldier : MonoBehaviour
             return;
 
         SetHealth(Mathf.Min(GetHealth() + amount, GetMaxHealth()));
+    }
+
+    public IEnumerator DelayedSound() {
+        yield return new WaitForSeconds(GetAttackSpeed() - GetSound().length*GetAttackSpeed());
+        
+        GameObject tempAudioObject = new GameObject("TempAudio");
+        tempAudioObject.transform.position = transform.position;
+        AudioSource audioSource = tempAudioObject.AddComponent<AudioSource>();
+        audioSource.clip = GetSound();
+        audioSource.pitch = 1/GetAttackSpeed();
+        audioSource.Play();
+        
+        Destroy(tempAudioObject, GetSound().length / audioSource.pitch);
     }
 }
