@@ -264,7 +264,7 @@ GameObject:
   - component: {fileID: 3804357562588819733}
   - component: {fileID: 907674458416325965}
   m_Layer: 0
-  m_Name: Canvas Red
+  m_Name: Canvas Right
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -361,7 +361,7 @@ CanvasGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3264122720092308465}
   m_Enabled: 1
-  m_Alpha: 0.3
+  m_Alpha: 0.6
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
@@ -446,7 +446,7 @@ GameObject:
   - component: {fileID: 3274062857318162562}
   - component: {fileID: 6627336137028178156}
   m_Layer: 0
-  m_Name: Canvas Blue
+  m_Name: Canvas Left
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -543,7 +543,7 @@ CanvasGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4557148529189130022}
   m_Enabled: 1
-  m_Alpha: 0.3
+  m_Alpha: 0.6
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0

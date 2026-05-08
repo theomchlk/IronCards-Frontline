@@ -23,7 +23,7 @@ public class Projectile : MonoBehaviour
 
     void Update()
     {
-        if (target == null || !target.IsAlive()) { Destroy(gameObject); return; }
+        if (target == null) { Destroy(gameObject); return; }
 
         Vector3 targetPos = target.GetPosition() + Vector3.up; 
         transform.position = Vector3.MoveTowards(transform.position, targetPos, speed * Time.deltaTime);

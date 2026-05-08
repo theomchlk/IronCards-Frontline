@@ -5,6 +5,10 @@ public class Tank : Soldier
     [SerializeField] private float shieldProtection;
     [SerializeField] private AudioClip shieldSound;
 
+    public override bool ChangeTargetCondition()
+    {
+        return GetTarget() == null || !GetTarget().IsAlive() || !IsInRange(GetTarget());
+    }
 
     public override bool CompareOwnerId(Soldier other)
     {

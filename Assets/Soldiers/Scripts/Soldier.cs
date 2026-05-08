@@ -5,12 +5,12 @@ public abstract class Soldier : MonoBehaviour
 {
     [Header("Data & Stats")]
     [SerializeField] private CardsSO data;
-    [SerializeField] private int ownerId;    
+    public int ownerId;
     private float health;
     private Soldier target;
     private float activationTime;
     private float lastActionTime;
-    
+    private Rigidbody rb;
     private Animator animator;
     private Rigidbody[] ragdollRigidbodies;
     private Collider[] ragdollColliders;
@@ -18,7 +18,7 @@ public abstract class Soldier : MonoBehaviour
     // ==========================================
     // GETTERS
     // ==========================================
-    
+
     public string GetName() => data.cardName;
     public float GetMaxHealth() => data.health;
     public float GetMoveSpeed() => data.movementSpeed;
@@ -33,6 +33,8 @@ public abstract class Soldier : MonoBehaviour
     public bool IsAlive() => health > 0;
     public Animator GetAnimator() => animator;
     public CombatActionSO GetCombatAction() => data.combatAction;
+    public Soldier GetTarget() => target;
+    public float GetSoundVolume() => data.soundVolume;
 
     // ==========================================
     // SETTERS
@@ -43,21 +45,20 @@ public abstract class Soldier : MonoBehaviour
 
     private void SetRagdollState(bool state)
     {
-        foreach (Rigidbody rb in ragdollRigidbodies)
+        foreach (Rigidbody rrb in ragdollRigidbodies)
         {
-            rb.isKinematic = !state;
+            rrb.isKinematic = !state;
         }
+
         foreach (Collider col in ragdollColliders)
         {
-            if (col.gameObject != gameObject) 
+            if (col.gameObject != gameObject)
                 col.enabled = state;
         }
 
-        // Gestion du Rigidbody et Collider principaux
         if (GetComponent<Rigidbody>() != null)
             GetComponent<Rigidbody>().isKinematic = state;
-        
-        // Note: Assure-toi d'avoir un BoxCollider ou CapsuleCollider sur le root
+
         if (GetComponent<Collider>() != null)
             GetComponent<Collider>().enabled = !state;
     }
@@ -68,6 +69,8 @@ public abstract class Soldier : MonoBehaviour
 
     private void Awake()
     {
+        rb = GetComponent<Rigidbody>();
+
         activationTime = Time.time + 2f;
         animator = GetComponent<Animator>();
         health = GetMaxHealth();
@@ -83,24 +86,26 @@ public abstract class Soldier : MonoBehaviour
         if (Time.time < activationTime || !IsAlive())
             return;
 
-        if (target != null && IsInRange(target)) 
+        if (!ChangeTargetCondition())
         {
-            if (animator != null) 
-            {
-                animator.SetFloat("MoveX", 0);
-                animator.SetFloat("MoveZ", 0);
-                animator.SetBool("Walking", false);
-            }
+            StopMoving();
             Action(target);
-        } 
-        else 
+        }
+        else
         {
             target = GetNearestTarget();
-            if (target != null) 
-            {
-                Move(target.GetPosition());
-            }
         }
+    }
+
+    void FixedUpdate()
+    {
+        if (rb != null && target != null && !IsInRange(target))
+        {
+            Move(target.GetPosition());
+            return;
+        }
+
+        StopMoving();
     }
 
     public Soldier GetNearestTarget()
@@ -121,6 +126,7 @@ public abstract class Soldier : MonoBehaviour
                 }
             }
         }
+
         return nearestTarget;
     }
 
@@ -134,40 +140,61 @@ public abstract class Soldier : MonoBehaviour
         return Vector3.Distance(transform.position, target.GetPosition()) <= GetRange();
     }
 
+    private void StopMoving()
+    {
+        if (animator != null)
+        {
+            animator.SetFloat("MoveX", 0);
+            animator.SetFloat("MoveZ", 0);
+            animator.SetBool("Walking", false);
+            animator.SetBool("Running", false);
+        }
+
+        if (rb != null && IsAlive())
+        {
+            rb.linearVelocity = Vector3.zero;
+        }
+    }
+
     public abstract void Action(Soldier target);
 
     public abstract void TakeDamage(Soldier source, float damage);
+    public abstract bool ChangeTargetCondition();
 
-    public void Move(Vector3 destination) 
+    public void Move(Vector3 destination)
     {
-        Vector3 direction = (destination - transform.position).normalized;
+        Vector3 direction = (destination - rb.position).normalized;
         Vector3 flatDir = new Vector3(direction.x, 0f, direction.z);
 
-        if (flatDir.sqrMagnitude > 0.0001f) 
+        if (flatDir.sqrMagnitude > 0.0001f)
         {
             transform.rotation = Quaternion.LookRotation(flatDir);
         }
 
-        if (animator != null) 
+        if (animator != null)
         {
             animator.SetFloat("MoveX", Mathf.Abs(direction.x));
             animator.SetFloat("MoveZ", Mathf.Abs(direction.z));
-            animator.SetBool("Walking", true);
+            if (GetMoveSpeed() > 2f) {
+                animator.SetBool("Running", true);
+            } else {
+                animator.SetBool("Walking", true);
+            }
         }
 
-        transform.position += direction * GetMoveSpeed() * Time.deltaTime;
+        rb.MovePosition(rb.position + direction * GetMoveSpeed() * Time.fixedDeltaTime);
     }
 
-    public void Die() 
+    public void Die()
     {
-        if (animator != null) 
+        if (animator != null)
             animator.enabled = false;
 
         SetRagdollState(true);
         Destroy(gameObject, 10f);
     }
 
-    public void Heal(float amount) 
+    public void Heal(float amount)
     {
         if (!IsAlive())
             return;
@@ -175,16 +202,18 @@ public abstract class Soldier : MonoBehaviour
         SetHealth(Mathf.Min(GetHealth() + amount, GetMaxHealth()));
     }
 
-    public IEnumerator DelayedSound() {
-        yield return new WaitForSeconds(GetAttackSpeed() - GetSound().length*GetAttackSpeed());
-        
+    public IEnumerator DelayedSound()
+    {
+        yield return new WaitForSeconds(GetAttackSpeed() - GetSound().length * GetAttackSpeed());
+
         GameObject tempAudioObject = new GameObject("TempAudio");
         tempAudioObject.transform.position = transform.position;
         AudioSource audioSource = tempAudioObject.AddComponent<AudioSource>();
         audioSource.clip = GetSound();
-        audioSource.pitch = 1/GetAttackSpeed();
+        audioSource.volume = GetSoundVolume();
+        audioSource.pitch = 1 / GetAttackSpeed();
         audioSource.Play();
-        
+
         Destroy(tempAudioObject, GetSound().length / audioSource.pitch);
     }
 }

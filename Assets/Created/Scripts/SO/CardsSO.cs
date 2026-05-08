@@ -22,6 +22,8 @@ public class CardsSO : ItemSO
     public Sprite sprite;
     public AudioClip sound;
     public CombatActionSO combatAction;
+    public GameObject soldierPrefab;
+    [SerializeField, Range(0f, 1f)] public float soundVolume = 0.05f;
 
     public override string Id => id;
 

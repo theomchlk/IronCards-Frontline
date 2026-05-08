@@ -2,6 +2,11 @@ using UnityEngine;
 
 public class Healer : Soldier
 {
+    public override bool ChangeTargetCondition()
+    {
+        return GetTarget() == null || !GetTarget().IsAlive() || !IsInRange(GetTarget()) || GetTarget().GetHealth() >= GetTarget().GetMaxHealth();
+    }
+
     public override bool CompareOwnerId(Soldier other)
     {
         return GetOwnerId() == other.GetOwnerId();

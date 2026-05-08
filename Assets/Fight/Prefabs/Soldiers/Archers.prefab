@@ -427,7 +427,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 3503167532966410781, guid: 9bd72731ebe2248478ba4849c274a43b, type: 3}
       propertyPath: m_Name
-      value: HumanDummy_M White Variant
+      value: Archers
       objectReference: {fileID: 0}
     - target: {fileID: 4311652260893728935, guid: 9bd72731ebe2248478ba4849c274a43b, type: 3}
       propertyPath: m_LocalScale.x
@@ -1723,7 +1723,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 1
-  m_Constraints: 10
+  m_Constraints: 112
   m_CollisionDetection: 1
 --- !u!114 &5128821529649278595
 MonoBehaviour:
@@ -1737,7 +1737,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e248165a45f4d147a288dfc96afd797, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Attacker
-  data: {fileID: 11400000, guid: f5332a3ca93605b4ba77486b45f48160, type: 2}
+  data: {fileID: 11400000, guid: 71ce5dbfe09e6a447a5050f2de6579f1, type: 2}
+  soundVolume: 0.04
   ownerId: 0
 --- !u!65 &2268220664580232035
 BoxCollider:

@@ -3,6 +3,10 @@ using UnityEngine;
 
 public class Attacker : Soldier
 {
+    public override bool ChangeTargetCondition()
+    {
+        return GetTarget() == null || !GetTarget().IsAlive() || !IsInRange(GetTarget());
+    }
 
     public override bool CompareOwnerId(Soldier other)
     {
