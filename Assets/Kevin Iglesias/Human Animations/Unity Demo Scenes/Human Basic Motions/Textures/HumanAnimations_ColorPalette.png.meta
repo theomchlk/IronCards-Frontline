@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 674cf6df797672946a1c70b6f43bccc4
+guid: b52e088d175fdb548ad6e2d43e580c57
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -140,9 +140,9 @@ TextureImporter:
   assetBundleVariant: 
 AssetOrigin:
   serializedVersion: 1
-  productId: 335880
-  packageName: Human Archer Animations FREE
+  productId: 345572
+  packageName: Human Throwing Animations FREE
   packageVersion: 1.0
   assetPath: Assets/Kevin Iglesias/Human Animations/Unity Demo Scenes/Human Basic
     Motions/Textures/HumanAnimations_ColorPalette.png
-  uploadId: 825246
+  uploadId: 825318

@@ -352,125 +352,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Spawner
   spawnHeight: 1
---- !u!1 &692284057
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 692284058}
-  - component: {fileID: 692284059}
-  m_Layer: 0
-  m_Name: TmpPlayers
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!4 &692284058
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 692284057}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1250391934}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &692284059
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 692284057}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9a0345a13f7915946aa3b2c91a3b4e52, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TmpPlayer
-  playerLeft:
-  - {fileID: 11400000, guid: f5332a3ca93605b4ba77486b45f48160, type: 2}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  playerRight:
-  - {fileID: 11400000, guid: f5332a3ca93605b4ba77486b45f48160, type: 2}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  canvasLeft: {fileID: 1622963257}
-  canvasRight: {fileID: 347983579}
-  spawner: {fileID: 435313169}
 --- !u!1 &744892221
 GameObject:
   m_ObjectHideFlags: 0
@@ -942,7 +823,6 @@ Transform:
   m_Children:
   - {fileID: 138346905}
   - {fileID: 1120530327}
-  - {fileID: 692284058}
   - {fileID: 1965158358}
   - {fileID: 435313168}
   m_Father: {fileID: 0}
@@ -1215,7 +1095,7 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
-  - {fileID: 11400000, guid: f5332a3ca93605b4ba77486b45f48160, type: 2}
+  - {fileID: 11400000, guid: 71ce5dbfe09e6a447a5050f2de6579f1, type: 2}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
@@ -1223,65 +1103,65 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
-  - {fileID: 11400000, guid: f5332a3ca93605b4ba77486b45f48160, type: 2}
+  - {fileID: 11400000, guid: 71ce5dbfe09e6a447a5050f2de6579f1, type: 2}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
-  - {fileID: 11400000, guid: f5332a3ca93605b4ba77486b45f48160, type: 2}
+  - {fileID: 11400000, guid: 71ce5dbfe09e6a447a5050f2de6579f1, type: 2}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
-  - {fileID: 11400000, guid: f5332a3ca93605b4ba77486b45f48160, type: 2}
+  - {fileID: 11400000, guid: 71ce5dbfe09e6a447a5050f2de6579f1, type: 2}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
-  - {fileID: 11400000, guid: f5332a3ca93605b4ba77486b45f48160, type: 2}
+  - {fileID: 11400000, guid: 71ce5dbfe09e6a447a5050f2de6579f1, type: 2}
   - {fileID: 0}
   - {fileID: 0}
-  - {fileID: 11400000, guid: f5332a3ca93605b4ba77486b45f48160, type: 2}
+  - {fileID: 11400000, guid: 71ce5dbfe09e6a447a5050f2de6579f1, type: 2}
   - {fileID: 0}
-  - {fileID: 11400000, guid: f5332a3ca93605b4ba77486b45f48160, type: 2}
+  - {fileID: 11400000, guid: 71ce5dbfe09e6a447a5050f2de6579f1, type: 2}
   - {fileID: 0}
   playerRight:
   - {fileID: 0}
   - {fileID: 0}
-  - {fileID: 11400000, guid: f5332a3ca93605b4ba77486b45f48160, type: 2}
+  - {fileID: 11400000, guid: 71ce5dbfe09e6a447a5050f2de6579f1, type: 2}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
-  - {fileID: 11400000, guid: fa66090ede3519048ac0611a3e748969, type: 2}
+  - {fileID: 11400000, guid: 71ce5dbfe09e6a447a5050f2de6579f1, type: 2}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
-  - {fileID: 11400000, guid: f5332a3ca93605b4ba77486b45f48160, type: 2}
+  - {fileID: 11400000, guid: 71ce5dbfe09e6a447a5050f2de6579f1, type: 2}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
-  - {fileID: 11400000, guid: f5332a3ca93605b4ba77486b45f48160, type: 2}
+  - {fileID: 11400000, guid: 71ce5dbfe09e6a447a5050f2de6579f1, type: 2}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
-  - {fileID: 11400000, guid: f5332a3ca93605b4ba77486b45f48160, type: 2}
+  - {fileID: 11400000, guid: 71ce5dbfe09e6a447a5050f2de6579f1, type: 2}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
-  - {fileID: 11400000, guid: f5332a3ca93605b4ba77486b45f48160, type: 2}
+  - {fileID: 11400000, guid: 71ce5dbfe09e6a447a5050f2de6579f1, type: 2}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
-  - {fileID: 11400000, guid: f5332a3ca93605b4ba77486b45f48160, type: 2}
+  - {fileID: 11400000, guid: 71ce5dbfe09e6a447a5050f2de6579f1, type: 2}
   canvasLeft: {fileID: 1622963257}
   canvasRight: {fileID: 347983579}
   spawner: {fileID: 435313169}
