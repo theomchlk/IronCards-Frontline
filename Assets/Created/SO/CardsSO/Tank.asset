@@ -24,9 +24,9 @@ MonoBehaviour:
   movementSpeed: 1
   nbSoldiers: 5
   sprite: {fileID: 2124728754, guid: 9c937b4e1eeb9f34eab2e144bc97a418, type: 3}
-  sound: {fileID: 8300000, guid: 4f1b111dd00d6c4478cc47ad11ef2dfc, type: 3}
+  sound: {fileID: 8300000, guid: 4fb70bfed61b9e24980b4fb5bdaec0c0, type: 3}
   combatAction: {fileID: 0}
   soldierPrefab: {fileID: 5361016960189669175, guid: bfe9d51f5c5b3a04db8fab1dd6f3c0c0, type: 3}
   soundVolume: 0.05
-  armorProtection: 0
+  armorProtection: 0.3
   protectionSound: {fileID: 8300000, guid: 72013526dfe380a4190d9aa9344f5a26, type: 3}

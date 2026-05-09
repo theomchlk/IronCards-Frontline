@@ -57,7 +57,7 @@ public class TmpPlayer : MonoBehaviour
         CardUI[] cardUILeft = canvasLeft.GetComponentsInChildren<CardUI>();
         CardUI[] cardUIRight = canvasRight.GetComponentsInChildren<CardUI>();
 
-        for (int i = 0; i < playerLeft.Length; i++)
+        for (int i = 0; i < cardUILeft.Length; i++)
         {
             CanvasGroup canvasGroup = cardUILeft[i].GetComponent<CanvasGroup>();
             if (canvasGroup != null)
@@ -67,7 +67,7 @@ public class TmpPlayer : MonoBehaviour
                 canvasGroup.blocksRaycasts = false;
             }
         }
-        for (int i = 0; i < playerRight.Length; i++)
+        for (int i = 0; i < cardUIRight.Length; i++)
         {
             CanvasGroup canvasGroup = cardUIRight[i].GetComponent<CanvasGroup>();
             if (canvasGroup != null)

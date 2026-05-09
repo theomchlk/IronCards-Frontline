@@ -188,7 +188,13 @@ public abstract class Soldier : MonoBehaviour
     public void TakeDamage(Soldier source, float damage) {
         if (Random.value < GetArmorProtection())
         {
-            AudioSource.PlayClipAtPoint(GetProtectionSound(), transform.position);
+            GameObject tempAudioObject = new GameObject("Protection Sound");
+            tempAudioObject.transform.position = transform.position;
+            AudioSource audioSource = tempAudioObject.AddComponent<AudioSource>();
+            audioSource.clip = GetProtectionSound();
+            audioSource.volume = GetSoundVolume();
+            audioSource.Play();
+            Destroy(tempAudioObject, GetProtectionSound().length / audioSource.pitch);
             return;
         }
 
@@ -204,7 +210,7 @@ public abstract class Soldier : MonoBehaviour
             animator.enabled = false;
 
         SetRagdollState(true);
-        Destroy(gameObject, 10f);
+        Destroy(gameObject, 4f);
     }
 
     public void Heal(float amount)
@@ -219,7 +225,7 @@ public abstract class Soldier : MonoBehaviour
     {
         yield return new WaitForSeconds(GetAttackSpeed() - GetSound().length * GetAttackSpeed());
 
-        GameObject tempAudioObject = new GameObject("TempAudio");
+        GameObject tempAudioObject = new GameObject("Action Sound");
         tempAudioObject.transform.position = transform.position;
         AudioSource audioSource = tempAudioObject.AddComponent<AudioSource>();
         audioSource.clip = GetSound();

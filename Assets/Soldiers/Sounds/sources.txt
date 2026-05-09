@@ -3,12 +3,6 @@ https://freesound.org/people/Lydmakeren/sounds/511489/
 
 
 
-816366__artninja__mcu_corvus_glaive_inspired_sword_stab_sound_final_07162025
-(shield.mp3 et sword.mp3)
-https://freesound.org/people/Artninja/sounds/816366/
-
-
-
 803161__geoff-bremner-audio__boxed-tissue-pull-6
 https://freesound.org/people/Geoff-Bremner-Audio/sounds/803161/
 
@@ -16,3 +10,8 @@ https://freesound.org/people/Geoff-Bremner-Audio/sounds/803161/
 
 322163__liamg_sfx__shield-hit-10
 https://freesound.org/people/LiamG_SFX/sounds/322163/
+
+
+
+649361__sonofxaudio__sword_fire01
+https://freesound.org/people/SonoFxAudio/sounds/649361/
