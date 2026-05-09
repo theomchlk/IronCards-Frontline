@@ -12,15 +12,6 @@ public class Attacker : Soldier
     {
         return GetOwnerId() != other.GetOwnerId();
     }
-
-
-    public override void TakeDamage(Soldier source, float damage) {
-        SetHealth(GetHealth() - damage);
-        if (GetHealth() <= 0) {
-            Die();
-        }
-    }
-
     
     public override void Action(Soldier target) {
         if (IsInRange(target) && target.IsAlive() && Time.time >= GetLastActionTime() + GetAttackSpeed()) {

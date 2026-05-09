@@ -26,5 +26,7 @@ MonoBehaviour:
   sprite: {fileID: -794707472, guid: 9c937b4e1eeb9f34eab2e144bc97a418, type: 3}
   sound: {fileID: 8300000, guid: 04e106b8589cc254791f91380ccbe1ce, type: 3}
   combatAction: {fileID: 11400000, guid: 4b364ff6897e0fd4594ad7effc7a9713, type: 2}
-  soldierPrefab: {fileID: 8709182333145263357, guid: 218ceb51d938b7f49b5405e99ee3bde6, type: 3}
+  soldierPrefab: {fileID: 8137492815250974086, guid: 480c69ba347efff49b3dbaa8b19fb69a, type: 3}
   soundVolume: 0.05
+  armorProtection: 0
+  protectionSound: {fileID: 8300000, guid: 72013526dfe380a4190d9aa9344f5a26, type: 3}

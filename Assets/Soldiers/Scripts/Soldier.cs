@@ -35,6 +35,8 @@ public abstract class Soldier : MonoBehaviour
     public CombatActionSO GetCombatAction() => data.combatAction;
     public Soldier GetTarget() => target;
     public float GetSoundVolume() => data.soundVolume;
+    public float GetArmorProtection() => data.armorProtection;
+    public AudioClip GetProtectionSound() => data.protectionSound;
 
     // ==========================================
     // SETTERS
@@ -157,8 +159,6 @@ public abstract class Soldier : MonoBehaviour
     }
 
     public abstract void Action(Soldier target);
-
-    public abstract void TakeDamage(Soldier source, float damage);
     public abstract bool ChangeTargetCondition();
 
     public void Move(Vector3 destination)
@@ -183,6 +183,19 @@ public abstract class Soldier : MonoBehaviour
         }
 
         rb.MovePosition(rb.position + direction * GetMoveSpeed() * Time.fixedDeltaTime);
+    }
+
+    public void TakeDamage(Soldier source, float damage) {
+        if (Random.value < GetArmorProtection())
+        {
+            AudioSource.PlayClipAtPoint(GetProtectionSound(), transform.position);
+            return;
+        }
+
+        SetHealth(GetHealth() - damage);
+        if (GetHealth() <= 0) {
+            Die();
+        }
     }
 
     public void Die()
