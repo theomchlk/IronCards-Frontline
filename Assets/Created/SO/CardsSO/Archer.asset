@@ -21,7 +21,7 @@ MonoBehaviour:
   attackSpeed: 1
   health: 10
   range: 10
-  movementSpeed: 2
+  movementSpeed: 4
   nbSoldiers: 5
   sprite: {fileID: -794707472, guid: 9c937b4e1eeb9f34eab2e144bc97a418, type: 3}
   sound: {fileID: 8300000, guid: 04e106b8589cc254791f91380ccbe1ce, type: 3}

@@ -18,10 +18,10 @@ MonoBehaviour:
   id: card_tank
   cardName: Tank
   damage: 2
-  attackSpeed: 1
+  attackSpeed: 2
   health: 20
-  range: 1
-  movementSpeed: 1
+  range: 2
+  movementSpeed: 2
   nbSoldiers: 5
   sprite: {fileID: 2124728754, guid: 9c937b4e1eeb9f34eab2e144bc97a418, type: 3}
   sound: {fileID: 8300000, guid: 4fb70bfed61b9e24980b4fb5bdaec0c0, type: 3}

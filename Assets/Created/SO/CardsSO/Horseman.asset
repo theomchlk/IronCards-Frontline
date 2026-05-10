@@ -20,7 +20,7 @@ MonoBehaviour:
   damage: 5
   attackSpeed: 1
   health: 10
-  range: 2
+  range: 4
   movementSpeed: 6
   nbSoldiers: 5
   sprite: {fileID: 0}

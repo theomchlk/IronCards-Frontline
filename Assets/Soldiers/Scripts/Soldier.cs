@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.AI;
 
 public abstract class Soldier : MonoBehaviour
 {
@@ -14,6 +15,8 @@ public abstract class Soldier : MonoBehaviour
     private Animator animator;
     private Rigidbody[] ragdollRigidbodies;
     private Collider[] ragdollColliders;
+    private NavMeshAgent agent;
+    private float lastDestinationUpdateTime = 0f;
 
     // ==========================================
     // GETTERS
@@ -39,11 +42,32 @@ public abstract class Soldier : MonoBehaviour
     public AudioClip GetProtectionSound() => data.protectionSound;
 
     // ==========================================
+    // ABSTRACT METHODS
+    // ==========================================
+    public abstract void Action(Soldier target);
+    public abstract bool ChangeTargetCondition();
+
+    public virtual bool CompareOwnerId(Soldier other)
+    {
+        return GetOwnerId() != other.GetOwnerId();
+    }
+
+    // ==========================================
     // SETTERS
     // ==========================================
 
     public void SetHealth(float value) => health = value;
     public void SetLastActionTime(float value) => lastActionTime = value;
+
+    private void ConfigureAudio(AudioSource audioSource, AudioClip clip)
+    {
+        audioSource.clip = clip;
+        audioSource.volume = GetSoundVolume();
+        audioSource.spatialBlend = 1f;
+        audioSource.rolloffMode = AudioRolloffMode.Logarithmic;
+        audioSource.minDistance = 1.5f;
+        audioSource.maxDistance = Mathf.Max(15f, GetRange() * 4f);
+    }
 
     private void SetRagdollState(bool state)
     {
@@ -66,13 +90,13 @@ public abstract class Soldier : MonoBehaviour
     }
 
     // ==========================================
-    // MÉTHODES DE LOGIQUE & UNITY
+    // MÉTHODES UNITY
     // ==========================================
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
-
+        agent = GetComponent<NavMeshAgent>();
         activationTime = Time.time + 2f;
         animator = GetComponent<Animator>();
         health = GetMaxHealth();
@@ -81,6 +105,18 @@ public abstract class Soldier : MonoBehaviour
         ragdollColliders = GetComponentsInChildren<Collider>();
 
         SetRagdollState(false);
+
+        if (agent != null)
+        {
+            agent.speed = GetMoveSpeed();
+            agent.stoppingDistance = GetRange();
+            agent.updateRotation = true; 
+        }
+
+        if (animator != null)
+        {
+            animator.SetFloat("AttackSpeedMultiplier", 1 / GetAttackSpeed());
+        }
     }
 
     void Update()
@@ -90,7 +126,7 @@ public abstract class Soldier : MonoBehaviour
 
         if (!ChangeTargetCondition())
         {
-            StopMoving();
+            StopMovement();
             Action(target);
         }
         else
@@ -103,12 +139,16 @@ public abstract class Soldier : MonoBehaviour
     {
         if (rb != null && target != null && !IsInRange(target))
         {
-            Move(target.GetPosition());
+            HandleMovement();
             return;
         }
 
-        StopMoving();
+        StopMovement();
     }
+
+    // ==========================================
+    // MÉTHODES
+    // ==========================================
 
     public Soldier GetNearestTarget()
     {
@@ -132,57 +172,51 @@ public abstract class Soldier : MonoBehaviour
         return nearestTarget;
     }
 
-    public virtual bool CompareOwnerId(Soldier other)
-    {
-        return GetOwnerId() != other.GetOwnerId();
-    }
-
     public bool IsInRange(Soldier target)
     {
         return Vector3.Distance(transform.position, target.GetPosition()) <= GetRange();
     }
 
-    private void StopMoving()
+    private void HandleMovement()
     {
-        if (animator != null)
+        if (target != null && target.IsAlive())
         {
-            animator.SetFloat("MoveX", 0);
-            animator.SetFloat("MoveZ", 0);
-            animator.SetBool("Walking", false);
-            animator.SetBool("Running", false);
-        }
+            if (lastDestinationUpdateTime + 0.5f > Time.time)
+                return;
 
-        if (rb != null && IsAlive())
-        {
-            rb.linearVelocity = Vector3.zero;
-        }
-    }
+            agent.SetDestination(target.GetPosition());
+            lastDestinationUpdateTime = Time.time;
 
-    public abstract void Action(Soldier target);
-    public abstract bool ChangeTargetCondition();
+            if (!agent.pathPending && agent.remainingDistance > agent.stoppingDistance)
+            {
+                Vector3 direction = (target.GetPosition() - transform.position).normalized;
+                animator.SetFloat("MoveX", Mathf.Abs(direction.x));
+                animator.SetFloat("MoveZ", Mathf.Abs(direction.z));
+                if (GetMoveSpeed() > 2f) {
+                    animator.SetBool("Running", true);
+                } else {
+                    animator.SetBool("Walking", true);
+                }
 
-    public void Move(Vector3 destination)
-    {
-        Vector3 direction = (destination - rb.position).normalized;
-        Vector3 flatDir = new Vector3(direction.x, 0f, direction.z);
-
-        if (flatDir.sqrMagnitude > 0.0001f)
-        {
-            transform.rotation = Quaternion.LookRotation(flatDir);
-        }
-
-        if (animator != null)
-        {
-            animator.SetFloat("MoveX", Mathf.Abs(direction.x));
-            animator.SetFloat("MoveZ", Mathf.Abs(direction.z));
-            if (GetMoveSpeed() > 2f) {
-                animator.SetBool("Running", true);
-            } else {
-                animator.SetBool("Walking", true);
+            }
+            else if (!agent.pathPending)
+            {
+                StopMovement();
             }
         }
+        else StopMovement();
+    }
 
-        rb.MovePosition(rb.position + direction * GetMoveSpeed() * Time.fixedDeltaTime);
+    private void StopMovement()
+    {
+        if (agent.isOnNavMesh)
+        {
+            agent.ResetPath();
+        }
+        animator.SetFloat("MoveX", 0);
+        animator.SetFloat("MoveZ", 0);
+        animator.SetBool("Walking", false);
+        animator.SetBool("Running", false);
     }
 
     public void TakeDamage(Soldier source, float damage) {
@@ -191,8 +225,7 @@ public abstract class Soldier : MonoBehaviour
             GameObject tempAudioObject = new GameObject("Protection Sound");
             tempAudioObject.transform.position = transform.position;
             AudioSource audioSource = tempAudioObject.AddComponent<AudioSource>();
-            audioSource.clip = GetProtectionSound();
-            audioSource.volume = GetSoundVolume();
+            ConfigureAudio(audioSource, GetProtectionSound());
             audioSource.Play();
             Destroy(tempAudioObject, GetProtectionSound().length / audioSource.pitch);
             return;
@@ -228,9 +261,8 @@ public abstract class Soldier : MonoBehaviour
         GameObject tempAudioObject = new GameObject("Action Sound");
         tempAudioObject.transform.position = transform.position;
         AudioSource audioSource = tempAudioObject.AddComponent<AudioSource>();
-        audioSource.clip = GetSound();
-        audioSource.volume = GetSoundVolume();
         audioSource.pitch = 1 / GetAttackSpeed();
+        ConfigureAudio(audioSource, GetSound());
         audioSource.Play();
 
         Destroy(tempAudioObject, GetSound().length / audioSource.pitch);
