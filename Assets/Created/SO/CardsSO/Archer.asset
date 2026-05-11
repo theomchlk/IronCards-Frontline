@@ -22,7 +22,7 @@ MonoBehaviour:
   health: 10
   range: 10
   movementSpeed: 4
-  nbSoldiers: 5
+  nbSoldiers: 20
   sprite: {fileID: -794707472, guid: 9c937b4e1eeb9f34eab2e144bc97a418, type: 3}
   sound: {fileID: 8300000, guid: 04e106b8589cc254791f91380ccbe1ce, type: 3}
   combatAction: {fileID: 11400000, guid: 4b364ff6897e0fd4594ad7effc7a9713, type: 2}

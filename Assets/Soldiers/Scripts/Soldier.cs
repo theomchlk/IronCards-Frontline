@@ -14,12 +14,13 @@ public abstract class Soldier : MonoBehaviour
     private float lastActionTime;
     private Animator animator;
     private Rigidbody[] ragdollRigidbodies;
+    private Rigidbody mainRigidbody;
     private Collider[] ragdollColliders;
-    private NavMeshAgent agent;
     private float lastMaterialChangeTime = 0f;
     private bool isControlledByPlayer = false;
     private static List<Soldier> allSoldiers = new List<Soldier>();
-    private float nextPathUpdateTime = 0f;
+    private Vector3 destination;
+    private bool movementRequested;
 
     // ==========================================
     // GETTERS
@@ -86,8 +87,8 @@ public abstract class Soldier : MonoBehaviour
                 col.enabled = state;
         }
 
-        if (GetComponent<Rigidbody>() != null)
-            GetComponent<Rigidbody>().isKinematic = state;
+        if (mainRigidbody != null)
+            mainRigidbody.isKinematic = state;
 
         if (GetComponent<Collider>() != null)
             GetComponent<Collider>().enabled = !state;
@@ -130,11 +131,8 @@ public abstract class Soldier : MonoBehaviour
         isControlledByPlayer = value;
         if (isControlledByPlayer)
         {
-            StopMovement();
+            StopMovementRigidbody();
             target = null;
-            agent.stoppingDistance = 0.1f;
-        } else {
-            agent.stoppingDistance = GetRange() * 0.8f;
         }
     }
 
@@ -151,7 +149,6 @@ public abstract class Soldier : MonoBehaviour
     {
         allSoldiers.Add(this);
 
-        agent = GetComponent<NavMeshAgent>();
         activationTime = Time.time + 2f;
         animator = GetComponent<Animator>();
         health = GetMaxHealth();
@@ -159,14 +156,9 @@ public abstract class Soldier : MonoBehaviour
         ragdollRigidbodies = GetComponentsInChildren<Rigidbody>();
         ragdollColliders = GetComponentsInChildren<Collider>();
 
-        SetRagdollState(false);
+        mainRigidbody = GetComponent<Rigidbody>();
 
-        if (agent != null)
-        {
-            agent.speed = GetMoveSpeed();
-            agent.stoppingDistance = GetRange() * 0.8f;
-            agent.updateRotation = false; 
-        }
+        SetRagdollState(false);
 
         if (animator != null)
         {
@@ -194,6 +186,20 @@ public abstract class Soldier : MonoBehaviour
         }
     }
 
+    private void FixedUpdate()
+    {
+        if (Time.time < activationTime || !IsAlive() || !movementRequested || mainRigidbody == null)
+            return;
+
+        Vector3 direction = destination - transform.position;
+        if (direction.sqrMagnitude < 0.0001f)
+            return;
+
+        direction.Normalize();
+        mainRigidbody.MovePosition(mainRigidbody.position + direction * GetMoveSpeed() * Time.fixedDeltaTime);
+        transform.LookAt(transform.position + direction);
+    }
+
     // ==========================================
     // MÉTHODES
     // ==========================================
@@ -202,16 +208,16 @@ public abstract class Soldier : MonoBehaviour
     {
         if (!ChangeTargetCondition())
         {
-            StopMovement();
+            StopMovementRigidbody();
             Action(target);
         }
         else
         {
             target = GetNearestTarget(); 
             if (target != null)
-                HandleMovement(target.GetPosition());
+                HandleMovementRigidbody(target.GetPosition());
             else 
-                StopMovement();
+                StopMovementRigidbody();
         }
     }
 
@@ -219,19 +225,24 @@ public abstract class Soldier : MonoBehaviour
     {
         if (target == null)
         {
-            if (agent.remainingDistance <= agent.stoppingDistance)
-                StopMovement();
+            float remainingDistance = Vector3.Distance(transform.position, destination);
+            if (remainingDistance < 0.1f)
+            {
+                StopMovementRigidbody();
+            } else {
+                HandleMovementRigidbody(destination);
+            }
         } 
         else
         {
             if (IsInRange(target))
             {
-                StopMovement();
+                StopMovementRigidbody();
                 Action(target);
             } 
             else
             {
-                HandleMovement(target.GetPosition());
+                HandleMovementRigidbody(target.GetPosition());
             }
         }
     }
@@ -262,13 +273,17 @@ public abstract class Soldier : MonoBehaviour
         return Vector3.Distance(transform.position, target.GetPosition()) <= GetRange();
     }
 
-    public void HandleMovement(Vector3 destination)
+    public void HandleMovementRigidbody(Vector3 destination)
     {
-        agent.SetDestination(destination);
+        if (!IsAlive())
+            return;
 
-        Vector3 direction = (destination - transform.position).normalized;
-        
-        transform.LookAt(transform.position + direction);
+        this.destination = destination;
+        movementRequested = true;
+
+        Vector3 direction = destination - transform.position;
+        if (direction.sqrMagnitude > 0.0001f)
+            direction.Normalize();
 
         animator.SetFloat("MoveX", Mathf.Abs(direction.x));
         animator.SetFloat("MoveZ", Mathf.Abs(direction.z));
@@ -278,19 +293,15 @@ public abstract class Soldier : MonoBehaviour
         } else {
             animator.SetBool("Walking", true);
         }
-
-        if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
-        {
-            StopMovement();
-        }
     }
 
-    public void StopMovement()
+    public void StopMovementRigidbody()
     {
-        if (agent.isOnNavMesh)
-        {
-            agent.ResetPath();
-        }
+        movementRequested = false;
+        if (mainRigidbody != null)
+            mainRigidbody.linearVelocity = Vector3.zero;
+        destination = transform.position;
+
         animator.SetFloat("MoveX", 0);
         animator.SetFloat("MoveZ", 0);
         animator.SetBool("Walking", false);
@@ -301,6 +312,7 @@ public abstract class Soldier : MonoBehaviour
         if (Random.value < GetArmorProtection())
         {
             GameObject tempAudioObject = new GameObject("Protection Sound");
+            tempAudioObject.transform.SetParent(transform);
             tempAudioObject.transform.position = transform.position;
             AudioSource audioSource = tempAudioObject.AddComponent<AudioSource>();
             ConfigureAudio(audioSource, GetProtectionSound());
@@ -321,9 +333,6 @@ public abstract class Soldier : MonoBehaviour
         if (animator != null)
             animator.enabled = false;
 
-        if (agent != null)
-            agent.enabled = false;
-
         SetRagdollState(true);
         allSoldiers.Remove(this);
         Destroy(gameObject, 4f);
@@ -342,6 +351,7 @@ public abstract class Soldier : MonoBehaviour
         yield return new WaitForSeconds(GetAttackSpeed() - GetSound().length * GetAttackSpeed());
 
         GameObject tempAudioObject = new GameObject("Action Sound");
+        tempAudioObject.transform.SetParent(transform);
         tempAudioObject.transform.position = transform.position;
         AudioSource audioSource = tempAudioObject.AddComponent<AudioSource>();
         audioSource.pitch = 1 / GetAttackSpeed();

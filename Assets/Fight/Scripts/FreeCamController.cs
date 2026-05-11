@@ -64,16 +64,7 @@ public class FreeCamController : MonoBehaviour
         UpdateCursorState();
         UpdateUI();
 
-        // FPS counter: log every second
-        fpsFrameCount++;
-        fpsElapsed += Time.unscaledDeltaTime;
-        if (fpsElapsed >= 1f)
-        {
-            fps = fpsFrameCount / fpsElapsed;
-            Debug.Log($"FPS: {fps:F1}");
-            fpsFrameCount = 0;
-            fpsElapsed = 0f;
-        }
+        DisplayFPS();
 
         
     }
@@ -105,9 +96,9 @@ public class FreeCamController : MonoBehaviour
 
         if (keyboard == null) return;
 
-        if (keyboard.wKey.isPressed) move += transform.forward;
+        if (keyboard.wKey.isPressed || keyboard.zKey.isPressed) move += transform.forward;
         if (keyboard.sKey.isPressed) move += -transform.forward;
-        if (keyboard.aKey.isPressed) move += -transform.right;
+        if (keyboard.aKey.isPressed || keyboard.qKey.isPressed) move += -transform.right;
         if (keyboard.dKey.isPressed) move += transform.right;
 
         if (keyboard.leftCtrlKey.isPressed) move.y -= 1f;
@@ -236,7 +227,7 @@ public class FreeCamController : MonoBehaviour
         Vector3 targetPoint = GetMouseClickedPoint();
         if (targetPoint != Vector3.zero)
         {
-            selectedSoldier.HandleMovement(targetPoint);
+            selectedSoldier.HandleMovementRigidbody(targetPoint);
             selectedSoldier.SetTarget(null);
         }
     }
@@ -297,5 +288,18 @@ public class FreeCamController : MonoBehaviour
     {
         selectedSoldier = soldier;
         selectedSoldier.SetIsControlledByPlayer(true);
+    }
+
+    private void DisplayFPS()
+    {
+        fpsFrameCount++;
+        fpsElapsed += Time.unscaledDeltaTime;
+        if (fpsElapsed >= 1f)
+        {
+            fps = fpsFrameCount / fpsElapsed;
+            Debug.Log($"FPS: {fps:F1}");
+            fpsFrameCount = 0;
+            fpsElapsed = 0f;
+        }
     }
 }
