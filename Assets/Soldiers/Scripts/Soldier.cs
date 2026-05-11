@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -17,6 +18,8 @@ public abstract class Soldier : MonoBehaviour
     private NavMeshAgent agent;
     private float lastMaterialChangeTime = 0f;
     private bool isControlledByPlayer = false;
+    private static List<Soldier> allSoldiers = new List<Soldier>();
+    private float nextPathUpdateTime = 0f;
 
     // ==========================================
     // GETTERS
@@ -146,6 +149,8 @@ public abstract class Soldier : MonoBehaviour
 
     private void Awake()
     {
+        allSoldiers.Add(this);
+
         agent = GetComponent<NavMeshAgent>();
         activationTime = Time.time + 2f;
         animator = GetComponent<Animator>();
@@ -205,6 +210,8 @@ public abstract class Soldier : MonoBehaviour
             target = GetNearestTarget(); 
             if (target != null)
                 HandleMovement(target.GetPosition());
+            else 
+                StopMovement();
         }
     }
 
@@ -231,15 +238,14 @@ public abstract class Soldier : MonoBehaviour
 
     public Soldier GetNearestTarget()
     {
-        Soldier[] soldiers = FindObjectsByType<Soldier>(FindObjectsSortMode.None);
         Soldier nearestTarget = null;
         float shortestDistance = float.MaxValue;
 
-        foreach (Soldier s in soldiers)
+        foreach (Soldier s in allSoldiers)
         {
             if (s != this && s.IsAlive() && CompareOwnerId(s))
             {
-                float distance = Vector3.Distance(transform.position, s.GetPosition());
+                float distance = (transform.position - s.GetPosition()).sqrMagnitude;
                 if (distance < shortestDistance)
                 {
                     shortestDistance = distance;
@@ -277,7 +283,6 @@ public abstract class Soldier : MonoBehaviour
         {
             StopMovement();
         }
-
     }
 
     public void StopMovement()
@@ -320,6 +325,7 @@ public abstract class Soldier : MonoBehaviour
             agent.enabled = false;
 
         SetRagdollState(true);
+        allSoldiers.Remove(this);
         Destroy(gameObject, 4f);
     }
 

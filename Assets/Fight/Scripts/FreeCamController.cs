@@ -32,6 +32,9 @@ public class FreeCamController : MonoBehaviour
     private float pitch = 0f;
     private float yaw = 0f;
     private Camera cam;
+    private int fpsFrameCount = 0;
+    private float fpsElapsed = 0f;
+    private float fps = 0f;
     private float minConstraintX, maxConstraintX, minConstraintZ, maxConstraintZ;
     private bool hasGroundConstraints = false;
 
@@ -46,7 +49,7 @@ public class FreeCamController : MonoBehaviour
         CalculateGroundBounds();    
     }
 
-    void Update()
+    void LateUpdate()
     {
         HandleEscapeKey();
         HandleMovement();
@@ -60,6 +63,19 @@ public class FreeCamController : MonoBehaviour
         HandleMouseInteractions();
         UpdateCursorState();
         UpdateUI();
+
+        // FPS counter: log every second
+        fpsFrameCount++;
+        fpsElapsed += Time.unscaledDeltaTime;
+        if (fpsElapsed >= 1f)
+        {
+            fps = fpsFrameCount / fpsElapsed;
+            Debug.Log($"FPS: {fps:F1}");
+            fpsFrameCount = 0;
+            fpsElapsed = 0f;
+        }
+
+        
     }
 
     private void CalculateGroundBounds()
