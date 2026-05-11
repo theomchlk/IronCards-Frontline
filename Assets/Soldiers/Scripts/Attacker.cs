@@ -14,6 +14,9 @@ public class Attacker : Soldier
     }
     
     public override void Action(Soldier target) {
+        if (target == null || !target.IsAlive() || !IsInRange(target) || GetOwnerId() == target.GetOwnerId())
+            return;
+        
         if (IsInRange(target) && target.IsAlive() && Time.time >= GetLastActionTime() + GetAttackSpeed()) {
             SetLastActionTime(Time.time);
 
@@ -35,8 +38,10 @@ public class Attacker : Soldier
         if (action != null) {
             action.Execute(this, target);
         }
-        
-        target.TakeDamage(this, GetDamage());
+        if (IsInRange(target))
+        {
+            target.TakeDamage(this, GetDamage());
+        }
     }
 
 }

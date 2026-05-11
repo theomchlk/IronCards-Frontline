@@ -114,7 +114,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 2560
+        y: 2816
         width: 288
         height: 256
       alignment: 0
@@ -136,6 +136,28 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
+        y: 2560
+        width: 288
+        height: 256
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6422d009395e199468991352d4ca5428
+      internalID: -2050526677
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: icons_2
+      rect:
+        serializedVersion: 2
+        x: 0
         y: 2304
         width: 288
         height: 256
@@ -147,14 +169,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 68e7de4ef3b4f1c46a40cde54fe84267
-      internalID: -2050526677
+      spriteID: ddc28a59d7cd1a34aad0e6169cf40507
+      internalID: -1979201746
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: icons_2
+      name: icons_3
       rect:
         serializedVersion: 2
         x: 0
@@ -169,14 +191,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 52560f53d8f26494b88403715a112a4e
-      internalID: -1979201746
+      spriteID: 315cc1998f179c446934b9c90c2dae2b
+      internalID: 912722759
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: icons_3
+      name: icons_4
       rect:
         serializedVersion: 2
         x: 0
@@ -191,14 +213,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e69e313f895074b46a34a814797c75cd
-      internalID: 912722759
+      spriteID: 30b00a928e1b0004cb784b48624cc715
+      internalID: 1521660979
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: icons_4
+      name: icons_5
       rect:
         serializedVersion: 2
         x: 0
@@ -213,14 +235,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 657ab8a2778405d4c8a444d16fb5b3c4
-      internalID: 1521660979
+      spriteID: a82986e1848c2d847b8a483b992d63a7
+      internalID: 712189393
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: icons_5
+      name: icons_6
       rect:
         serializedVersion: 2
         x: 0
@@ -235,14 +257,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 4e48887c13af08f48aa6decb4ecb1165
-      internalID: 712189393
+      spriteID: 9932c848952d2a84c8bfbf8ff92e1ea1
+      internalID: -512671054
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: icons_6
+      name: icons_7
       rect:
         serializedVersion: 2
         x: 0
@@ -257,14 +279,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 8cba011782019054e91767644b7b3a76
-      internalID: -512671054
+      spriteID: ae24acf9fec2aef4eb439fa87baab8e4
+      internalID: -356893965
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: icons_7
+      name: icons_8
       rect:
         serializedVersion: 2
         x: 0
@@ -279,14 +301,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: ee833d3bd8503c64a94ad7fc2734f3cd
-      internalID: -356893965
+      spriteID: f4a85d67a0eedd7489e03a51235932de
+      internalID: -1898912306
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: icons_8
+      name: icons_9
       rect:
         serializedVersion: 2
         x: 0
@@ -301,14 +323,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 7976ff627172b6c4d9df8c74317857c7
-      internalID: -1898912306
+      spriteID: af234fa16f90aff4f8d4dc39330ba6d8
+      internalID: -1158981834
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: icons_9
+      name: icons_10
       rect:
         serializedVersion: 2
         x: 0
@@ -323,14 +345,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 70c6e03114b467f44bd51269817f9d67
-      internalID: -1158981834
+      spriteID: 30ab4ee512a15f64e856ee398a684ea6
+      internalID: -774860852
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: icons_10
+      name: icons_11
       rect:
         serializedVersion: 2
         x: 0
@@ -345,8 +367,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: a068d3fffc49ebd468217536f6790b36
-      internalID: -774860852
+      spriteID: 8afba80c2630a15408fe5fe37a214559
+      internalID: -593783203
       vertices: []
       indices: 
       edges: []
@@ -365,11 +387,12 @@ TextureImporter:
     spriteCustomMetadata:
       entries:
       - key: SpriteEditor.SliceSettings
-        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":11.0},"gridSpriteSize":{"x":288.0,"y":256.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":12.0},"gridSpriteSize":{"x":288.0,"y":256.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
       icons_0: -1730664833
       icons_1: -2050526677
       icons_10: -774860852
+      icons_11: -593783203
       icons_2: -1979201746
       icons_3: 912722759
       icons_4: 1521660979

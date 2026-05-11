@@ -1,6 +1,6 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.Controls; // Indispensable pour le nouveau système
 
 public class FreeCamController : MonoBehaviour
 {
@@ -19,11 +19,21 @@ public class FreeCamController : MonoBehaviour
     [Header("Constraints")]
     [SerializeField] private float maxHeight = 80f;
     [SerializeField] private GameObject[] ground;
+    private Soldier hoveredSoldier;
+    private Soldier selectedSoldier;
+
+    [Header("UI")]
+    [SerializeField] private SoldierUIManager uiManager;
+    [SerializeField] private Texture2D defaultCursor;
+    [SerializeField] private Texture2D attackCursor;
+    [SerializeField] private Texture2D stepCursor;
 
 
     private float pitch = 0f;
     private float yaw = 0f;
     private Camera cam;
+    private float minConstraintX, maxConstraintX, minConstraintZ, maxConstraintZ;
+    private bool hasGroundConstraints = false;
 
     void Awake()
     {
@@ -31,21 +41,51 @@ public class FreeCamController : MonoBehaviour
         Vector3 angles = transform.eulerAngles;
         pitch = angles.x;
         yaw = angles.y;
+        Cursor.SetCursor(defaultCursor, Vector2.zero, CursorMode.Auto);
+        
+        CalculateGroundBounds();    
     }
 
     void Update()
     {
+        HandleEscapeKey();
         HandleMovement();
         HandleRotation();
         HandleZoom();
         HandleGroundCollision();
         HandleConstraints();
+
+        hoveredSoldier = GetSoldierUnderMouse();
+        
+        HandleMouseInteractions();
+        UpdateCursorState();
+        UpdateUI();
+    }
+
+    private void CalculateGroundBounds()
+    {
+        minConstraintX = float.MaxValue; maxConstraintX = float.MinValue; 
+        minConstraintZ = float.MaxValue; maxConstraintZ = float.MinValue;
+
+        for (int i = 0; i < ground.Length; i++)
+        {
+            Renderer groundRenderer = ground[i].GetComponent<Renderer>();
+            if (groundRenderer != null)
+            {
+                hasGroundConstraints = true;
+                Bounds bounds = groundRenderer.bounds;
+                minConstraintX = Mathf.Min(minConstraintX, bounds.min.x);
+                maxConstraintX = Mathf.Max(maxConstraintX, bounds.max.x);
+                minConstraintZ = Mathf.Min(minConstraintZ, bounds.min.z);
+                maxConstraintZ = Mathf.Max(maxConstraintZ, bounds.max.z);
+            }
+        }
     }
 
     private void HandleMovement()
     {
         Vector3 move = Vector3.zero;
-        var keyboard = Keyboard.current;
+        Keyboard keyboard = Keyboard.current;
 
         if (keyboard == null) return;
 
@@ -65,7 +105,7 @@ public class FreeCamController : MonoBehaviour
 
     private void HandleRotation()
     {
-        var mouse = Mouse.current;
+        Mouse mouse = Mouse.current;
         if (mouse == null) return;
 
         if (mouse.rightButton.isPressed)
@@ -82,7 +122,7 @@ public class FreeCamController : MonoBehaviour
 
     private void HandleZoom()
     {
-        var mouse = Mouse.current;
+        Mouse mouse = Mouse.current;
         if (mouse == null) return;
 
         float scrollY = mouse.scroll.ReadValue().y;
@@ -110,35 +150,136 @@ public class FreeCamController : MonoBehaviour
         }
     }
 
-    private void HandleConstraints()
+    public Soldier GetSoldierUnderMouse()
     {
-        Vector3 pos = transform.position;
-        pos.y = Mathf.Min(pos.y, maxHeight);
+        Mouse mouse = Mouse.current;
+        if (mouse == null) return null;
 
-        float minX = float.MaxValue, maxX = float.MinValue, minZ = float.MaxValue, maxZ = float.MinValue;
-        bool foundGround = false;
+        Ray ray = cam.ScreenPointToRay(mouse.position.ReadValue());
+        RaycastHit hit;
 
-        for (int i = 0; i < ground.Length; i++)
+        if (Physics.Raycast(ray, out hit, 500f))
         {
-            Renderer groundRenderer = ground[i].GetComponent<Renderer>();
-            if (groundRenderer != null)
+            Soldier targetSoldier = hit.collider.GetComponentInParent<Soldier>();
+            
+            if (targetSoldier != null)
             {
-                foundGround = true;
-                Bounds bounds = groundRenderer.bounds;
-                minX = Mathf.Min(minX, bounds.min.x);
-                maxX = Mathf.Max(maxX, bounds.max.x);
-                minZ = Mathf.Min(minZ, bounds.min.z);
-                maxZ = Mathf.Max(maxZ, bounds.max.z);
+                return targetSoldier;
             }
         }
 
-        if (foundGround)
-        {            
-            pos.x = Mathf.Clamp(pos.x, minX+0.2f, maxX-0.2f);
-            pos.z = Mathf.Clamp(pos.z, minZ+0.2f, maxZ-0.2f);
+        return null;
+    }
+
+    private Vector3 GetMouseClickedPoint()
+    {
+        Mouse mouse = Mouse.current;
+        if (mouse == null) return Vector3.zero;
+
+        Ray ray = cam.ScreenPointToRay(mouse.position.ReadValue());
+        RaycastHit hit;
+
+        if (Physics.Raycast(ray, out hit, 500f, groundLayer))
+        {
+            return hit.point;
         }
 
+        return Vector3.zero;
+    }
+    private void HandleConstraints()
+    {
+        if (!hasGroundConstraints) return;
+
+        Vector3 pos = transform.position;
+        pos.y = Mathf.Min(pos.y, maxHeight);
+        pos.x = Mathf.Clamp(pos.x, minConstraintX + 0.2f, maxConstraintX - 0.2f);
+        pos.z = Mathf.Clamp(pos.z, minConstraintZ + 0.2f, maxConstraintZ - 0.2f);
         transform.position = pos;
     }
 
+    private void HandleMouseInteractions()
+    {
+        if (Mouse.current == null || !Mouse.current.leftButton.wasPressedThisFrame) return;
+
+        if (selectedSoldier == null && hoveredSoldier != null)
+        {
+            SelectSoldier(hoveredSoldier);
+        } 
+        else if (selectedSoldier != null && hoveredSoldier != null && hoveredSoldier != selectedSoldier && selectedSoldier.GetOwnerId() != hoveredSoldier.GetOwnerId())
+        {
+            selectedSoldier.SetTarget(hoveredSoldier);
+        } 
+        else if (selectedSoldier != null && hoveredSoldier == null)
+        {
+            CommandSoldierToMove();
+        }
+    }
+
+    private void CommandSoldierToMove()
+    {
+        Vector3 targetPoint = GetMouseClickedPoint();
+        if (targetPoint != Vector3.zero)
+        {
+            selectedSoldier.HandleMovement(targetPoint);
+            selectedSoldier.SetTarget(null);
+        }
+    }
+
+    private void HandleEscapeKey()
+    {
+        if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame && selectedSoldier != null)
+        {
+            selectedSoldier.SetIsControlledByPlayer(false);
+            selectedSoldier.SetTarget(null);
+            selectedSoldier = null;
+        }
+    }
+
+    private void UpdateCursorState()
+    {
+        if (selectedSoldier != null)
+        {
+            if (hoveredSoldier != null && selectedSoldier.GetOwnerId() != hoveredSoldier.GetOwnerId())
+            {
+                Cursor.SetCursor(attackCursor, Vector2.zero, CursorMode.Auto);
+            }
+            else
+            {
+                Cursor.SetCursor(stepCursor, new Vector2(stepCursor.width / 2, stepCursor.height / 2), CursorMode.Auto);
+            }
+        }
+        else
+        {
+            Cursor.SetCursor(defaultCursor, Vector2.zero, CursorMode.Auto);
+        }
+    }
+
+    private void HandleSoldier(Soldier soldier)
+    {
+        soldier.SetBloomMaterial();
+
+        uiManager.ShowAndUpdateUI(soldier);
+    }
+
+    private void UpdateUI()
+    {
+        if (hoveredSoldier != null)
+        {
+            HandleSoldier(hoveredSoldier);
+        }
+        else if (selectedSoldier != null)
+        {
+            HandleSoldier(selectedSoldier);
+        }
+        else
+        {
+            uiManager.HideUI();
+        }
+    }
+
+    private void SelectSoldier(Soldier soldier)
+    {
+        selectedSoldier = soldier;
+        selectedSoldier.SetIsControlledByPlayer(true);
+    }
 }

@@ -11,12 +11,12 @@ public abstract class Soldier : MonoBehaviour
     private Soldier target;
     private float activationTime;
     private float lastActionTime;
-    private Rigidbody rb;
     private Animator animator;
     private Rigidbody[] ragdollRigidbodies;
     private Collider[] ragdollColliders;
     private NavMeshAgent agent;
-    private float lastDestinationUpdateTime = 0f;
+    private float lastMaterialChangeTime = 0f;
+    private bool isControlledByPlayer = false;
 
     // ==========================================
     // GETTERS
@@ -40,6 +40,7 @@ public abstract class Soldier : MonoBehaviour
     public float GetSoundVolume() => data.soundVolume;
     public float GetArmorProtection() => data.armorProtection;
     public AudioClip GetProtectionSound() => data.protectionSound;
+    private FightColorsSO GetMaterials() => data.fightColors;
 
     // ==========================================
     // ABSTRACT METHODS
@@ -89,13 +90,62 @@ public abstract class Soldier : MonoBehaviour
             GetComponent<Collider>().enabled = !state;
     }
 
+    public void SetMaterial(Material mat)
+    {
+        SkinnedMeshRenderer renderer = GetComponentInChildren<SkinnedMeshRenderer>();
+        if (renderer != null)
+        {
+            renderer.material = mat;
+            lastMaterialChangeTime = Time.time;
+        }
+    }
+
+    public void SetDefaultMaterial()
+    {
+        if (GetMaterials() != null && GetMaterials().colors.Length > ownerId)
+        {
+            SetMaterial(GetMaterials().colors[ownerId].material);
+        }
+    }
+
+    public void SetBloomMaterial()
+    {
+        if (GetMaterials() != null && GetMaterials().colors.Length > ownerId)
+        {
+            SetMaterial(GetMaterials().colors[ownerId].bloomMaterial);
+        }
+    }
+
+    public void SetOwnerId(int id)
+    {
+        ownerId = id;
+        SetDefaultMaterial();
+    }
+
+    public void SetIsControlledByPlayer(bool value)
+    {
+        isControlledByPlayer = value;
+        if (isControlledByPlayer)
+        {
+            StopMovement();
+            target = null;
+            agent.stoppingDistance = 0.1f;
+        } else {
+            agent.stoppingDistance = GetRange() * 0.8f;
+        }
+    }
+
+    public void SetTarget(Soldier newTarget)
+    {
+        target = newTarget;
+    }
+
     // ==========================================
     // MÉTHODES UNITY
     // ==========================================
 
     private void Awake()
     {
-        rb = GetComponent<Rigidbody>();
         agent = GetComponent<NavMeshAgent>();
         activationTime = Time.time + 2f;
         animator = GetComponent<Animator>();
@@ -109,21 +159,42 @@ public abstract class Soldier : MonoBehaviour
         if (agent != null)
         {
             agent.speed = GetMoveSpeed();
-            agent.stoppingDistance = GetRange();
-            agent.updateRotation = true; 
+            agent.stoppingDistance = GetRange() * 0.8f;
+            agent.updateRotation = false; 
         }
 
         if (animator != null)
         {
             animator.SetFloat("AttackSpeedMultiplier", 1 / GetAttackSpeed());
         }
+
+        SetDefaultMaterial();
     }
 
     void Update()
     {
+        if (lastMaterialChangeTime + 0.2f < Time.time) 
+            SetDefaultMaterial();
+
         if (Time.time < activationTime || !IsAlive())
             return;
 
+        if (isControlledByPlayer)
+        {
+            HandlePlayerBehavior();
+        }
+        else
+        {
+            HandleAIBehavior();
+        }
+    }
+
+    // ==========================================
+    // MÉTHODES
+    // ==========================================
+
+    private void HandleAIBehavior()
+    {
         if (!ChangeTargetCondition())
         {
             StopMovement();
@@ -131,24 +202,32 @@ public abstract class Soldier : MonoBehaviour
         }
         else
         {
-            target = GetNearestTarget();
+            target = GetNearestTarget(); 
+            if (target != null)
+                HandleMovement(target.GetPosition());
         }
     }
 
-    void FixedUpdate()
+    private void HandlePlayerBehavior()
     {
-        if (rb != null && target != null && !IsInRange(target))
+        if (target == null)
         {
-            HandleMovement();
-            return;
+            if (agent.remainingDistance <= agent.stoppingDistance)
+                StopMovement();
+        } 
+        else
+        {
+            if (IsInRange(target))
+            {
+                StopMovement();
+                Action(target);
+            } 
+            else
+            {
+                HandleMovement(target.GetPosition());
+            }
         }
-
-        StopMovement();
     }
-
-    // ==========================================
-    // MÉTHODES
-    // ==========================================
 
     public Soldier GetNearestTarget()
     {
@@ -177,37 +256,31 @@ public abstract class Soldier : MonoBehaviour
         return Vector3.Distance(transform.position, target.GetPosition()) <= GetRange();
     }
 
-    private void HandleMovement()
+    public void HandleMovement(Vector3 destination)
     {
-        if (target != null && target.IsAlive())
-        {
-            if (lastDestinationUpdateTime + 0.5f > Time.time)
-                return;
+        agent.SetDestination(destination);
 
-            agent.SetDestination(target.GetPosition());
-            lastDestinationUpdateTime = Time.time;
+        Vector3 direction = (destination - transform.position).normalized;
+        
+        transform.LookAt(transform.position + direction);
 
-            if (!agent.pathPending && agent.remainingDistance > agent.stoppingDistance)
-            {
-                Vector3 direction = (target.GetPosition() - transform.position).normalized;
-                animator.SetFloat("MoveX", Mathf.Abs(direction.x));
-                animator.SetFloat("MoveZ", Mathf.Abs(direction.z));
-                if (GetMoveSpeed() > 2f) {
-                    animator.SetBool("Running", true);
-                } else {
-                    animator.SetBool("Walking", true);
-                }
-
-            }
-            else if (!agent.pathPending)
-            {
-                StopMovement();
-            }
+        animator.SetFloat("MoveX", Mathf.Abs(direction.x));
+        animator.SetFloat("MoveZ", Mathf.Abs(direction.z));
+        
+        if (GetMoveSpeed() > 2f) {
+            animator.SetBool("Running", true);
+        } else {
+            animator.SetBool("Walking", true);
         }
-        else StopMovement();
+
+        if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
+        {
+            StopMovement();
+        }
+
     }
 
-    private void StopMovement()
+    public void StopMovement()
     {
         if (agent.isOnNavMesh)
         {
@@ -233,6 +306,7 @@ public abstract class Soldier : MonoBehaviour
 
         SetHealth(GetHealth() - damage);
         if (GetHealth() <= 0) {
+            health = 0;
             Die();
         }
     }
@@ -241,6 +315,9 @@ public abstract class Soldier : MonoBehaviour
     {
         if (animator != null)
             animator.enabled = false;
+
+        if (agent != null)
+            agent.enabled = false;
 
         SetRagdollState(true);
         Destroy(gameObject, 4f);
@@ -267,4 +344,5 @@ public abstract class Soldier : MonoBehaviour
 
         Destroy(tempAudioObject, GetSound().length / audioSource.pitch);
     }
+
 }

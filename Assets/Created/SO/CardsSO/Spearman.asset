@@ -30,3 +30,4 @@ MonoBehaviour:
   soundVolume: 0.05
   armorProtection: 0
   protectionSound: {fileID: 8300000, guid: 72013526dfe380a4190d9aa9344f5a26, type: 3}
+  fightColors: {fileID: 11400000, guid: 33a4f763aa7fc764e9e02cca5fb9aa4a, type: 2}
