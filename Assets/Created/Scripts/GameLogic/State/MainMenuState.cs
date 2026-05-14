@@ -6,14 +6,25 @@ public class MainMenuState : IGameState
     public GameStateType GameStateType => GameStateType.MainMenu;
     public List<GameStateType> AllowedTransitions() => new() { GameStateType.Lobby };
     
-    public void Exit()
+    public void ExitServer()
     {
-        throw new System.NotImplementedException();
+        Debug.Log($"LobbyState ExitServer");
+        
     }
 
-    public void Enter()
+    public void ExitClient()
     {
-        throw new System.NotImplementedException();
+        Debug.Log($"LobbyState ExitClient");
+    }
+        
+    public void EnterClient()
+    {
+        Debug.Log($"LobbyState EnterClient");
+    }
+
+    public void EnterServer()
+    {
+        Debug.Log($"LobbyState EnterServer");
     }
 
     public void Update()

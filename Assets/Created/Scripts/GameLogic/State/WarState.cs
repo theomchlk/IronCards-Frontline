@@ -7,17 +7,25 @@ public class WarState : IGameState
     public GameStateType GameStateType => GameStateType.War;
     public List<GameStateType> AllowedTransitions() => new() { GameStateType.End , GameStateType.Planification };
     
-    public void Exit()
+    public void ExitServer()
     {
-        if (InstanceFinder.ServerManager.Started)
-        {
-            GameStateController.Instance.IncreaseNbRounds();
-        }
+        Debug.Log($"WarState ExitServer");
+        GameStateController.Instance.IncreaseNbRounds();
     }
 
-    public void Enter()
+    public void ExitClient()
     {
+        Debug.Log($"WarState ExitClient");
+    }
         
+    public void EnterClient()
+    {
+        Debug.Log($"WarState EnterClient");
+    }
+
+    public void EnterServer()
+    {
+        Debug.Log($"WarState EnterServer");
     }
 
     public void Update()

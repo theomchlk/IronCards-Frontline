@@ -7,23 +7,36 @@ public class LobbyState : IGameState
 {
     public GameStateType GameStateType => GameStateType.Lobby;
     public List<GameStateType> AllowedTransitions() => new() { GameStateType.Preparation };
-
-    public void Exit()
-    {
-        Debug.Log($"LobbyState Exit");
-    }
-
-    public void Enter()
-    {
-        Debug.Log($"LobbyState Enter");
-        if (InstanceFinder.ClientManager.Started)
+        public void ExitServer()
         {
-            foreach (var ps in PlayerRegistry.GetAll)
-            {
-                GameStateController.Instance.TargetEnterLobbyState(ps.Owner,ps.IsLobbyLeader());
-            }
+            Debug.Log($"LobbyState ExitServer");
         }
+
+        public void ExitClient()
+        {
+            Debug.Log($"LobbyState ExitClient");
+        }
+        
+        public void EnterClient()
+        {
+            Debug.Log($"LobbyState EnterClient");
+        }
+
+
+
+    public void EnterServer()
+    {
+        Debug.Log($"LobbyState EnterServer");
+        // TargetRpc ne peut être envoyé que par le serveur
+
+        foreach (var ps in PlayerRegistry.GetAll)
+        {
+            GameStateController.Instance.TargetEnterLobbyState(ps.Owner, ps.IsLobbyLeader());
+        }
+        
     }
+
+
 
     public void Update()
     {

@@ -6,14 +6,25 @@ public class PlanificationState : IGameState
     public GameStateType GameStateType => GameStateType.Planification;
     public List<GameStateType> AllowedTransitions() => new() { GameStateType.War };
     
-    public void Exit()
+    public void ExitServer()
     {
-        throw new System.NotImplementedException();
+        Debug.Log($"PlanificationState ExitServer");
+        
     }
 
-    public void Enter()
+    public void ExitClient()
     {
-        throw new System.NotImplementedException();
+        Debug.Log($"PlanificationState ExitClient");
+    }
+        
+    public void EnterClient()
+    {
+        Debug.Log($"PlanificationState EnterClient");
+    }
+
+    public void EnterServer()
+    {
+        Debug.Log($"PlanificationState EnterServer");
     }
 
     public void Update()

@@ -6,8 +6,10 @@ public interface IGameState
 
     public List<GameStateType> AllowedTransitions();
     
-    public void Exit();
-    public void Enter();
+    public void ExitServer();
+    public void ExitClient();
+    public void EnterServer();
+    public void EnterClient();
     
     public void Update();
     

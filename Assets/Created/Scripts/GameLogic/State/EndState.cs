@@ -5,14 +5,26 @@ public class EndState : IGameState
 {
     public GameStateType GameStateType => GameStateType.End;
     public List<GameStateType> AllowedTransitions() => new() { GameStateType.Lobby };
-    public void Exit()
+    
+    public void ExitServer()
     {
-        throw new System.NotImplementedException();
+        Debug.Log($"EndState ExitServer");
+        
     }
 
-    public void Enter()
+    public void ExitClient()
     {
-        throw new System.NotImplementedException();
+        Debug.Log($"EndState ExitClient");
+    }
+        
+    public void EnterClient()
+    {
+        Debug.Log($"EndState EnterClient");
+    }
+
+    public void EnterServer()
+    {
+        Debug.Log($"EndState EnterServer");
     }
 
     public void Update()

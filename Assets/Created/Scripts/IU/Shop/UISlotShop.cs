@@ -59,9 +59,6 @@ public class UISlotShop : MonoBehaviour
 
     private void AddNewSlot(SlotItem slot)
     {
-        Debug.Log("slot = " + slot );
-        Debug.Log("slotData = " + slot.Data );
-        Debug.Log("slotGoItemUI = " + slot.Data.goItemUI );
         var slotPrefab = slot.Data.goItemUI;
         var slotUi = Instantiate(slotPrefab, slotsHand).GetComponent<SlotUI>();
         _slots.Add(slotUi);

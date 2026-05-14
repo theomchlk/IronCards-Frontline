@@ -2,21 +2,21 @@ using System;
 using System.Linq;
 using UnityEngine;
 using FishNet;
+using FishNet.Connection;
 
 public class LocalPlayerUIBinder : MonoBehaviour
 {
     private PlayerState _ps;
 
-    private void Start()
+    public void Bind(PlayerState ps)
     {
-        _ps = PlayerRegistry.GetPlayerState(InstanceFinder.ClientManager.Connection);
-        Debug.Log(InstanceFinder.ClientManager.Connection);
-
+        _ps = ps;
         
         BindMoney();
         BindMills();
         BindSlots();
     }
+
 
     private void BindMoney()
     {
@@ -54,7 +54,7 @@ public class LocalPlayerUIBinder : MonoBehaviour
 
     private void OnSlotChanged(int previous, int next, bool asServer)
     {
-        UIManager.Instance.uiSlotShop.SetUI(next);
+        UIManager.Instance.uiSlotShop.SetUI(_ps.slotCost.Value);
     }
     
     private void OnDestroy()

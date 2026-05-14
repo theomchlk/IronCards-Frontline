@@ -1,6 +1,7 @@
 using FishNet;
 using UnityEngine;
 using System.Collections.Generic;
+using System.Globalization;
 using Created.Scripts.IU.Shop;
 using FishNet.Managing.Scened;
 
@@ -9,37 +10,41 @@ public class PreparationState : IGameState
     public GameStateType GameStateType => GameStateType.Preparation;
     public List<GameStateType> AllowedTransitions() => new() { GameStateType.Planification };
     
-    public void Exit()
+    public void ExitServer()
     {
-        Debug.Log($"Preparation Exit");
-        if (InstanceFinder.ClientManager.Started)
-        {
-            UIManager.Instance.shopItemUI.CloseShuttereUI();
-        }
+        Debug.Log($"PreparationState ExitServer");
     }
 
-    public void Enter()
+    public void ExitClient()
     {
-        Debug.Log($"Preparation Enter");
-        var isFirstRound = GameStateController.Instance.NbRounds == 0;
+        Debug.Log($"PreparationState ExitClient");
+       
+        UIManager.Instance.shopItemUI.CloseShuttereUI();
+    }
+    
+    public void EnterClient()
+    {
+        Debug.Log($"PreparationState EnterClient");
+        Debug.Log($"UIManager {UIManager.Instance} )");
+        Debug.Log($"and ShopItemUI {UIManager.Instance.shopItemUI}");
+        UIManager.Instance.shopItemUI.OpenShuttereUI();
+    }
+    
 
-        if (InstanceFinder.ServerManager.Started)
+    public void EnterServer()
+    {
+        Debug.Log($"Preparation EnterServer");
+        var isFirstRound = GameStateController.Instance.NbRounds == 0;
+        
+        foreach (PlayerState ps in PlayerRegistry.GetAll) 
         {
-            foreach (PlayerState ps in PlayerRegistry.GetAll)
-            {
-                if (isFirstRound)
-                {
-                    ps.InitItemsFromDatabase();
-                    ps.GetComponent<CardStallTable>().SetCardStallsOnTableByDataBase();
-                }
-                ps.SetNewMoney();
+            if (isFirstRound)
+            { 
+                ps.InitItemsFromDatabase(); 
+                ps.GetComponent<CardStallTable>().SetCardStallsOnTableByDataBase();
+            }
+            else ps.SetNewMoney();
                 
-            }
-            if (InstanceFinder.ClientManager.Started)
-            {
-                UIManager.Instance.shopItemUI.OpenShuttereUI();
-            }
-            /*GameStateController.Instance.ObserversEnterPreparationState();*/
         }
     }
     

@@ -15,6 +15,7 @@ public class GameStateController : NetworkBehaviour
     private void Awake()
     {
         Instance = this;
+       
     }
     
     public int NbRounds => _nbRounds;
@@ -39,9 +40,9 @@ public class GameStateController : NetworkBehaviour
     private void SetState(IGameState newState)
     {
         Debug.Log($"SetState {newState.GetType().Name}");
-        CurrentState?.Exit();
+        CurrentState?.ExitServer();
         CurrentState = newState;
-        CurrentState.Enter();
+        CurrentState.EnterServer();
         
         ObserversSetState(newState.GameStateType);
     }
@@ -55,9 +56,9 @@ public class GameStateController : NetworkBehaviour
     private void ObserversSetState(GameStateType type)
     {
         if (CurrentState != null && CurrentState.GameStateType == type) return;
-        CurrentState?.Exit();
+        CurrentState?.ExitClient();
         CurrentState = CreateState(type);
-        CurrentState.Enter();
+        CurrentState.EnterClient();
     }
     
     [ObserversRpc]
@@ -81,7 +82,7 @@ public class GameStateController : NetworkBehaviour
         };
     }
 
-    /*[ServerRpc(RequireOwnership = false)]
+    [ServerRpc(RequireOwnership = false)]
     public void ServerStartGame()
     {
         if (!IsHostStarted) return;
@@ -96,34 +97,76 @@ public class GameStateController : NetworkBehaviour
 
     private void OnGameSceneLoaded(SceneLoadEndEventArgs args)
     {
+        SceneManager.OnLoadEnd -= OnGameSceneLoaded;
         ServerSetState(GameStateType.Preparation);
-    }*/
+    }
     
+    /*private int _clientsLoaded = 0;
+    private int _clientsReady = 0;
+    private int _expectedClients = 0;
+
     [ServerRpc(RequireOwnership = false)]
     public void ServerStartGame()
     {
         if (!IsHostStarted) return;
 
+        _clientsLoaded = 0;
+        _clientsReady  = 0;
+        _sceneLoadHandled = false; // ← reset
+        _expectedClients = InstanceFinder.ServerManager.Clients.Count;
+
+        Debug.Log($"Lancement avec {_expectedClients} clients");
+
         SceneLoadData data = new SceneLoadData("Theo");
+        InstanceFinder.SceneManager.OnLoadEnd += OnSceneLoadEnd;
         InstanceFinder.SceneManager.LoadGlobalScenes(data);
-
-        // On écoute les clients
-        InstanceFinder.SceneManager.OnClientLoadedStartScenes += OnClientFinishedLoading;
     }
 
-    private int clientsLoaded = 0;
+    private bool _sceneLoadHandled = false;
 
-    private void OnClientFinishedLoading(NetworkConnection conn, bool asServer)
+    private void OnSceneLoadEnd(SceneLoadEndEventArgs args)
     {
-        clientsLoaded++;
+        Debug.Log($"OnLoadEnd — AsServer:{args.QueueData.AsServer} " +
+                  $"IsServer:{IsServerStarted} " +
+                  $"Scenes:{string.Join(", ", System.Array.ConvertAll(args.LoadedScenes, s => s.name))}");
 
-        // Quand tous les joueurs sont prêts
-        if (clientsLoaded == InstanceFinder.ServerManager.Clients.Count)
-        {
-            InstanceFinder.SceneManager.OnClientLoadedStartScenes -= OnClientFinishedLoading;
-            ServerSetState(GameStateType.Preparation);
-        }
+        if (!IsServerStarted) return; // ← utilise ça à la place
+        if (_sceneLoadHandled) return;
+        if (args.LoadedScenes == null || args.LoadedScenes.Length == 0) return;
+
+        bool theoLoaded = false;
+        foreach (var scene in args.LoadedScenes)
+            if (scene.name == "Theo") theoLoaded = true;
+        if (!theoLoaded) return;
+
+        _sceneLoadHandled = true;
+        InstanceFinder.SceneManager.OnLoadEnd -= OnSceneLoadEnd;
+
+        Debug.Log("Scène Theo chargée → RpcAskClientsReady");
+        RpcAskClientsReady();
     }
+
+    [ObserversRpc]
+    private void RpcAskClientsReady()
+    {
+        ServerConfirmReady();
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void ServerConfirmReady()
+    {
+        _clientsReady++;
+        Debug.Log($"Clients prêts : {_clientsReady} / {_expectedClients}");
+
+        if (_clientsReady >= _expectedClients)
+        {
+            // ✅ Appel direct au lieu de passer par un ServerRpc
+            var newState = CreateState(GameStateType.Preparation);
+            SetState(newState);
+        }
+    }   
+    */
+
 
 
     
@@ -137,6 +180,7 @@ public class GameStateController : NetworkBehaviour
     [TargetRpc]
     public void TargetEnterLobbyState(NetworkConnection conn, bool isLobbyLeader)
     {
+        Debug.Log($"GameStateController::IsLobbyLeader: {isLobbyLeader}");
         MenuUIManager.Instance.SetLobbyStateUI(isLobbyLeader);
     }
     

@@ -18,9 +18,15 @@ public class UIManager : MonoBehaviour
     public UISlotShop uiSlotShop;
     public UICardShop uiCardShop;
     public UIMillShop uiMillShop;
-    
-    private PlayerState _ps;
+    public LocalPlayerUIBinder localPlayerUIBinder;
+    public PlayerState ps;
 
+    public void Bind(PlayerState ps)
+    {
+        this.ps = ps;
+        uiCardShop.Bind(ps);
+        localPlayerUIBinder.Bind(ps);
+    }
     
     public void Awake()
     {
@@ -29,7 +35,7 @@ public class UIManager : MonoBehaviour
 
     private void Start()
     {
-        _ps = PlayerRegistry.GetPlayerState(InstanceFinder.ClientManager.Connection);
+
         if (defaultPanel == null) return;
         ShowPanel(defaultPanel);
 

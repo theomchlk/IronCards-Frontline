@@ -7,13 +7,10 @@ public class BuyItemButton : MonoBehaviour
 {
     [SerializeField] private ShopItem _shopItem;
     [SerializeField] private ItemSO _itemData;
-
-    public void Start()
-    {
-        _shopItem = PlayerRegistry.GetPlayerState(InstanceFinder.ClientManager.Connection).GetComponent<ShopItem>();
-    }
+    
     public void OnClickBuyItem()
     {
+        if (!_shopItem) _shopItem = UIManager.Instance.ps.GetComponent<ShopItem>();
         _shopItem.BuyItemServerRpc(_itemData.Id);
     }
 

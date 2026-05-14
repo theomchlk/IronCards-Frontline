@@ -412,7 +412,7 @@ MonoBehaviour:
   _initializeOrder: 0
   _preventDespawnOnDisconnect: 0
   _defaultDespawnType: 0
-  _initializedTimestamp: -8584236118198568742
+  _initializedTimestamp: -8584233554432024288
 --- !u!114 &987295808739517072
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -902,7 +902,7 @@ MonoBehaviour:
   _spectatorInterpolation: 2
   _enableTeleport: 0
   _teleportThreshold: 1
-  <PrefabId>k__BackingField: 9
+  <PrefabId>k__BackingField: 10
   <SpawnableCollectionId>k__BackingField: 0
   <AssetPathHash>k__BackingField: 6327428683875275301
   SceneId: 0
@@ -932,7 +932,7 @@ MonoBehaviour:
   _initializeOrder: -3
   _preventDespawnOnDisconnect: 0
   _defaultDespawnType: 0
-  _initializedTimestamp: -8584236118198568742
+  _initializedTimestamp: -8584233554432024288
 --- !u!114 &5495445565985175453
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -980,7 +980,6 @@ MonoBehaviour:
   _addedNetworkObject: {fileID: 4350343371047122656}
   _networkObjectCache: {fileID: 4350343371047122656}
   playerConfig: {fileID: 11400000, guid: 0034ef9e26a1c904abc06f38f5d85e03, type: 2}
-  uiManager: {fileID: 8218382974991641414}
 --- !u!114 &8218382974991641414
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -995,6 +994,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UIManager
   defaultPanel: {fileID: 7104400532607756724}
   moneyUI: {fileID: 752145897062780224}
+  shopItemUI: {fileID: 0}
   uiSlotShop: {fileID: 7958258008643833650}
   uiCardShop: {fileID: 2684032653656198589}
   uiMillShop: {fileID: 362527050214871689}

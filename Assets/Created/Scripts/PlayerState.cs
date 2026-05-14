@@ -5,6 +5,7 @@ using FishNet.Object;
 using FishNet.Object.Synchronizing;
 using System.Collections.Generic;
 using FishNet;
+using FishNet.Managing.Scened;
 using Unity.VisualScripting;
 
 public class PlayerState : NetworkBehaviour
@@ -84,6 +85,26 @@ public class PlayerState : NetworkBehaviour
         _slotItems.Clear();*/
 
         PlayerRegistry.Unregister(Owner);
+    }
+
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+
+        if (!IsOwner) return;
+        InstanceFinder.SceneManager.OnLoadEnd += OnGameSceneLoad;
+    }
+
+    private void OnGameSceneLoad(SceneLoadEndEventArgs args)
+    {
+        InstanceFinder.SceneManager.OnLoadEnd -= OnGameSceneLoad;
+        UIManager.Instance.Bind(this);
+    }
+
+    public override void OnStopClient()
+    {
+        base.OnStopClient();
+        InstanceFinder.SceneManager.OnLoadEnd -= OnGameSceneLoad;
     }
 
     

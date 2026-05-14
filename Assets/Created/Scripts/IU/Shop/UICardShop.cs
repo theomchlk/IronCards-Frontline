@@ -11,13 +11,13 @@ public class UICardShop : MonoBehaviour
     public ShopItem shopItem;
     /*[SerializeField] private GameObject cardStallUI;
     [SerializeField] private GameObject cardContainerUI;*/
-    private UIManager _uIManager;
+    /*private UIManager _uIManager;*/
     
     public void Setup(UIManager uIManager) => uIManager = uIManager;
 
-    public void Awake()
+    public void Bind(PlayerState ps)
     {
-        shopItem = PlayerRegistry.GetPlayerState(InstanceFinder.ClientManager.Connection).GetComponent<ShopItem>();
+        shopItem = ps.GetComponent<ShopItem>();
     }
 
     public void BuyNewCard(CardItem card, UISlotShop uiSlotShop)
