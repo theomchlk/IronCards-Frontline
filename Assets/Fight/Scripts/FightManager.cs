@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class FightManager : MonoBehaviour
@@ -7,6 +8,29 @@ public class FightManager : MonoBehaviour
     [SerializeField] private TmpPlayerCamp playerRight;
     [SerializeField] private Canvas canvasLeft;
     [SerializeField] private Canvas canvasRight;
+    [SerializeField] private SoldierRegistry soldierRegistry;
+
+    public static event Action<int> OnFightEnd;
+
+    void Awake()
+    {
+        if (soldierRegistry == null)
+            soldierRegistry = GetComponentInChildren<SoldierRegistry>();
+
+        SoldierRegistry.OnTeamEliminated += HandleTeamEliminated;
+    }
+
+    void OnDestroy()
+    {
+        SoldierRegistry.OnTeamEliminated -= HandleTeamEliminated;
+    }
+
+    private void HandleTeamEliminated(int losingTeamId)
+    {
+        int winnerTeamId = losingTeamId == 0 ? 1 : 0;
+        Debug.Log($"Équipe {losingTeamId} éliminée. Victoire de l'équipe {winnerTeamId}.");
+        OnFightEnd?.Invoke(winnerTeamId);
+    }
 
     void Start()
     {

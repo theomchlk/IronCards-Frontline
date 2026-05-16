@@ -12,7 +12,20 @@ public class Healer : Soldier
     {
         return GetOwnerId() == other.GetOwnerId();
     }
-    
+
+    public override Soldier GetNearestTarget()
+    {
+        if (SoldierRegistry.Instance == null)
+            return null;
+
+        Soldier mostWounded = SoldierRegistry.Instance.GetMostWoundedAlly(this);
+
+        if (mostWounded != null && IsInRange(mostWounded))
+            return mostWounded;
+
+        return mostWounded;
+    }
+
     public override void Action(Soldier target) {
         if (target == null || !target.IsAlive() || !IsInRange(target) || GetOwnerId() != target.GetOwnerId())
             return;
@@ -24,7 +37,6 @@ public class Healer : Soldier
             if (animator != null) {
                 animator.SetTrigger("Action");
             }
-
 
             StartCoroutine(DelayedSound());
             StartCoroutine(DelayedHeal(target));

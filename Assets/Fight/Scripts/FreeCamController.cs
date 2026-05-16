@@ -19,15 +19,6 @@ public class FreeCamController : MonoBehaviour
     [Header("Constraints")]
     [SerializeField] private float maxHeight = 80f;
     [SerializeField] private GameObject[] ground;
-    private Soldier hoveredSoldier;
-    private Soldier selectedSoldier;
-
-    [Header("UI")]
-    [SerializeField] private SoldierUIManager uiManager;
-    [SerializeField] private Texture2D defaultCursor;
-    [SerializeField] private Texture2D attackCursor;
-    [SerializeField] private Texture2D stepCursor;
-
 
     private float pitch = 0f;
     private float yaw = 0f;
@@ -44,29 +35,19 @@ public class FreeCamController : MonoBehaviour
         Vector3 angles = transform.eulerAngles;
         pitch = angles.x;
         yaw = angles.y;
-        Cursor.SetCursor(defaultCursor, Vector2.zero, CursorMode.Auto);
         
         CalculateGroundBounds();    
     }
 
     void LateUpdate()
     {
-        HandleEscapeKey();
         HandleMovement();
         HandleRotation();
         HandleZoom();
         HandleGroundCollision();
         HandleConstraints();
 
-        hoveredSoldier = GetSoldierUnderMouse();
-        
-        HandleMouseInteractions();
-        UpdateCursorState();
-        UpdateUI();
-
         DisplayFPS();
-
-        
     }
 
     private void CalculateGroundBounds()
@@ -157,42 +138,6 @@ public class FreeCamController : MonoBehaviour
         }
     }
 
-    public Soldier GetSoldierUnderMouse()
-    {
-        Mouse mouse = Mouse.current;
-        if (mouse == null) return null;
-
-        Ray ray = cam.ScreenPointToRay(mouse.position.ReadValue());
-        RaycastHit hit;
-
-        if (Physics.Raycast(ray, out hit, 500f))
-        {
-            Soldier targetSoldier = hit.collider.GetComponentInParent<Soldier>();
-            
-            if (targetSoldier != null)
-            {
-                return targetSoldier;
-            }
-        }
-
-        return null;
-    }
-
-    private Vector3 GetMouseClickedPoint()
-    {
-        Mouse mouse = Mouse.current;
-        if (mouse == null) return Vector3.zero;
-
-        Ray ray = cam.ScreenPointToRay(mouse.position.ReadValue());
-        RaycastHit hit;
-
-        if (Physics.Raycast(ray, out hit, 500f, groundLayer))
-        {
-            return hit.point;
-        }
-
-        return Vector3.zero;
-    }
     private void HandleConstraints()
     {
         if (!hasGroundConstraints) return;
@@ -202,92 +147,6 @@ public class FreeCamController : MonoBehaviour
         pos.x = Mathf.Clamp(pos.x, minConstraintX + 0.2f, maxConstraintX - 0.2f);
         pos.z = Mathf.Clamp(pos.z, minConstraintZ + 0.2f, maxConstraintZ - 0.2f);
         transform.position = pos;
-    }
-
-    private void HandleMouseInteractions()
-    {
-        if (Mouse.current == null || !Mouse.current.leftButton.wasPressedThisFrame) return;
-
-        if (selectedSoldier == null && hoveredSoldier != null)
-        {
-            SelectSoldier(hoveredSoldier);
-        } 
-        else if (selectedSoldier != null && hoveredSoldier != null && hoveredSoldier != selectedSoldier && selectedSoldier.GetOwnerId() != hoveredSoldier.GetOwnerId())
-        {
-            selectedSoldier.SetTarget(hoveredSoldier);
-        } 
-        else if (selectedSoldier != null && hoveredSoldier == null)
-        {
-            CommandSoldierToMove();
-        }
-    }
-
-    private void CommandSoldierToMove()
-    {
-        Vector3 targetPoint = GetMouseClickedPoint();
-        if (targetPoint != Vector3.zero)
-        {
-            selectedSoldier.HandleMovementRigidbody(targetPoint);
-            selectedSoldier.SetTarget(null);
-        }
-    }
-
-    private void HandleEscapeKey()
-    {
-        if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame && selectedSoldier != null)
-        {
-            selectedSoldier.SetIsControlledByPlayer(false);
-            selectedSoldier.SetTarget(null);
-            selectedSoldier = null;
-        }
-    }
-
-    private void UpdateCursorState()
-    {
-        if (selectedSoldier != null)
-        {
-            if (hoveredSoldier != null && selectedSoldier.GetOwnerId() != hoveredSoldier.GetOwnerId())
-            {
-                Cursor.SetCursor(attackCursor, Vector2.zero, CursorMode.Auto);
-            }
-            else
-            {
-                Cursor.SetCursor(stepCursor, new Vector2(stepCursor.width / 2, stepCursor.height / 2), CursorMode.Auto);
-            }
-        }
-        else
-        {
-            Cursor.SetCursor(defaultCursor, Vector2.zero, CursorMode.Auto);
-        }
-    }
-
-    private void HandleSoldier(Soldier soldier)
-    {
-        soldier.SetBloomMaterial();
-
-        uiManager.ShowAndUpdateUI(soldier);
-    }
-
-    private void UpdateUI()
-    {
-        if (hoveredSoldier != null)
-        {
-            HandleSoldier(hoveredSoldier);
-        }
-        else if (selectedSoldier != null)
-        {
-            HandleSoldier(selectedSoldier);
-        }
-        else
-        {
-            uiManager.HideUI();
-        }
-    }
-
-    private void SelectSoldier(Soldier soldier)
-    {
-        selectedSoldier = soldier;
-        selectedSoldier.SetIsControlledByPlayer(true);
     }
 
     private void DisplayFPS()

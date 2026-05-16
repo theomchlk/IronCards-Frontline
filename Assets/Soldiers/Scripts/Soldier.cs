@@ -1,7 +1,5 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
 
 public abstract class Soldier : MonoBehaviour
 {
@@ -17,8 +15,7 @@ public abstract class Soldier : MonoBehaviour
     private Rigidbody mainRigidbody;
     private Collider[] ragdollColliders;
     private float lastMaterialChangeTime = 0f;
-    private bool isControlledByPlayer = false;
-    private static List<Soldier> allSoldiers = new List<Soldier>();
+    private SoldierState state = SoldierState.Idle;
     private Vector3 destination;
     private bool movementRequested;
 
@@ -45,6 +42,7 @@ public abstract class Soldier : MonoBehaviour
     public float GetArmorProtection() => data.armorProtection;
     public AudioClip GetProtectionSound() => data.protectionSound;
     private FightColorsSO GetMaterials() => data.fightColors;
+    public SoldierState GetState() => state;
 
     // ==========================================
     // ABSTRACT METHODS
@@ -74,24 +72,24 @@ public abstract class Soldier : MonoBehaviour
         audioSource.maxDistance = Mathf.Max(15f, GetRange() * 4f);
     }
 
-    private void SetRagdollState(bool state)
+    private void SetRagdollState(bool enabled)
     {
         foreach (Rigidbody rrb in ragdollRigidbodies)
         {
-            rrb.isKinematic = !state;
+            rrb.isKinematic = !enabled;
         }
 
         foreach (Collider col in ragdollColliders)
         {
             if (col.gameObject != gameObject)
-                col.enabled = state;
+                col.enabled = enabled;
         }
 
         if (mainRigidbody != null)
-            mainRigidbody.isKinematic = state;
+            mainRigidbody.isKinematic = enabled;
 
         if (GetComponent<Collider>() != null)
-            GetComponent<Collider>().enabled = !state;
+            GetComponent<Collider>().enabled = !enabled;
     }
 
     public void SetMaterial(Material mat)
@@ -128,11 +126,15 @@ public abstract class Soldier : MonoBehaviour
 
     public void SetIsControlledByPlayer(bool value)
     {
-        isControlledByPlayer = value;
-        if (isControlledByPlayer)
+        if (value)
         {
+            state = SoldierState.PlayerControlled;
             StopMovementRigidbody();
             target = null;
+        }
+        else
+        {
+            state = SoldierState.Idle;
         }
     }
 
@@ -147,7 +149,8 @@ public abstract class Soldier : MonoBehaviour
 
     private void Awake()
     {
-        allSoldiers.Add(this);
+        if (SoldierRegistry.Instance != null)
+            SoldierRegistry.Instance.Register(this);
 
         activationTime = Time.time + 2f;
         animator = GetComponent<Animator>();
@@ -176,7 +179,7 @@ public abstract class Soldier : MonoBehaviour
         if (Time.time < activationTime || !IsAlive())
             return;
 
-        if (isControlledByPlayer)
+        if (state == SoldierState.PlayerControlled)
         {
             HandlePlayerBehavior();
         }
@@ -247,25 +250,12 @@ public abstract class Soldier : MonoBehaviour
         }
     }
 
-    public Soldier GetNearestTarget()
+    public virtual Soldier GetNearestTarget()
     {
-        Soldier nearestTarget = null;
-        float shortestDistance = float.MaxValue;
+        if (SoldierRegistry.Instance != null)
+            return SoldierRegistry.Instance.GetNearestTarget(this);
 
-        foreach (Soldier s in allSoldiers)
-        {
-            if (s != this && s.IsAlive() && CompareOwnerId(s))
-            {
-                float distance = (transform.position - s.GetPosition()).sqrMagnitude;
-                if (distance < shortestDistance)
-                {
-                    shortestDistance = distance;
-                    nearestTarget = s;
-                }
-            }
-        }
-
-        return nearestTarget;
+        return null;
     }
 
     public bool IsInRange(Soldier target)
@@ -330,11 +320,16 @@ public abstract class Soldier : MonoBehaviour
 
     public void Die()
     {
+        state = SoldierState.Dead;
+
         if (animator != null)
             animator.enabled = false;
 
         SetRagdollState(true);
-        allSoldiers.Remove(this);
+
+        if (SoldierRegistry.Instance != null)
+            SoldierRegistry.Instance.Unregister(this);
+
         Destroy(gameObject, 4f);
     }
 

@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 1254679606974807014}
   - component: {fileID: 6112068550301660528}
   - component: {fileID: 4793598924421000367}
+  - component: {fileID: 8296237542045122851}
   m_Layer: 0
   m_Name: Camera
   m_TagString: Untagged
@@ -161,7 +162,22 @@ MonoBehaviour:
   ground:
   - {fileID: 0}
   - {fileID: 0}
+--- !u!114 &8296237542045122851
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2353045261735969347}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eec8a8f7fdff9b146944a002aa9d49e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SoldierSelectionController
   uiManager: {fileID: 0}
   defaultCursor: {fileID: 2800000, guid: 91c09f9f3ca07ca4a8f6707e4712f97e, type: 3}
   attackCursor: {fileID: 2800000, guid: cc6ac8ef0aaa2014e8e48eef04b5dacf, type: 3}
   stepCursor: {fileID: 2800000, guid: 18cb26f15ac14d44ca833fc4d69d3074, type: 3}
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 4294967295

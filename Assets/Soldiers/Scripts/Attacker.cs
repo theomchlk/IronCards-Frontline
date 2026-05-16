@@ -38,7 +38,8 @@ public class Attacker : Soldier
         if (action != null) {
             action.Execute(this, target);
         }
-        if (IsInRange(target))
+
+        if ((action == null || !action.HandlesDamage()) && IsInRange(target))
         {
             target.TakeDamage(this, GetDamage());
         }
