@@ -2,6 +2,8 @@ using UnityEngine;
 using TMPro;
 using System.Linq;
 using System.Collections.Generic;
+using FishNet;
+using FishNet.Managing;
 using FishNet.Object;
 
 public class UISlotShop : MonoBehaviour
@@ -52,7 +54,6 @@ public class UISlotShop : MonoBehaviour
     
     public void BuyNewSlot(SlotItem slot)
     {
-        Debug.Log("Slot purchased !");
         AddNewSlot(slot);
     }
 

@@ -401,12 +401,9 @@ MonoBehaviour:
   <PredictedOwner>k__BackingField: {fileID: 0}
   NetworkBehaviours:
   - {fileID: 987295808739517072}
-  - {fileID: 0}
   - {fileID: 3136271971920396597}
-  - {fileID: 0}
   InitializedParentNetworkBehaviour: {fileID: 5495445565985175453}
-  InitializedNestedNetworkObjects:
-  - {fileID: 0}
+  InitializedNestedNetworkObjects: []
   RuntimeParentNetworkBehaviour: {fileID: 0}
   RuntimeChildNetworkBehaviours: []
   _isNetworked: 1
@@ -415,7 +412,7 @@ MonoBehaviour:
   _initializeOrder: 0
   _preventDespawnOnDisconnect: 0
   _defaultDespawnType: 0
-  _initializedTimestamp: -8584242952682919079
+  _initializedTimestamp: -8584233554432024288
 --- !u!114 &987295808739517072
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -905,7 +902,7 @@ MonoBehaviour:
   _spectatorInterpolation: 2
   _enableTeleport: 0
   _teleportThreshold: 1
-  <PrefabId>k__BackingField: 11
+  <PrefabId>k__BackingField: 10
   <SpawnableCollectionId>k__BackingField: 0
   <AssetPathHash>k__BackingField: 6327428683875275301
   SceneId: 0
@@ -932,10 +929,10 @@ MonoBehaviour:
   _isNetworked: 1
   _isSpawnable: 1
   _isGlobal: 0
-  _initializeOrder: 0
+  _initializeOrder: -3
   _preventDespawnOnDisconnect: 0
   _defaultDespawnType: 0
-  _initializedTimestamp: -8584242952682919079
+  _initializedTimestamp: -8584233554432024288
 --- !u!114 &5495445565985175453
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -997,6 +994,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UIManager
   defaultPanel: {fileID: 7104400532607756724}
   moneyUI: {fileID: 752145897062780224}
+  shopItemUI: {fileID: 0}
   uiSlotShop: {fileID: 7958258008643833650}
   uiCardShop: {fileID: 2684032653656198589}
   uiMillShop: {fileID: 362527050214871689}
@@ -1304,7 +1302,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b388c3c4f6f84db3b7c729bcce834f56, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Created.Scripts.IU.Shop.CardStallTable
-  _componentIndexCache: 2
+  _componentIndexCache: 1
   _addedNetworkObject: {fileID: 9212670185691083737}
   _networkObjectCache: {fileID: 9212670185691083737}
 --- !u!1 &6717585247032437119

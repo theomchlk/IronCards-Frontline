@@ -7,5 +7,5 @@ public abstract class ASpawnableItem : NetworkBehaviour
 { 
     public abstract void Init(ItemSO itemData);
 
-    public abstract void TargetSpawnItem(NetworkConnection conn);
+    public abstract void TargetSpawnItem(NetworkConnection conn, string itemId);
 }

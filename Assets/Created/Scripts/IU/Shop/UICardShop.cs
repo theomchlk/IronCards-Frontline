@@ -1,18 +1,29 @@
 using Created.Scripts.IU;
 using Created.Scripts.IU.Shop;
+using FishNet;
+using FishNet.Connection;
 using UnityEngine;
 
 public class UICardShop : MonoBehaviour
 {
 
     [SerializeField] private Transform cardStallsLocation;
-    [SerializeField] private ShopItem shopItem;
+    public ShopItem shopItem;
     /*[SerializeField] private GameObject cardStallUI;
     [SerializeField] private GameObject cardContainerUI;*/
+    /*private UIManager _uIManager;*/
+    
+    public void Setup(UIManager uIManager) => uIManager = uIManager;
 
-    public void BuyNewCard(CardItem card)
+    public void Bind(PlayerState ps)
     {
-        var slotFree = UIManager.Instance.uiSlotShop.GetSlotFree();
+        shopItem = ps.GetComponent<ShopItem>();
+    }
+
+    public void BuyNewCard(CardItem card, UISlotShop uiSlotShop)
+    {
+        
+        var slotFree = uiSlotShop.GetSlotFree();
         Debug.Log(slotFree.name);
         var cardPrefab = card.Data.goItemUI;
         var cardUI= Instantiate(cardPrefab, slotFree.transform).GetComponent<CardUI>();
@@ -67,6 +78,7 @@ public class UICardShop : MonoBehaviour
 
     public void AddNewStall(CardStallSO csSO)
     {
+        
         var csGO = Instantiate(csSO.cardStallPrefab, cardStallsLocation);
         var csUI = csGO.GetComponent<CardStallUI>();
         csUI.SetCardStall(csSO);

@@ -1,4 +1,5 @@
 using System;
+using FishNet;
 using NUnit.Framework.Internal;
 using UnityEngine;
 
@@ -13,10 +14,19 @@ public class UIManager : MonoBehaviour
     [SerializeField] private PanelBehavior defaultPanel;
     public MoneyUI moneyUI;
     
+    public ShopItemUI shopItemUI;
     public UISlotShop uiSlotShop;
     public UICardShop uiCardShop;
     public UIMillShop uiMillShop;
+    public LocalPlayerUIBinder localPlayerUIBinder;
+    public PlayerState ps;
 
+    public void Bind(PlayerState ps)
+    {
+        this.ps = ps;
+        uiCardShop.Bind(ps);
+        localPlayerUIBinder.Bind(ps);
+    }
     
     public void Awake()
     {
@@ -25,9 +35,10 @@ public class UIManager : MonoBehaviour
 
     private void Start()
     {
+
         if (defaultPanel == null) return;
         ShowPanel(defaultPanel);
-        
+
     }
 
     public void ShowPanel(PanelBehavior panel)
@@ -43,6 +54,12 @@ public class UIManager : MonoBehaviour
     {
         OnSetUIsItems?.Invoke();
     }
+
+    public void SetUpUI()
+    {
+        uiCardShop.Setup(this);
+    }
+    
     
 }
 
