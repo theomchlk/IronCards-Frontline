@@ -21,7 +21,7 @@ public class MenuUIManager : MonoBehaviour
 
     public void SetLobbyPanelActive()
     {
-        for (var i = 0 ; i < transform.childCount ; i++)
+        for (var i = 0 ; i < transform.childCount-3 ; i++)
         {
             transform.GetChild(i).gameObject.SetActive(false);
         }
@@ -32,7 +32,8 @@ public class MenuUIManager : MonoBehaviour
     
     public void OnClickCreateLobby()
     {
-        LobbyManager.Instance.ServerCreateLobby(nameInputField.text, maxPlayersDropdown.value + 2);
+        LobbyBroadcaster.Instance.CreateNewLobby(nameInputField.text, maxPlayersDropdown.value + 2);
+        SetLobbyPanelActive();
     }
 
 
@@ -41,10 +42,12 @@ public class MenuUIManager : MonoBehaviour
         InstanceFinder.ClientManager.StopConnection();
         
         // Si c'est l'hôte, on arrête aussi le serveur
+        /*
         if (InstanceFinder.ServerManager.Started)
             InstanceFinder.ServerManager.StopConnection(false);
+            */
         
-        InstanceFinder.ClientManager.StartConnection("127.0.0.1", 7780);
+        /*InstanceFinder.ClientManager.StartConnection("127.0.0.1", 7780);*/
     }
 
     public void OnClickStartGame()

@@ -23,7 +23,14 @@ public class GameStateController : NetworkBehaviour
 
     public override void OnStartServer()
     {
+        base.OnStartServer();
         SetState(new LobbyState());
+    }
+
+    public override void OnStopServer()
+    {
+        base.OnStopServer();
+        CurrentState = null;
     }
     
 
@@ -83,9 +90,9 @@ public class GameStateController : NetworkBehaviour
     }
 
     [ServerRpc(RequireOwnership = false)]
-    public void ServerStartGame()
+    public void ServerStartGame(NetworkConnection conn = null)
     {
-        if (!IsHostStarted) return;
+        if (!conn.IsHost) return;
 
         Debug.Log("ServerStartGame");
 
@@ -98,6 +105,7 @@ public class GameStateController : NetworkBehaviour
     private void OnGameSceneLoaded(SceneLoadEndEventArgs args)
     {
         SceneManager.OnLoadEnd -= OnGameSceneLoaded;
+        Debug.Log("Scene loaded !");
         ServerSetState(GameStateType.Preparation);
     }
     
