@@ -26,10 +26,12 @@ public class UILobbyList : MonoBehaviour
     public void UpdatePanel(int index, LobbyData data)
     {
         LobbyUI lobbyUI = lobbyListLocation.GetChild(index).GetComponent<LobbyUI>();
+        lobbyUI.ResetTimerSeen();
+        if (!data.hasBeenModified) return;
         lobbyUI.SetUI(data);
     }
     
-    public bool PanelExists(int lobbyId)
+    public bool PanelExists(string lobbyId)
     {
         foreach (Transform child in lobbyListLocation)
         {

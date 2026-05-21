@@ -74,6 +74,7 @@ public class PlayerState : NetworkBehaviour
     public override void OnStopServer()
     {
         base.OnStopServer();
+        if (GameStateController.Instance.CurrentState == null) return;
         GameStateController.Instance.CurrentState.OnPlayerExit(this);
         Debug.Log($"OnStopServer: {InstanceFinder.ClientManager.Connection}");
         /*foreach (var slot in _slotItems)
@@ -192,8 +193,21 @@ public class PlayerState : NetworkBehaviour
 
     [Server]
     public bool IsLobbyLeader() => isLobbyLeader.Value;
-    
 
+    [ServerRpc]
+    public void ServerPlayerSurrender(NetworkConnection conn = null)
+    {
+        if (conn != Owner) return;
+        hp.Value = 0;
+        LoadBackMainMenu(conn);
+    }
+
+    [Server]
+    private void LoadBackMainMenu(NetworkConnection conn)
+    {
+        SceneUnloadData sceneUnloadData = new SceneUnloadData("Theo");
+        InstanceFinder.SceneManager.UnloadConnectionScenes(conn, sceneUnloadData);
+    }
 
 
 

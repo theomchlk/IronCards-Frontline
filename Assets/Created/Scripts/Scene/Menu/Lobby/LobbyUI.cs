@@ -12,8 +12,22 @@ public class LobbyUI : MonoBehaviour
     [SerializeField] private TMP_Text lobbyAddressText;
     [SerializeField] private TMP_Text lobbyPlayersText;
     [SerializeField] private Button joinLobbyButton;
+    public float timerBeforeDelete = 5;
+    private float _lastTimeSeen;
 
+    void Awake()
+    {
+        ResetTimerSeen();
+    }
 
+    void Update()
+    {
+        _lastTimeSeen -= Time.deltaTime;
+        if (_lastTimeSeen > 0) return;
+        LobbyDiscovery.Instance.RemoveLobbyDataInList(_data.id);
+        Destroy(gameObject);
+        
+    }
 
     public void SetUI(LobbyData data)
     {
@@ -23,7 +37,11 @@ public class LobbyUI : MonoBehaviour
         SetNbPlayersUI(data.nbPlayers, data.maxPlayers);
 
     }
-    
+
+    public void ResetTimerSeen()
+    {
+        _lastTimeSeen = timerBeforeDelete;
+    }
     
     public void SetNbPlayersUI(int nbPlayers, int nbPlayersMax)
     {
@@ -32,11 +50,11 @@ public class LobbyUI : MonoBehaviour
 
     public void OnClickJoinButton()
     {
-        LobbyManager.Instance.ServerJoinLobby(_data.id);
+        LobbyDiscovery.Instance.JoinLobby(_data.id);
         
     }
     
-    public int LobbyId => _data.id;
+    public string LobbyId => _data.id;
     
 
     public void SetJoinFailed()

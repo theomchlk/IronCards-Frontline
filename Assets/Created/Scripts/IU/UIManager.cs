@@ -59,6 +59,11 @@ public class UIManager : MonoBehaviour
     {
         uiCardShop.Setup(this);
     }
+
+    public void OnClickSurrender()
+    {
+        ps.ServerPlayerSurrender();
+    }
     
     
 }
