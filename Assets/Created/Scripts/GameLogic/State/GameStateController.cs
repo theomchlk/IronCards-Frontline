@@ -6,7 +6,8 @@ using UnityEngine;
 
 public class GameStateController : NetworkBehaviour
 {
-    
+    [SerializeField] private Canvas lobbyCanvas;  
+
     public static GameStateController Instance;
     private int _nbRounds = 0;
     
@@ -15,7 +16,6 @@ public class GameStateController : NetworkBehaviour
     private void Awake()
     {
         Instance = this;
-       
     }
     
     public int NbRounds => _nbRounds;
@@ -99,7 +99,20 @@ public class GameStateController : NetworkBehaviour
         SceneLoadData data = new SceneLoadData("Theo");
         SceneManager.OnLoadEnd += OnGameSceneLoaded; // ← callback attaché AVANT le chargement
 
-       SceneManager.LoadGlobalScenes(data);
+        // SceneManager.LoadGlobalScenes(data);
+
+        // Temporaire pour les tests
+        SceneLoadData data2 = new SceneLoadData("Noah");
+        SceneManager.LoadGlobalScenes(data2);
+
+        ObserversHideLobbyCanvas();
+    }
+
+    [ObserversRpc]
+    private void ObserversHideLobbyCanvas()
+    {
+        if (lobbyCanvas != null)
+            lobbyCanvas.gameObject.SetActive(false);
     }
 
     private void OnGameSceneLoaded(SceneLoadEndEventArgs args)

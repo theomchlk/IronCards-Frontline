@@ -9,7 +9,6 @@ public class SoldierRegistry : MonoBehaviour
     private readonly List<Soldier> _soldiers = new List<Soldier>();
 
     public static event Action<Soldier> OnSoldierDied;
-    public static event Action<int> OnTeamEliminated;
 
     private void Awake()
     {
@@ -27,7 +26,6 @@ public class SoldierRegistry : MonoBehaviour
         {
             Instance = null;
             OnSoldierDied = null;
-            OnTeamEliminated = null;
         }
     }
 
@@ -100,7 +98,5 @@ public class SoldierRegistry : MonoBehaviour
             if (s.GetOwnerId() == teamId)
                 return;
         }
-
-        OnTeamEliminated?.Invoke(teamId);
     }
 }

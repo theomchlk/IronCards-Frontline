@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using FishNet.Connection;
+using UnityEngine;
 
 public static class PlayerRegistry
 {
@@ -22,4 +23,15 @@ public static class PlayerRegistry
     }
     
     public static IEnumerable<PlayerState> GetAll => players.Values;
+
+    public static void DisplayAllInformations()
+    {
+        Debug.Log("Current Players in Registry:");
+        Debug.Log($"Total Players: {players.Count}");
+        foreach (var conn in players)
+        {
+            var ps = conn.Value;
+            Debug.Log($"Player : IsLeader={ps.IsLobbyLeader()} | isOwner={ps.IsOwner}"); 
+        }
+    }
 }

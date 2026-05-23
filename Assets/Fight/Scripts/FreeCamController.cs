@@ -47,7 +47,7 @@ public class FreeCamController : MonoBehaviour
         HandleGroundCollision();
         HandleConstraints();
 
-        DisplayFPS();
+        // DisplayFPS();
     }
 
     private void CalculateGroundBounds()

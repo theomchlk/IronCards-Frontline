@@ -12,6 +12,7 @@ public class PlayerState : NetworkBehaviour
 {
     /*public static PlayerState Local;*/
     [SerializeField] private PlayerSO playerConfig;
+    [SerializeField] private PlayerCamp defaultCamp;
     /*[SerializeField] private UIManager uiManager;
     
     public UIManager UIManager => uiManager;*/
@@ -30,6 +31,7 @@ public class PlayerState : NetworkBehaviour
     //Mill
     public readonly SyncVar<int> nbMills = new();
     public readonly SyncVar<int> millCost = new();
+    public readonly SyncVar<PlayerCamp> playerCamp = new();
 
     
     private List<SlotItem> _slotItems = new();
@@ -40,6 +42,8 @@ public class PlayerState : NetworkBehaviour
         hp.Value = playerConfig.hpByDefault;
         money.Value = playerConfig.moneyByDefault;
         _moneyPerMills = playerConfig.moneyPerMills;
+
+       playerCamp.Value = defaultCamp;
     }
 
 
@@ -99,7 +103,8 @@ public class PlayerState : NetworkBehaviour
     private void OnGameSceneLoad(SceneLoadEndEventArgs args)
     {
         InstanceFinder.SceneManager.OnLoadEnd -= OnGameSceneLoad;
-        UIManager.Instance.Bind(this);
+        //UIManager.Instance.Bind(this);
+        FightManager.RegisterPlayerState(this, this, this);
     }
 
     public override void OnStopClient()

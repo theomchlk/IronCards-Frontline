@@ -1,48 +1,74 @@
-using System;
 using UnityEngine;
 
 public class FightManager : MonoBehaviour
 {
     [SerializeField] private float spawnHeight = 1f;
-    [SerializeField] private TmpPlayerCamp playerLeft;
-    [SerializeField] private TmpPlayerCamp playerRight;
     [SerializeField] private Canvas canvasLeft;
     [SerializeField] private Canvas canvasRight;
     [SerializeField] private SoldierRegistry soldierRegistry;
+    [SerializeField] private AllCardsSO allCardsSO;
+    private PlayerState localPlayerState;
+    private CardsSO[] playerLeftCamp;
+    private CardsSO[] playerRightCamp;
+    public static FightManager Instance;
 
-    public static event Action<int> OnFightEnd;
 
     void Awake()
     {
-        if (soldierRegistry == null)
-            soldierRegistry = GetComponentInChildren<SoldierRegistry>();
-
-        SoldierRegistry.OnTeamEliminated += HandleTeamEliminated;
+        Instance = this;
     }
 
-    void OnDestroy()
+    public static void RegisterPlayerState(PlayerState psOwner, PlayerState psLeft, PlayerState psRight)
     {
-        SoldierRegistry.OnTeamEliminated -= HandleTeamEliminated;
-    }
-
-    private void HandleTeamEliminated(int losingTeamId)
-    {
-        int winnerTeamId = losingTeamId == 0 ? 1 : 0;
-        Debug.Log($"Équipe {losingTeamId} éliminée. Victoire de l'équipe {winnerTeamId}.");
-        OnFightEnd?.Invoke(winnerTeamId);
-    }
-
-    void Start()
-    {
-        HideCards();
-        CardUI[] cardUILeft = canvasLeft.GetComponentsInChildren<CardUI>();
-        CardUI[] cardUIRight = canvasRight.GetComponentsInChildren<CardUI>();
-
-        for (int i = 0; i < playerLeft.camp.Length; i++)
+        PlayerRegistry.DisplayAllInformations();
+        if (Instance == null)
         {
-            if (playerLeft.camp[i] != null)
+            Debug.LogError("FightManager instance is null. Cannot register local player.");
+            return;
+        }
+
+        if (psOwner == null || psLeft == null || psRight == null)
+        {
+            Debug.LogError("One or more PlayerState references are null. Cannot register local player.");
+            return;
+        }
+
+
+        Instance.localPlayerState = psOwner;
+        Instance.playerLeftCamp = new CardsSO[35];
+        Instance.playerRightCamp = new CardsSO[35];
+
+        for (int i = 0; i < psLeft.playerCamp.Value.campCardsId.Length; i++)
+        {
+            int cardId = psLeft.playerCamp.Value.campCardsId[i];
+            if (cardId >= 0 && cardId < Instance.allCardsSO.allCards.Length)
             {
-                cardUILeft[i].SetCardUI(playerLeft.camp[i]);
+                Instance.playerLeftCamp[i] = Instance.allCardsSO.allCards[cardId];
+            }
+        }
+
+        for (int i = 0; i < psRight.playerCamp.Value.campCardsId.Length; i++)
+        {
+            int cardId = psRight.playerCamp.Value.campCardsId[i];
+            if (cardId >= 0 && cardId < Instance.allCardsSO.allCards.Length)
+            {
+                Instance.playerRightCamp[i] = Instance.allCardsSO.allCards[cardId];
+            }
+        }
+
+
+        if (Instance.soldierRegistry == null)
+            Instance.soldierRegistry = Instance.GetComponentInChildren<SoldierRegistry>();
+
+        Instance.HideCards();
+        CardUI[] cardUILeft = Instance.canvasLeft.GetComponentsInChildren<CardUI>();
+        CardUI[] cardUIRight = Instance.canvasRight.GetComponentsInChildren<CardUI>();
+
+        for (int i = 0; i < Instance.playerLeftCamp.Length; i++)
+        {
+            if (Instance.playerLeftCamp[i] != null)
+            {
+                cardUILeft[i].SetCardUI(Instance.playerLeftCamp[i]);
                 CanvasGroup canvasGroup = cardUILeft[i].GetComponent<CanvasGroup>();
                 if (canvasGroup != null)
                 {
@@ -52,11 +78,12 @@ public class FightManager : MonoBehaviour
                 }
             }
         }
-        for (int i = 0; i < playerRight.camp.Length; i++)
+
+        for (int i = 0; i < Instance.playerRightCamp.Length; i++)
         {
-            if (playerRight.camp[i] != null)
+            if (Instance.playerRightCamp[i] != null)
             {
-                cardUIRight[i].SetCardUI(playerRight.camp[i]);
+                cardUIRight[i].SetCardUI(Instance.playerRightCamp[i]);
                 CanvasGroup canvasGroup = cardUIRight[i].GetComponent<CanvasGroup>();
                 if (canvasGroup != null)
                 {
@@ -68,8 +95,8 @@ public class FightManager : MonoBehaviour
         }
 
         Canvas.ForceUpdateCanvases();
-        SpawnSoldiers(playerLeft.camp, cardUILeft, 0);
-        SpawnSoldiers(playerRight.camp, cardUIRight, 1);
+        Instance.SpawnSoldiers(Instance.playerLeftCamp, cardUILeft, 0);
+        Instance.SpawnSoldiers(Instance.playerRightCamp, cardUIRight, 1);
     }
 
     private void HideCards()

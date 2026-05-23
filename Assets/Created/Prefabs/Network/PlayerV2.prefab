@@ -126,6 +126,7 @@ MonoBehaviour:
   _addedNetworkObject: {fileID: 4350343371047122656}
   _networkObjectCache: {fileID: 4350343371047122656}
   playerConfig: {fileID: 11400000, guid: 0034ef9e26a1c904abc06f38f5d85e03, type: 2}
+  defaultCamp: {fileID: 11400000, guid: 53c86a827d2239846b5a0867253e0dc8, type: 2}
 --- !u!114 &-5552982683059724394
 MonoBehaviour:
   m_ObjectHideFlags: 0

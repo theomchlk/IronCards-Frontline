@@ -1083,6 +1083,7 @@ MonoBehaviour:
   _componentIndexCache: 255
   _addedNetworkObject: {fileID: 145974768}
   _networkObjectCache: {fileID: 0}
+  lobbyCanvas: {fileID: 1939099422}
 --- !u!4 &145974770
 Transform:
   m_ObjectHideFlags: 0
@@ -3426,7 +3427,8 @@ MonoBehaviour:
   _levelOfDetailDistances: []
   _updateHostVisibility: 1
   _maximumTimedObserversDuration: 10
-  _defaultConditions: []
+  _defaultConditions:
+  - {fileID: 11400000, guid: 2033f54fd2794464bae08fa5a55c8996, type: 2}
 --- !u!1 &691618479
 GameObject:
   m_ObjectHideFlags: 0
