@@ -6,6 +6,7 @@ public abstract class Soldier : MonoBehaviour
     [Header("Data & Stats")]
     [SerializeField] private CardsSO data;
     public int ownerId;
+    private int _netId = -1;
     private float health;
     private Soldier target;
     private float activationTime;
@@ -18,6 +19,7 @@ public abstract class Soldier : MonoBehaviour
     private SoldierState state = SoldierState.Idle;
     private Vector3 destination;
     private bool movementRequested;
+    private bool isOwnerPlayer = false;
 
     // ==========================================
     // GETTERS
@@ -34,6 +36,7 @@ public abstract class Soldier : MonoBehaviour
     public float GetHealth() => health;
     public float GetLastActionTime() => lastActionTime;
     public int GetOwnerId() => ownerId;
+    public int GetNetId() => _netId;
     public bool IsAlive() => health > 0;
     public Animator GetAnimator() => animator;
     public CombatActionSO GetCombatAction() => data.combatAction;
@@ -118,6 +121,8 @@ public abstract class Soldier : MonoBehaviour
         }
     }
 
+    public void SetNetId(int id) => _netId = id;
+
     public void SetOwnerId(int id)
     {
         ownerId = id;
@@ -141,6 +146,11 @@ public abstract class Soldier : MonoBehaviour
     public void SetTarget(Soldier newTarget)
     {
         target = newTarget;
+    }
+
+    public void SetIsOwnerPlayer(bool value)
+    {
+        isOwnerPlayer = value;
     }
 
     // ==========================================
@@ -185,6 +195,7 @@ public abstract class Soldier : MonoBehaviour
         }
         else
         {
+            if (!isOwnerPlayer) return;
             HandleAIBehavior();
         }
     }

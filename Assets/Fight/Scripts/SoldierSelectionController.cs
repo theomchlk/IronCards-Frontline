@@ -54,7 +54,7 @@ public class SoldierSelectionController : MonoBehaviour
                  && hoveredSoldier != selectedSoldier
                  && selectedSoldier.GetOwnerId() != hoveredSoldier.GetOwnerId())
         {
-            selectedSoldier.SetTarget(hoveredSoldier);
+            FightManager.Instance.CmdSetTarget(selectedSoldier.GetNetId(), hoveredSoldier.GetNetId());
         }
         else if (selectedSoldier != null && hoveredSoldier == null)
         {
@@ -64,26 +64,25 @@ public class SoldierSelectionController : MonoBehaviour
 
     private void SelectSoldier(Soldier soldier)
     {
+        if (soldier.GetOwnerId() != FightManager.Instance.GetLocalPlayerState().playerId.Value)
+            return;
+
         selectedSoldier = soldier;
-        selectedSoldier.SetIsControlledByPlayer(true);
+        FightManager.Instance.CmdSetSoldierControlled(soldier.GetNetId(), true);
     }
 
     private void CommandSoldierToMove()
     {
         Vector3 targetPoint = GetMouseClickedPoint();
         if (targetPoint != Vector3.zero)
-        {
-            selectedSoldier.HandleMovementRigidbody(targetPoint);
-            selectedSoldier.SetTarget(null);
-        }
+            FightManager.Instance.CmdMoveTo(selectedSoldier.GetNetId(), targetPoint);
     }
 
     private void HandleEscapeKey()
     {
         if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame && selectedSoldier != null)
         {
-            selectedSoldier.SetIsControlledByPlayer(false);
-            selectedSoldier.SetTarget(null);
+            FightManager.Instance.CmdSetSoldierControlled(selectedSoldier.GetNetId(), false);
             selectedSoldier = null;
         }
     }

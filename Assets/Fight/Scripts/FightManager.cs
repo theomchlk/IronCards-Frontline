@@ -23,6 +23,9 @@ public class FightManager : NetworkBehaviour
     private CardsSO[] playerRightCamp;
     public static FightManager Instance;
 
+    private readonly Dictionary<int, Soldier> _soldierByNetId = new();
+    private int _nextSoldierNetId;
+
 
     void Awake()
     {
@@ -47,6 +50,8 @@ public class FightManager : NetworkBehaviour
         Instance.localPlayerState = psOwner;
         Instance.playerLeftCamp = new CardsSO[35];
         Instance.playerRightCamp = new CardsSO[35];
+        Instance._soldierByNetId.Clear();
+        Instance._nextSoldierNetId = 0;
 
         for (int i = 0; i < psLeft.playerCamp.Value.campCardsId.Length; i++)
         {
@@ -163,10 +168,78 @@ public class FightManager : NetworkBehaviour
     private void SpawnSoldier(GameObject soldierPrefab, Vector3 spawnPosition, int playerId)
     {
         GameObject soldier = Instantiate(soldierPrefab, spawnPosition, Quaternion.identity);
-        soldier.GetComponent<Soldier>().SetOwnerId(playerId);
+        Soldier sol = soldier.GetComponent<Soldier>();
+
+        int netId = _nextSoldierNetId++;
+        sol.SetNetId(netId);
+        sol.SetOwnerId(playerId);
+        _soldierByNetId[netId] = sol;
+
+        if (playerId == localPlayerState.playerId.Value)
+            sol.SetIsOwnerPlayer(true);
+
         soldier.transform.SetParent(transform);
     }
 
+    public PlayerState GetLocalPlayerState() => localPlayerState;
 
     // Méthode pour le networking
+
+    private bool ValidateOwnership(int soldierNetId, NetworkConnection conn, out Soldier soldier)
+    {
+        if (!_soldierByNetId.TryGetValue(soldierNetId, out soldier)) return false;
+        var ps = conn?.FirstObject?.GetComponent<PlayerState>();
+        return ps != null && soldier.GetOwnerId() == ps.campIndex.Value;
+    }
+
+
+    [ServerRpc(RequireOwnership = false)]
+    public void CmdSetSoldierControlled(int soldierNetId, bool controlled, NetworkConnection conn = null)
+    {
+        if (!ValidateOwnership(soldierNetId, conn, out _)) return;
+        RpcSetSoldierControlled(soldierNetId, controlled);
+    }
+
+    [ObserversRpc]
+    private void RpcSetSoldierControlled(int soldierNetId, bool controlled)
+    {
+        if (!_soldierByNetId.TryGetValue(soldierNetId, out var soldier)) return;
+        soldier.SetIsControlledByPlayer(controlled);
+    }
+
+    // ── Déplacement vers un point ───────────────────────────────────────────
+
+    [ServerRpc(RequireOwnership = false)]
+    public void CmdMoveTo(int soldierNetId, Vector3 destination, NetworkConnection conn = null)
+    {
+        if (!ValidateOwnership(soldierNetId, conn, out var soldier)) return;
+        if (soldier.GetState() != SoldierState.PlayerControlled) return;
+        RpcMoveTo(soldierNetId, destination);
+    }
+
+    [ObserversRpc]
+    private void RpcMoveTo(int soldierNetId, Vector3 destination)
+    {
+        if (!_soldierByNetId.TryGetValue(soldierNetId, out var soldier)) return;
+        soldier.HandleMovementRigidbody(destination);
+        soldier.SetTarget(null);
+    }
+
+    // ── Assignation d'une cible ennemie ────────────────────────────────────
+
+    [ServerRpc(RequireOwnership = false)]
+    public void CmdSetTarget(int soldierNetId, int targetNetId, NetworkConnection conn = null)
+    {
+        if (!ValidateOwnership(soldierNetId, conn, out var soldier)) return;
+        if (soldier.GetState() != SoldierState.PlayerControlled) return;
+        RpcSetTarget(soldierNetId, targetNetId);
+    }
+
+    [ObserversRpc]
+    private void RpcSetTarget(int soldierNetId, int targetNetId)
+    {
+        if (!_soldierByNetId.TryGetValue(soldierNetId, out var soldier)) return;
+        _soldierByNetId.TryGetValue(targetNetId, out var target);
+        soldier.SetTarget(target);
+    }
 }
