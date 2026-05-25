@@ -17,6 +17,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Noah.unity
     guid: b0a8e58603bf54441b0fc1c8c0dd8e82
+  - enabled: 1
+    path: Assets/Scenes/Noah_shop.unity
+    guid: 97b4a7108e5590a4d85c37a917c50f59
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0

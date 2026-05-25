@@ -8,11 +8,12 @@ using FishNet.Managing.Scened;
 public class PreparationState : IGameState
 {
     public GameStateType GameStateType => GameStateType.Preparation;
-    public List<GameStateType> AllowedTransitions() => new() { GameStateType.Planification };
+    public List<GameStateType> AllowedTransitions() => new() { GameStateType.Planification, GameStateType.War };
     
     public void ExitServer()
     {
         Debug.Log($"PreparationState ExitServer");
+        GameStateController.Instance.StopPreparationTimer();
     }
 
     public void ExitClient()
@@ -35,17 +36,18 @@ public class PreparationState : IGameState
     {
         Debug.Log($"Preparation EnterServer");
         var isFirstRound = GameStateController.Instance.NbRounds == 0;
-        
-        foreach (PlayerState ps in PlayerRegistry.GetAll) 
+
+        foreach (PlayerState ps in PlayerRegistry.GetAll)
         {
             if (isFirstRound)
-            { 
-                ps.InitItemsFromDatabase(); 
+            {
+                ps.InitItemsFromDatabase();
                 ps.GetComponent<CardStallTable>().SetCardStallsOnTableByDataBase();
             }
             else ps.SetNewMoney();
-                
         }
+
+        GameStateController.Instance.StartPreparationTimer();
     }
     
 

@@ -5,4 +5,5 @@ public class FightColorSO : ScriptableObject
 {
     public Material material;
     public Material bloomMaterial;
+    public Material goundColor;
 }

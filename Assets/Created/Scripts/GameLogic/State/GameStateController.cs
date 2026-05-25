@@ -1,15 +1,22 @@
 using FishNet.Connection;
 using FishNet.Object;
+using FishNet.Object.Synchronizing;
 using FishNet;
 using FishNet.Managing.Scened;
 using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
 
 public class GameStateController : NetworkBehaviour
 {
-    [SerializeField] private Canvas lobbyCanvas;  
+    [SerializeField] private Canvas lobbyCanvas;
+    [SerializeField] private int preparationDuration = 30;
 
     public static GameStateController Instance;
     private int _nbRounds = 0;
+
+    public readonly SyncVar<int> preparationTimeRemaining = new();
+    private Coroutine _preparationTimerCoroutine;
     
     public IGameState CurrentState { get; private set; }
 
@@ -96,16 +103,53 @@ public class GameStateController : NetworkBehaviour
 
         Debug.Log("ServerStartGame");
 
-        SceneLoadData data = new SceneLoadData("Theo");
-        SceneManager.OnLoadEnd += OnGameSceneLoaded; // ← callback attaché AVANT le chargement
-
-        // SceneManager.LoadGlobalScenes(data);
-
-        // Temporaire pour les tests
-        SceneLoadData data2 = new SceneLoadData("Noah");
-        SceneManager.LoadGlobalScenes(data2);
+        SceneLoadData data = new SceneLoadData("Noah_shop");
+        SceneManager.OnLoadEnd += OnGameSceneLoaded;
+        SceneManager.LoadGlobalScenes(data);
 
         ObserversHideLobbyCanvas();
+    }
+
+    [Server]
+    public void TransitionToWar()
+    {
+        AssignCampIndicesRandomly();
+        SetState(new WarState());
+    }
+
+    [Server]
+    private void AssignCampIndicesRandomly()
+    {
+        var allPlayers = new List<PlayerState>(PlayerRegistry.GetAll);
+        if (Random.Range(0, 2) == 1) allPlayers.Reverse();
+        for (int i = 0; i < allPlayers.Count; i++)
+            allPlayers[i].SetCampIndex(i);
+    }
+
+    [Server]
+    public void StartPreparationTimer()
+    {
+        preparationTimeRemaining.Value = preparationDuration;
+        if (_preparationTimerCoroutine != null) StopCoroutine(_preparationTimerCoroutine);
+        _preparationTimerCoroutine = StartCoroutine(PreparationTimerCoroutine());
+    }
+
+    [Server]
+    public void StopPreparationTimer()
+    {
+        if (_preparationTimerCoroutine == null) return;
+        StopCoroutine(_preparationTimerCoroutine);
+        _preparationTimerCoroutine = null;
+    }
+
+    private IEnumerator PreparationTimerCoroutine()
+    {
+        while (preparationTimeRemaining.Value > 0)
+        {
+            yield return new WaitForSeconds(1f);
+            preparationTimeRemaining.Value--;
+        }
+        TransitionToWar();
     }
 
     [ObserversRpc]

@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using FishNet;
+using FishNet.Managing.Scened;
 
 public class WarState : IGameState
 {
@@ -25,7 +26,9 @@ public class WarState : IGameState
 
     public void EnterServer()
     {
-        Debug.Log($"WarState EnterServer");
+        Debug.Log("WarState EnterServer");
+        InstanceFinder.SceneManager.UnloadGlobalScenes(new SceneUnloadData("Noah_shop"));
+        InstanceFinder.SceneManager.LoadGlobalScenes(new SceneLoadData("Noah"));
     }
 
     public void Update()

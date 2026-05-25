@@ -2127,6 +2127,16 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 58f23ca6721f33b42be27cf435a69778, type: 3}
+--- !u!23 &3013463152863862703 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 7073108629924570936, guid: 58f23ca6721f33b42be27cf435a69778, type: 3}
+  m_PrefabInstance: {fileID: 3013463152863862702}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &3013463152863862704 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 1779714250023966624, guid: 58f23ca6721f33b42be27cf435a69778, type: 3}
+  m_PrefabInstance: {fileID: 3013463152863862702}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &3929189353248298591
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2309,6 +2319,18 @@ PrefabInstance:
       propertyPath: canvasRight
       value: 
       objectReference: {fileID: 347983579}
+    - target: {fileID: 6598128388161803760, guid: f6200b3ba0c59624d90898082f6eb438, type: 3}
+      propertyPath: fightColorsSO
+      value: 
+      objectReference: {fileID: 11400000, guid: 33a4f763aa7fc764e9e02cca5fb9aa4a, type: 2}
+    - target: {fileID: 6598128388161803760, guid: f6200b3ba0c59624d90898082f6eb438, type: 3}
+      propertyPath: leftGroundRenderer
+      value: 
+      objectReference: {fileID: 3013463152863862704}
+    - target: {fileID: 6598128388161803760, guid: f6200b3ba0c59624d90898082f6eb438, type: 3}
+      propertyPath: rightGroundRenderer
+      value: 
+      objectReference: {fileID: 3013463152863862703}
     - target: {fileID: 7967444809353172812, guid: f6200b3ba0c59624d90898082f6eb438, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

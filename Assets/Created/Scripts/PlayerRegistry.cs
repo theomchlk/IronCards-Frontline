@@ -6,10 +6,11 @@ public static class PlayerRegistry
 {
     private static Dictionary<NetworkConnection, PlayerState> players = new();
 
+    public static int Count => players.Count;
+
     public static void Register(NetworkConnection conn, PlayerState ps)
     {
         players[conn] = ps;
-        if (players.Count == 1) ps.SetLobbyLeader();
     }
 
     public static void Unregister(NetworkConnection conn)

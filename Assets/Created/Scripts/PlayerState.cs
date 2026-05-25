@@ -10,7 +10,7 @@ using Unity.VisualScripting;
 
 public class PlayerState : NetworkBehaviour
 {
-    /*public static PlayerState Local;*/
+    public static PlayerState Local;
     [SerializeField] private PlayerSO playerConfig;
     [SerializeField] private PlayerCamp defaultCamp;
     /*[SerializeField] private UIManager uiManager;
@@ -32,6 +32,9 @@ public class PlayerState : NetworkBehaviour
     public readonly SyncVar<int> nbMills = new();
     public readonly SyncVar<int> millCost = new();
     public readonly SyncVar<PlayerCamp> playerCamp = new();
+    public readonly SyncVar<bool> isReady = new();
+    public readonly SyncVar<int> campIndex = new();
+    public readonly SyncVar<int> playerId = new();
 
     
     private List<SlotItem> _slotItems = new();
@@ -70,9 +73,10 @@ public class PlayerState : NetworkBehaviour
     {
         base.OnStartServer();
         PlayerRegistry.Register(Owner, this);
+        SetPlayerId(PlayerRegistry.Count - 1);
+        if (PlayerRegistry.Count == 1) SetLobbyLeader();
         GameStateController.Instance.CurrentState.OnPlayerEnter(this);
         Debug.Log(InstanceFinder.ClientManager.Connection);
-        
     }
 
     public override void OnStopServer()
@@ -96,20 +100,47 @@ public class PlayerState : NetworkBehaviour
     {
         base.OnStartClient();
 
+        PlayerRegistry.Register(Owner, this);
+
         if (!IsOwner) return;
+        Local = this;
         InstanceFinder.SceneManager.OnLoadEnd += OnGameSceneLoad;
     }
 
     private void OnGameSceneLoad(SceneLoadEndEventArgs args)
     {
+        if (args.LoadedScenes == null) return;
+        bool fightSceneLoaded = false;
+        foreach (var scene in args.LoadedScenes)
+            if (scene.name == "Noah") { fightSceneLoaded = true; break; }
+        if (!fightSceneLoaded) return;
+
         InstanceFinder.SceneManager.OnLoadEnd -= OnGameSceneLoad;
-        //UIManager.Instance.Bind(this);
-        FightManager.RegisterPlayerState(this, this, this);
+
+        PlayerState enemyPs = null;
+        foreach (var ps in PlayerRegistry.GetAll)
+        {
+            if (!ps.IsOwner) { enemyPs = ps; break; }
+        }
+
+        if (enemyPs == null)
+        {
+            Debug.LogError("[PlayerState] PlayerState ennemi introuvable — scène Noah chargée trop tôt ?");
+            return;
+        }
+
+        // Le serveur a assigné campIndex : 0 = gauche, 1 = droite.
+        // Les deux clients arrivent à la même assignation de façon indépendante.
+        PlayerState leftPs  = campIndex.Value == 0 ? this : enemyPs;
+        PlayerState rightPs = campIndex.Value == 0 ? enemyPs : this;
+
+        FightManager.RegisterPlayerState(this, leftPs, rightPs);
     }
 
     public override void OnStopClient()
     {
         base.OnStopClient();
+        PlayerRegistry.Unregister(Owner);
         InstanceFinder.SceneManager.OnLoadEnd -= OnGameSceneLoad;
     }
 
@@ -198,6 +229,32 @@ public class PlayerState : NetworkBehaviour
 
     [Server]
     public bool IsLobbyLeader() => isLobbyLeader.Value;
+
+    [Server]
+    public void SetCampIndex(int index) => campIndex.Value = index;
+
+    [Server]
+    public void SetPlayerId(int id) => playerId.Value = id;
+
+    [ServerRpc]
+    public void ServerToggleReady(NetworkConnection conn = null)
+    {
+        if (GameStateController.Instance.CurrentState?.GameStateType != GameStateType.Preparation) return;
+        isReady.Value = !isReady.Value;
+        CheckAllPlayersReady();
+    }
+
+    [Server]
+    private void CheckAllPlayersReady()
+    {
+        var allPlayers = new List<PlayerState>(PlayerRegistry.GetAll);
+        if (allPlayers.Count < 2) return;
+        foreach (var ps in allPlayers)
+            if (!ps.isReady.Value) return;
+        foreach (var ps in allPlayers)
+            ps.isReady.Value = false;
+        GameStateController.Instance.TransitionToWar();
+    }
 
     [ServerRpc]
     public void ServerPlayerSurrender(NetworkConnection conn = null)

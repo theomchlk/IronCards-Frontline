@@ -1,12 +1,23 @@
+using System;
 using UnityEngine;
+using FishNet.Connection;
+using FishNet.Object;
+using FishNet.Object.Synchronizing;
+using System.Collections.Generic;
+using FishNet;
+using FishNet.Managing.Scened;
+using Unity.VisualScripting;
 
-public class FightManager : MonoBehaviour
+public class FightManager : NetworkBehaviour
 {
     [SerializeField] private float spawnHeight = 1f;
     [SerializeField] private Canvas canvasLeft;
     [SerializeField] private Canvas canvasRight;
     [SerializeField] private SoldierRegistry soldierRegistry;
     [SerializeField] private AllCardsSO allCardsSO;
+    [SerializeField] private FightColorsSO fightColorsSO;
+    [SerializeField] private Renderer leftGroundRenderer;
+    [SerializeField] private Renderer rightGroundRenderer;
     private PlayerState localPlayerState;
     private CardsSO[] playerLeftCamp;
     private CardsSO[] playerRightCamp;
@@ -20,7 +31,6 @@ public class FightManager : MonoBehaviour
 
     public static void RegisterPlayerState(PlayerState psOwner, PlayerState psLeft, PlayerState psRight)
     {
-        PlayerRegistry.DisplayAllInformations();
         if (Instance == null)
         {
             Debug.LogError("FightManager instance is null. Cannot register local player.");
@@ -95,8 +105,11 @@ public class FightManager : MonoBehaviour
         }
 
         Canvas.ForceUpdateCanvases();
-        Instance.SpawnSoldiers(Instance.playerLeftCamp, cardUILeft, 0);
-        Instance.SpawnSoldiers(Instance.playerRightCamp, cardUIRight, 1);
+
+        Instance.leftGroundRenderer.material = Instance.fightColorsSO.colors[psLeft.playerId.Value].goundColor;
+        Instance.rightGroundRenderer.material = Instance.fightColorsSO.colors[psRight.playerId.Value].goundColor;
+        Instance.SpawnSoldiers(Instance.playerLeftCamp, cardUILeft, psLeft.playerId.Value);
+        Instance.SpawnSoldiers(Instance.playerRightCamp, cardUIRight, psRight.playerId.Value);
     }
 
     private void HideCards()
@@ -153,4 +166,7 @@ public class FightManager : MonoBehaviour
         soldier.GetComponent<Soldier>().SetOwnerId(playerId);
         soldier.transform.SetParent(transform);
     }
+
+
+    // Méthode pour le networking
 }

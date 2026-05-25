@@ -59,11 +59,12 @@ public class LocalPlayerUIBinder : MonoBehaviour
     
     private void OnDestroy()
     {
+        if (_ps == null) return;
         DestroyMoney();
         DestroyMill();
         DestroySlot();
     }
-    
+
     private void DestroyMoney()
     {
         _ps.money.OnChange -= OnMoneyChanged;

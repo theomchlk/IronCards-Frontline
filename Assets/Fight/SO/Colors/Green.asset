@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ColorSO
   material: {fileID: 2100000, guid: f3f9426632d1a504694fb61f2b7900a0, type: 2}
   bloomMaterial: {fileID: 2100000, guid: c96e6c43dc60a3644806ba0903292bae, type: 2}
+  goundColor: {fileID: 2100000, guid: 078c18a25f182f4439f1bf66f36bd9c6, type: 2}
