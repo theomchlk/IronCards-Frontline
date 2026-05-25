@@ -1084,6 +1084,7 @@ MonoBehaviour:
   _addedNetworkObject: {fileID: 145974768}
   _networkObjectCache: {fileID: 0}
   lobbyCanvas: {fileID: 1939099422}
+  preparationDuration: 30
 --- !u!4 &145974770
 Transform:
   m_ObjectHideFlags: 0

@@ -5,6 +5,7 @@ public abstract class Soldier : MonoBehaviour
 {
     [Header("Data & Stats")]
     [SerializeField] private CardsSO data;
+    [SerializeField] private HealthBar healthBar;
     public int ownerId;
     private int _netId = -1;
     private float health;
@@ -174,11 +175,10 @@ public abstract class Soldier : MonoBehaviour
         SetRagdollState(false);
 
         if (animator != null)
-        {
             animator.SetFloat("AttackSpeedMultiplier", 1 / GetAttackSpeed());
-        }
 
         SetDefaultMaterial();
+        RefreshHealthBar();
     }
 
     void Update()
@@ -323,6 +323,7 @@ public abstract class Soldier : MonoBehaviour
         }
 
         SetHealth(GetHealth() - damage);
+        RefreshHealthBar();
         if (GetHealth() <= 0) {
             health = 0;
             Die();
@@ -337,6 +338,7 @@ public abstract class Soldier : MonoBehaviour
             animator.enabled = false;
 
         SetRagdollState(true);
+        healthBar?.gameObject.SetActive(false);
 
         if (SoldierRegistry.Instance != null)
             SoldierRegistry.Instance.Unregister(this);
@@ -350,7 +352,10 @@ public abstract class Soldier : MonoBehaviour
             return;
 
         SetHealth(Mathf.Min(GetHealth() + amount, GetMaxHealth()));
+        RefreshHealthBar();
     }
+
+    private void RefreshHealthBar() => healthBar?.SetHealth(health, GetMaxHealth());
 
     public IEnumerator DelayedSound()
     {
