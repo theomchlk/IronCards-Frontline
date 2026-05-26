@@ -141,11 +141,11 @@
             playerColor.Value = color;
             Debug.Log($"ServerSetPlayerInfo {namePlayer}");
             ObserversAddPanelPlayerInLobby(this, namePlayer, color);
-            SetAllPanelPlayersInLobby(conn ,namePlayer,color);     
+            SetAllPanelPlayersInLobby(conn);     
         }
         
         [Server]
-        private void SetAllPanelPlayersInLobby(NetworkConnection conn, string namePlayer, Color color)
+        private void SetAllPanelPlayersInLobby(NetworkConnection conn)
         {
             var i = 0;
             foreach (var ps in PlayerRegistry.GetAll)
@@ -154,7 +154,7 @@
                 Debug.Log($"foreach ps = {ps} and name {ps.playerName.Value}");
                 /*if (ps.Owner != conn)
                 {*/
-                    TargetSetPanelPlayerInLobby(conn, namePlayer, color,i == PlayerRegistry.PlayerCount);
+                    TargetSetPanelPlayerInLobby(conn, ps.playerName.Value, ps.playerColor.Value,i == PlayerRegistry.PlayerCount);
                     Debug.Log($"TargetSetAllPanelPlayersInLobby ps {ps.playerName.Value}");
                 /*}*/
             }
