@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using FishNet.Connection;
 
 public class EndState : IGameState
 {

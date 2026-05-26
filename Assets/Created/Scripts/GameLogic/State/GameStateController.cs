@@ -1,45 +1,140 @@
+using System;
+using System.Collections;
 using FishNet.Connection;
 using FishNet.Object;
 using FishNet;
 using FishNet.Managing.Scened;
+using FishNet.Transporting;
+using LiteNetLib;
 using UnityEngine;
 
 public class GameStateController : NetworkBehaviour
 {
     
     public static GameStateController Instance;
-    private int _nbRounds = 0;
+    /*private int _nbRounds = 0;*/
     
     public IGameState CurrentState { get; private set; }
+    private IGameState _serverState;
 
     private void Awake()
     {
         Instance = this;
-       
+    }
+
+    private void Start()
+    {
+        ClientManager.OnClientConnectionState += OnClientStateChanged;
     }
     
-    public int NbRounds => _nbRounds;
-    public void IncreaseNbRounds() => _nbRounds++;
+
+    public override void OnStopClient()
+    {
+        base.OnStopClient();
+        Debug.Log($"OnDestroy {ClientManager} and {InstanceFinder.ClientManager}");
+        
+    }
+
+    
+    /*public override void OnStopClient()
+    {
+        base.OnStopClient();
+        CurrentState = null;
+    }*/
+
+    private void OnClientStateChanged(ClientConnectionStateArgs args)
+    {
+        
+        Debug.Log($"IsServerStarted {InstanceFinder.IsServerStarted} and IsHost {InstanceFinder.IsHostStarted}");
+        if (args.ConnectionState != LocalConnectionState.Stopped) return;
+        
+        if (InstanceFinder.IsServerStarted) 
+        {
+            Debug.Log("RemoveInLobbyList");
+            LobbyBroadcaster.Instance.StopBroadcast();
+            ServerManager.StopConnection(false);
+            /*return;*/
+            
+        }
+            
+            
+        if (CurrentState == null)
+        {
+            Debug.Log("CurrentState = null");
+            FullReset();
+            return;
+        }
+    
+        /*if (CurrentState.GameStateType == GameStateType.Lobby)
+        {
+            Debug.Log("CurrentState = Lobby");
+            InLobbyUI.Instance.RemoveAllPlayers();
+            CurrentState = null;
+            return;
+        }*/
+    
+        Debug.Log("FullReset");
+        InstanceFinder.ClientManager.OnClientConnectionState -= OnClientStateChanged;
+        FullReset();
+    }
+    
+
 
     public override void OnStartServer()
     {
         base.OnStartServer();
-        SetState(new LobbyState());
+        SetState(CreateState(GameStateType.Lobby));
+        InstanceFinder.ServerManager.OnRemoteConnectionState += OnClientStateChange;
+    }
+
+    private void OnClientStateChange(NetworkConnection conn, RemoteConnectionStateArgs args)
+    {
+        if (!IsServerStarted) return;
+        if (conn.IsHost) return;
+        if (args.ConnectionState != RemoteConnectionState.Stopped) return;
+        if (CurrentState == null) return;
+        if (_serverState == null) return;
+
+        var ps = PlayerRegistry.GetPlayerState(conn.ClientId);
+        if (ps == null) return;
+
+        CurrentState.OnPlayerExit(ps);
+    }
+
+
+    [ServerRpc(RequireOwnership = false)]
+    public void OnPlayerEnter(PlayerState ps, NetworkConnection conn = null)
+    {
+        if (PlayerRegistry.GetPlayerState(conn.ClientId) != ps) return;
+        _serverState.OnPlayerEnter(ps);
+    }
+    
+    [ServerRpc(RequireOwnership = false)]
+    public void OnPlayerExit(int playerId, NetworkConnection conn = null)
+    {
+        var ps = PlayerRegistry.GetPlayerState(playerId);
+        if (ps == null) return;
+        if (ps.IsHostStarted) return;
+        if (PlayerRegistry.GetPlayerState(conn.ClientId) != ps) return;
+        _serverState.OnPlayerExit(ps);
     }
 
     public override void OnStopServer()
     {
         base.OnStopServer();
-        CurrentState = null;
+        PlayerRegistry.Clear();
+        InstanceFinder.ServerManager.OnRemoteConnectionState -= OnClientStateChange;
+        _serverState = null;
     }
+    
     
 
     [ServerRpc(RequireOwnership = false)]
     public void ServerSetState(GameStateType type)
     {
-        if (!CurrentState.AllowedTransitions().Contains(type)) return;
+        if (!_serverState.AllowedTransitions().Contains(type)) return;
         var newState = CreateState(type);
-        Debug.Log("ServerSetState");
+        Debug.Log($"ServerSetState {type}");
         SetState(newState);
     }
 
@@ -47,9 +142,9 @@ public class GameStateController : NetworkBehaviour
     private void SetState(IGameState newState)
     {
         Debug.Log($"SetState {newState.GetType().Name}");
-        CurrentState?.ExitServer();
-        CurrentState = newState;
-        CurrentState.EnterServer();
+        _serverState?.ExitServer();
+        _serverState = newState;
+        _serverState.EnterServer();
         
         ObserversSetState(newState.GameStateType);
     }
@@ -59,10 +154,12 @@ public class GameStateController : NetworkBehaviour
         CurrentState?.Update();
     }*/
 
-    [ObserversRpc]
-    private void ObserversSetState(GameStateType type)
+    [ObserversRpc(BufferLast = true)]
+    private void ObserversSetState(GameStateType type, NetworkConnection conn = null)
     {
-        if (CurrentState != null && CurrentState.GameStateType == type) return;
+        Debug.Log($"ObserversSetState {type}");
+        Debug.Log($"State: {CurrentState} and type {type}");
+        /*if (CurrentState != null && CurrentState.GameStateType == type) return;*/
         CurrentState?.ExitClient();
         CurrentState = CreateState(type);
         CurrentState.EnterClient();
@@ -106,7 +203,69 @@ public class GameStateController : NetworkBehaviour
     {
         SceneManager.OnLoadEnd -= OnGameSceneLoaded;
         Debug.Log("Scene loaded !");
-        ServerSetState(GameStateType.Preparation);
+        SetStateWhenClientsReady(GameStateType.Preparation);
+
+    }
+
+    private void HandleClientsReadyForSettingState(GameStateType type)
+    {
+        OnAllClientsReady -= HandleClientsReadyForSettingState;
+        ServerSetState(type);
+    }
+
+    [Server]
+    public void SetStateWhenClientsReady(GameStateType type)
+    {
+        OnAllClientsReady += HandleClientsReadyForSettingState;
+        _stateWhenAllClientsReady = type;
+        AskClientIfReady();
+        
+    }
+
+    private event Action<GameStateType> OnAllClientsReady;
+    private GameStateType _stateWhenAllClientsReady;
+    private int _nbClients;
+    private int _nbClientReady;
+
+    [Server]
+    private void AskClientIfReady()
+    {
+        _nbClientReady = 0;
+        _nbClients = ServerManager.Clients.Count;
+        ObserversClientAreReady();
+    }
+
+    [ObserversRpc]
+    private void ObserversClientAreReady()
+    {
+        Debug.Log("Client is Ready ?");
+        // Au lieu de confirmer immédiatement, on attend que la scène soit chargée
+        StartCoroutine(WaitForSceneAndConfirm());
+    }
+
+    private IEnumerator WaitForSceneAndConfirm()
+    {
+        // On attend que UIManager soit disponible
+        yield return new WaitUntil(() => UIManager.Instance != null && 
+                                         UIManager.Instance.shopItemUI != null);
+        ServerConfirmReady();
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void ServerConfirmReady(NetworkConnection conn = null)
+    {
+        _nbClientReady++;
+        Debug.Log($"client ready = {_nbClientReady}/{_nbClients}");
+        if (_nbClients > _nbClientReady) return;
+        try
+        {
+            Debug.Log("ServerConfirmReady");
+            OnAllClientsReady?.Invoke(_stateWhenAllClientsReady);
+        }
+        catch
+        {
+            Debug.Log($"_stateWhenAllClientsReady {_stateWhenAllClientsReady}");
+        }
     }
     
     /*private int _clientsLoaded = 0;
@@ -185,14 +344,29 @@ public class GameStateController : NetworkBehaviour
         UIManager.Instance.shopItemUI.OpenShuttereUI();
     }
     
-    [TargetRpc]
+    /*[TargetRpc]
     public void TargetEnterLobbyState(NetworkConnection conn, bool isLobbyLeader)
     {
         Debug.Log($"GameStateController::IsLobbyLeader: {isLobbyLeader}");
         MenuUIManager.Instance.SetLobbyStateUI(isLobbyLeader);
-    }
+    }*/
     
-    
+    /*[ObserversRpc]
+    public void ObserverEnterLobbyState(NetworkConnection conn, bool isLobbyLeader)
+    {
+        Debug.Log($"GameStateController::IsLobbyLeader: {isLobbyLeader}");
+        MenuUIManager.Instance.SetLobbyStateUI(isLobbyLeader);
+    }*/
 
+    private void FullReset()
+    {
+        if (InstanceFinder.ServerManager.Started)
+            InstanceFinder.ServerManager.StopConnection(true);
+    
+        if (InstanceFinder.ClientManager.Started)
+            InstanceFinder.ClientManager.StopConnection();
+    
+        UnityEngine.SceneManagement.SceneManager.LoadScene("Start Menu");
+    }
 
 }

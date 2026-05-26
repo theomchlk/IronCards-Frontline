@@ -1,5 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
+using FishNet.Connection;
+
 public interface IGameState
 {
     public GameStateType GameStateType { get; }

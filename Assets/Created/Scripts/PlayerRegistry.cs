@@ -3,23 +3,31 @@ using FishNet.Connection;
 
 public static class PlayerRegistry
 {
-    private static Dictionary<NetworkConnection, PlayerState> players = new();
+    private static Dictionary<int, PlayerState> players = new();
 
-    public static void Register(NetworkConnection conn, PlayerState ps)
+    public static void Register(int clientId, PlayerState ps)
     {
-        players[conn] = ps;
+        ps.IdPlayer = clientId;
+        players[clientId] = ps;
         if (players.Count == 1) ps.SetLobbyLeader();
     }
 
-    public static void Unregister(NetworkConnection conn)
+    public static void Unregister(int clientId)
     {
-        players.Remove(conn);
+        players.Remove(clientId);
     }
 
-    public static PlayerState GetPlayerState(NetworkConnection conn)
+    public static PlayerState GetPlayerState(int clientId)
     {
-        return players.TryGetValue(conn, out var ps) ? ps : null;
+        return players.TryGetValue(clientId, out var ps) ? ps : null;
     }
     
     public static IEnumerable<PlayerState> GetAll => players.Values;
+    public static int PlayerCount => players.Count;
+    
+    public static void Clear()
+    {
+        players.Clear();
+    }
+
 }

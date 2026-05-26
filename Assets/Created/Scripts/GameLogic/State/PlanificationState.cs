@@ -1,6 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
-
+using FishNet.Connection;
 public class PlanificationState : IGameState
 {
     public GameStateType GameStateType => GameStateType.Planification;

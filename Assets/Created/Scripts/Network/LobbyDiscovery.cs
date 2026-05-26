@@ -36,14 +36,16 @@ public class LobbyDiscovery : MonoBehaviour
         return lobbyData;
     }
 
-    private void StartListening()
+    public void StartListening()
     {
+        Debug.Log("LobbyDiscovery Start Listening");
         //Un peu moche mais c'est uniquement avec le multiplayer play mode donc...
         try
         {
             _client = new UdpClient(new IPEndPoint(IPAddress.Any, 7779));
             _client.EnableBroadcast = true;
             _client.Client.ReceiveTimeout = timeOut;
+            
 
             _thread = new Thread(ListenLobbyData)
             {
@@ -51,8 +53,9 @@ public class LobbyDiscovery : MonoBehaviour
             };
             _thread.Start();
         }
-        catch
+        catch (SocketException e)
         {
+            Debug.Log($"Exception: {e}");
             Debug.Log("Can't open UDP client : Port 7779 already used");
         }
 
@@ -60,6 +63,7 @@ public class LobbyDiscovery : MonoBehaviour
     
     
     private ConcurrentQueue<LobbyData> _pendingLobbies = new();
+    
 
     private void ListenLobbyData()
     {
@@ -75,7 +79,15 @@ public class LobbyDiscovery : MonoBehaviour
             
                 _pendingLobbies.Enqueue(lobbyData);
             }
-            catch (SocketException) { }
+            catch (ObjectDisposedException)
+            {
+                // Quand on quitte le jeu 
+                break;
+            }
+            catch (SocketException)
+            {
+                // Timeout normal
+            }
         }
         StopBroadcast();
     }
@@ -134,6 +146,25 @@ public class LobbyDiscovery : MonoBehaviour
     public void StopListening()
     {
         _isListening = false;
+        _client?.Close();
+
+        if (_thread != null && _thread.IsAlive)
+            _thread.Join(50);
+
+        Debug.Log("LobbyDiscovery Stop Listening");
+    }
+
+
+    private void OnApplicationQuit()
+    {
+        StopListening();
+        StopBroadcast();
+    }
+    
+    private void OnDestroy()
+    {
+        StopListening();
+        StopBroadcast();
     }
 
     private void StopBroadcast()
@@ -153,7 +184,7 @@ public class LobbyDiscovery : MonoBehaviour
                 return;
             }
         }
-        ConnectionFailed("Error: This lobby id don't match with any id in the list", 3 , 1);
+        ConnectionState("Error: This lobby id don't match with any id in the list", 3 , 1);
     }
 
     private void ConnectToLobby(LobbyData lobbyData)
@@ -168,7 +199,7 @@ public class LobbyDiscovery : MonoBehaviour
         if (args.ConnectionState == LocalConnectionState.Stopped)
         {
             // Connexion échouée
-            ConnectionFailed("Connection failed", 3, 1);
+            ConnectionState("Connection failed", 3, 1);
             InstanceFinder.ClientManager.OnClientConnectionState -= OnConnectionResult;
         }
         else if (args.ConnectionState == LocalConnectionState.Started)
@@ -178,7 +209,7 @@ public class LobbyDiscovery : MonoBehaviour
         }
     }
 
-    public void ConnectionFailed(string message, float timeStay, float timeFade)
+    public void ConnectionState(string message, float timeStay, float timeFade)
     {
         MessagePanelBehavior.Local.SetMessage(message, timeStay, timeFade);
     }

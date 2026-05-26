@@ -14,7 +14,7 @@ public class LocalPlayerUIBinder : MonoBehaviour
         
         BindMoney();
         BindMills();
-        BindSlots();
+        BindSlots(); 
     }
 
 
