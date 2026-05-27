@@ -22,6 +22,14 @@ public abstract class Soldier : MonoBehaviour
     private bool movementRequested;
     private bool isOwnerPlayer = false;
 
+    private float _aiSyncTimer;
+    private const float AiSyncInterval = 0.1f;
+    private Vector3 _lastSentDestination;
+    private bool _lastSentMoving;
+
+    private float _actionCooldown;
+    private float _positionSyncTimer;
+
     // ==========================================
     // GETTERS
     // ==========================================
@@ -47,11 +55,11 @@ public abstract class Soldier : MonoBehaviour
     public AudioClip GetProtectionSound() => data.protectionSound;
     private FightColorsSO GetMaterials() => data.fightColors;
     public SoldierState GetState() => state;
+    public bool IsOwnerPlayer => isOwnerPlayer;
 
     // ==========================================
     // ABSTRACT METHODS
     // ==========================================
-    public abstract void Action(Soldier target);
     public abstract bool ChangeTargetCondition();
 
     public virtual bool CompareOwnerId(Soldier other)
@@ -141,6 +149,7 @@ public abstract class Soldier : MonoBehaviour
         else
         {
             state = SoldierState.Idle;
+            StopMovementRigidbody();
         }
     }
 
@@ -175,10 +184,16 @@ public abstract class Soldier : MonoBehaviour
         SetRagdollState(false);
 
         if (animator != null)
-            animator.SetFloat("AttackSpeedMultiplier", 1 / GetAttackSpeed());
+            animator.SetFloat("AttackSpeedMultiplier", 1/GetAttackSpeed());
 
         SetDefaultMaterial();
         RefreshHealthBar();
+    }
+
+    private void Start()
+    {
+        if (animator != null)
+            animator.SetFloat("AttackSpeedMultiplier", 1f / GetAttackSpeed());
     }
 
     void Update()
@@ -189,15 +204,19 @@ public abstract class Soldier : MonoBehaviour
         if (Time.time < activationTime || !IsAlive())
             return;
 
+        if (!isOwnerPlayer) return;
+
+        _positionSyncTimer += Time.deltaTime;
+        if (_positionSyncTimer >= 2f)
+        {
+            _positionSyncTimer = 0f;
+            FightManager.Instance?.CmdSyncPosition(_netId, transform.position, transform.rotation);
+        }
+
         if (state == SoldierState.PlayerControlled)
-        {
             HandlePlayerBehavior();
-        }
         else
-        {
-            if (!isOwnerPlayer) return;
             HandleAIBehavior();
-        }
     }
 
     private void FixedUpdate()
@@ -222,17 +241,40 @@ public abstract class Soldier : MonoBehaviour
     {
         if (!ChangeTargetCondition())
         {
-            StopMovementRigidbody();
-            Action(target);
+            RequestStop();
+            RequestAction(target);
         }
         else
         {
-            target = GetNearestTarget(); 
+            target = GetNearestTarget();
             if (target != null)
-                HandleMovementRigidbody(target.GetPosition());
-            else 
-                StopMovementRigidbody();
+                RequestMoveTo(target.GetPosition());
+            else
+                RequestStop();
         }
+    }
+
+    private void RequestMoveTo(Vector3 dest)
+    {
+        _aiSyncTimer += Time.deltaTime;
+        bool destinationChanged = Vector3.Distance(dest, _lastSentDestination) > 0.3f;
+        bool intervalElapsed    = _aiSyncTimer >= AiSyncInterval;
+
+        if (!_lastSentMoving || destinationChanged || intervalElapsed)
+        {
+            FightManager.Instance?.CmdMoveSoldier(_netId, dest);
+            _lastSentDestination = dest;
+            _lastSentMoving      = true;
+            _aiSyncTimer         = 0f;
+        }
+    }
+
+    private void RequestStop()
+    {
+        if (!_lastSentMoving) return;
+        FightManager.Instance?.CmdStopSoldier(_netId);
+        _lastSentMoving = false;
+        _aiSyncTimer    = 0f;
     }
 
     private void HandlePlayerBehavior()
@@ -240,25 +282,92 @@ public abstract class Soldier : MonoBehaviour
         if (target == null)
         {
             float remainingDistance = Vector3.Distance(transform.position, destination);
-            if (remainingDistance < 0.1f)
+            if (remainingDistance < 0.1f && movementRequested)
             {
-                StopMovementRigidbody();
-            } else {
-                HandleMovementRigidbody(destination);
+                movementRequested = false;
+                FightManager.Instance?.CmdStopSoldier(_netId);
             }
-        } 
+        }
         else
         {
             if (IsInRange(target))
             {
-                StopMovementRigidbody();
-                Action(target);
-            } 
+                RequestStop();
+                RequestAction(target);
+            }
             else
             {
-                HandleMovementRigidbody(target.GetPosition());
+                RequestMoveTo(target.GetPosition());
             }
         }
+    }
+
+    private void RequestAction(Soldier target)
+    {
+        if (target == null || !target.IsAlive()) return;
+        if (Time.time - _actionCooldown < GetAttackSpeed()) return;
+        _actionCooldown = Time.time;
+        FightManager.Instance?.CmdRequestAction(_netId, target.GetNetId());
+    }
+
+    public void ExecuteNetworkAction(Soldier target)
+    {
+        if (!IsAlive()) return;
+        SetLastActionTime(Time.time);
+
+        StartCoroutine(DelayedActionTrigger());
+        StartCoroutine(DelayedSound());
+
+        StartCoroutine(DelayedVisualAction(target));
+
+        if (isOwnerPlayer)
+            StartCoroutine(DelayedNetworkAction(target));
+    }
+
+    private IEnumerator DelayedActionTrigger()
+    {
+        yield return null;
+        if (!IsAlive()) yield break;
+
+        if (movementRequested || _lastSentMoving) yield break;
+
+        Animator anim = GetAnimator();
+        if (anim == null) yield break;
+
+        anim.SetTrigger("Action");
+
+        yield return new WaitForSeconds(GetAttackSpeed() + 0.1f);
+        if (!IsAlive() || !movementRequested) yield break;
+
+    }
+
+    private IEnumerator DelayedVisualAction(Soldier target)
+    {
+        yield return new WaitForSeconds(GetAttackSpeed() - 0.1f);
+        CombatActionSO combatAction = GetCombatAction();
+        if (combatAction != null)
+            combatAction.Execute(this, target);
+    }
+
+    protected virtual IEnumerator DelayedNetworkAction(Soldier target)
+    {
+        yield return new WaitForSeconds(GetAttackSpeed() - 0.1f);
+        if (target == null || !target.IsAlive()) yield break;
+        target.TakeDamage(this, GetDamage());
+    }
+
+    public void SnapToPosition(Vector3 pos, Quaternion rot)
+    {
+        if (mainRigidbody == null || mainRigidbody.isKinematic) return;
+        mainRigidbody.MovePosition(pos);
+        mainRigidbody.MoveRotation(rot);
+    }
+
+    public void ApplyHealLocal(float amount)
+    {
+        if (!IsAlive()) return;
+        SetHealth(Mathf.Min(GetHealth() + amount, GetMaxHealth()));
+        RefreshHealthBar();
     }
 
     public virtual Soldier GetNearestTarget()
@@ -288,7 +397,7 @@ public abstract class Soldier : MonoBehaviour
 
         animator.SetFloat("MoveX", Mathf.Abs(direction.x));
         animator.SetFloat("MoveZ", Mathf.Abs(direction.z));
-        
+
         if (GetMoveSpeed() > 2f) {
             animator.SetBool("Running", true);
         } else {
@@ -299,7 +408,7 @@ public abstract class Soldier : MonoBehaviour
     public void StopMovementRigidbody()
     {
         movementRequested = false;
-        if (mainRigidbody != null)
+        if (mainRigidbody != null && !mainRigidbody.isKinematic)
             mainRigidbody.linearVelocity = Vector3.zero;
         destination = transform.position;
 
@@ -309,8 +418,15 @@ public abstract class Soldier : MonoBehaviour
         animator.SetBool("Running", false);
     }
 
-    public void TakeDamage(Soldier source, float damage) {
-        if (Random.value < GetArmorProtection())
+    public void TakeDamage(Soldier source, float damage)
+    {
+        if (!source.IsOwnerPlayer) return;
+        FightManager.Instance?.CmdApplyDamage(_netId, damage);
+    }
+
+    public void ApplyDamageLocal(float damage, bool blocked)
+    {
+        if (blocked)
         {
             GameObject tempAudioObject = new GameObject("Protection Sound");
             tempAudioObject.transform.SetParent(transform);
@@ -324,14 +440,16 @@ public abstract class Soldier : MonoBehaviour
 
         SetHealth(GetHealth() - damage);
         RefreshHealthBar();
-        if (GetHealth() <= 0) {
+        if (GetHealth() <= 0)
+        {
             health = 0;
-            Die();
+            DieLocal();
         }
     }
 
-    public void Die()
+    private void DieLocal()
     {
+        if (state == SoldierState.Dead) return;
         state = SoldierState.Dead;
 
         if (animator != null)

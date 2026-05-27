@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Healer : Soldier
@@ -26,26 +27,16 @@ public class Healer : Soldier
         return mostWounded;
     }
 
-    public override void Action(Soldier target) {
-        if (target == null || !target.IsAlive() || !IsInRange(target) || GetOwnerId() != target.GetOwnerId())
-            return;
-        
-        if (Time.time >= GetLastActionTime() + GetAttackSpeed()) {
-            SetLastActionTime(Time.time);
-
-            Animator animator = GetAnimator();
-            if (animator != null) {
-                animator.SetTrigger("Action");
-            }
-
-            StartCoroutine(DelayedSound());
-            StartCoroutine(DelayedHeal(target));
-        }
+    protected override IEnumerator DelayedNetworkAction(Soldier target)
+    {
+        yield return new WaitForSeconds(GetAttackSpeed() - 0.1f);
+        if (target == null || !target.IsAlive()) yield break;
+        FightManager.Instance?.CmdApplyHeal(target.GetNetId(), GetDamage());
     }
 
     private IEnumerator DelayedHeal(Soldier target) {
         yield return new WaitForSeconds(GetAttackSpeed()-0.1f);
-        
+
         CombatActionSO action = GetCombatAction();
         if (action != null) {
             action.Execute(this, target);

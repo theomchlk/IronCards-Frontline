@@ -189,7 +189,7 @@ public class FightManager : NetworkBehaviour
     {
         if (!_soldierByNetId.TryGetValue(soldierNetId, out soldier)) return false;
         var ps = conn?.FirstObject?.GetComponent<PlayerState>();
-        return ps != null && soldier.GetOwnerId() == ps.campIndex.Value;
+        return ps != null && soldier.GetOwnerId() == ps.playerId.Value;
     }
 
 
@@ -207,7 +207,7 @@ public class FightManager : NetworkBehaviour
         soldier.SetIsControlledByPlayer(controlled);
     }
 
-    // ── Déplacement vers un point ───────────────────────────────────────────
+    // Déplacement vers un point
 
     [ServerRpc(RequireOwnership = false)]
     public void CmdMoveTo(int soldierNetId, Vector3 destination, NetworkConnection conn = null)
@@ -225,7 +225,7 @@ public class FightManager : NetworkBehaviour
         soldier.SetTarget(null);
     }
 
-    // ── Assignation d'une cible ennemie ────────────────────────────────────
+    // Assignation d'une cible ennemie
 
     [ServerRpc(RequireOwnership = false)]
     public void CmdSetTarget(int soldierNetId, int targetNetId, NetworkConnection conn = null)
@@ -241,5 +241,105 @@ public class FightManager : NetworkBehaviour
         if (!_soldierByNetId.TryGetValue(soldierNetId, out var soldier)) return;
         _soldierByNetId.TryGetValue(targetNetId, out var target);
         soldier.SetTarget(target);
+    }
+
+    // Déplacement (IA + joueur)
+
+    [ServerRpc(RequireOwnership = false)]
+    public void CmdMoveSoldier(int soldierNetId, Vector3 destination, NetworkConnection conn = null)
+    {
+        if (!ValidateOwnership(soldierNetId, conn, out _)) return;
+        RpcMoveSoldier(soldierNetId, destination);
+    }
+
+    [ObserversRpc]
+    private void RpcMoveSoldier(int soldierNetId, Vector3 destination)
+    {
+        if (!_soldierByNetId.TryGetValue(soldierNetId, out var soldier)) return;
+        soldier.HandleMovementRigidbody(destination);
+    }
+
+    // Arrêt
+
+    [ServerRpc(RequireOwnership = false)]
+    public void CmdStopSoldier(int soldierNetId, NetworkConnection conn = null)
+    {
+        if (!ValidateOwnership(soldierNetId, conn, out _)) return;
+        RpcStopSoldier(soldierNetId);
+    }
+
+    [ObserversRpc]
+    private void RpcStopSoldier(int soldierNetId)
+    {
+        if (!_soldierByNetId.TryGetValue(soldierNetId, out var soldier)) return;
+        soldier.StopMovementRigidbody();
+    }
+
+    // Action (animation + dégâts via CmdApplyDamage)
+
+    [ServerRpc(RequireOwnership = false)]
+    public void CmdRequestAction(int soldierNetId, int targetNetId, NetworkConnection conn = null)
+    {
+        if (!ValidateOwnership(soldierNetId, conn, out _)) return;
+        if (!_soldierByNetId.TryGetValue(targetNetId, out _)) return;
+        RpcExecuteAction(soldierNetId, targetNetId);
+    }
+
+    [ObserversRpc]
+    private void RpcExecuteAction(int soldierNetId, int targetNetId)
+    {
+        if (!_soldierByNetId.TryGetValue(soldierNetId, out var soldier)) return;
+        _soldierByNetId.TryGetValue(targetNetId, out var target);
+        soldier.ExecuteNetworkAction(target);
+    }
+
+    // Dégâts (serveur résout le jet d'armure)
+
+    [ServerRpc(RequireOwnership = false)]
+    public void CmdApplyDamage(int targetNetId, float damage, NetworkConnection conn = null)
+    {
+        if (!_soldierByNetId.TryGetValue(targetNetId, out var target)) return;
+        bool blocked = UnityEngine.Random.value < target.GetArmorProtection();
+        RpcApplyDamage(targetNetId, damage, blocked);
+    }
+
+    [ObserversRpc]
+    private void RpcApplyDamage(int targetNetId, float damage, bool blocked)
+    {
+        if (!_soldierByNetId.TryGetValue(targetNetId, out var soldier)) return;
+        soldier.ApplyDamageLocal(damage, blocked);
+    }
+
+    // Correction de position (divergence physique)
+
+    [ServerRpc(RequireOwnership = false)]
+    public void CmdSyncPosition(int soldierNetId, Vector3 position, Quaternion rotation, NetworkConnection conn = null)
+    {
+        if (!ValidateOwnership(soldierNetId, conn, out _)) return;
+        RpcSyncPosition(soldierNetId, position, rotation);
+    }
+
+    [ObserversRpc]
+    private void RpcSyncPosition(int soldierNetId, Vector3 position, Quaternion rotation)
+    {
+        if (!_soldierByNetId.TryGetValue(soldierNetId, out var soldier)) return;
+        if (soldier.IsOwnerPlayer) return;
+        soldier.SnapToPosition(position, rotation);
+    }
+
+    // Soin (Healer)
+
+    [ServerRpc(RequireOwnership = false)]
+    public void CmdApplyHeal(int targetNetId, float amount, NetworkConnection conn = null)
+    {
+        if (!_soldierByNetId.TryGetValue(targetNetId, out _)) return;
+        RpcApplyHeal(targetNetId, amount);
+    }
+
+    [ObserversRpc]
+    private void RpcApplyHeal(int targetNetId, float amount)
+    {
+        if (!_soldierByNetId.TryGetValue(targetNetId, out var soldier)) return;
+        soldier.ApplyHealLocal(amount);
     }
 }

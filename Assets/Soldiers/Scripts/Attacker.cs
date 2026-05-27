@@ -13,24 +13,6 @@ public class Attacker : Soldier
         return GetOwnerId() != other.GetOwnerId();
     }
     
-    public override void Action(Soldier target) {
-        if (target == null || !target.IsAlive() || !IsInRange(target) || GetOwnerId() == target.GetOwnerId())
-            return;
-        
-        if (IsInRange(target) && target.IsAlive() && Time.time >= GetLastActionTime() + GetAttackSpeed()) {
-            SetLastActionTime(Time.time);
-
-            Animator animator = GetAnimator();
-            if (animator != null) {
-                animator.SetTrigger("Action");
-            }
-
-
-            StartCoroutine(DelayedSound());
-            StartCoroutine(DelayedDamage(target));
-        }
-    }
-
     private IEnumerator DelayedDamage(Soldier target) {
         yield return new WaitForSeconds(GetAttackSpeed()-0.1f);
         
