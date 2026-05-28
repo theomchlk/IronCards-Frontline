@@ -99,6 +99,17 @@ public class LobbyBroadcaster : MonoBehaviour
         }
     }
     
+    private void OnApplicationQuit()
+    {
+        StopBroadcast();
+    }
+
+    private void OnDestroy()
+    {
+        StopBroadcast();
+    }
+    
+    
     public void StopBroadcast()
     {
         if (!_isSending) return;

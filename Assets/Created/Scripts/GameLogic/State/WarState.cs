@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using FishNet;
+using FishNet.Connection;
 using FishNet.Managing.Scened;
 
 public class WarState : IGameState
@@ -11,7 +12,7 @@ public class WarState : IGameState
     public void ExitServer()
     {
         Debug.Log($"WarState ExitServer");
-        GameStateController.Instance.IncreaseNbRounds();
+        GameManager.Instance.IncreaseNbRounds();
     }
 
     public void ExitClient()

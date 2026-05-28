@@ -91,10 +91,10 @@ MonoBehaviour:
   _isNetworked: 1
   _isSpawnable: 1
   _isGlobal: 0
-  _initializeOrder: -3
+  _initializeOrder: -31
   _preventDespawnOnDisconnect: 0
   _defaultDespawnType: 0
-  _initializedTimestamp: -8584233554432024288
+  _initializedTimestamp: -8584222324819003768
 --- !u!114 &838987558728041247
 MonoBehaviour:
   m_ObjectHideFlags: 0

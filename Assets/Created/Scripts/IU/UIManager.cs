@@ -19,6 +19,7 @@ public class UIManager : MonoBehaviour
     public UICardShop uiCardShop;
     public UIMillShop uiMillShop;
     public LocalPlayerUIBinder localPlayerUIBinder;
+    public UICamp uiCamp;
     public PlayerState ps;
 
     public void Bind(PlayerState ps)
@@ -63,6 +64,18 @@ public class UIManager : MonoBehaviour
     public void OnClickSurrender()
     {
         ps.ServerPlayerSurrender();
+    }
+
+    public void SetEnnemy(PlayerState ps)
+    {
+        if (ps)
+        {
+            uiCamp.SetEnnemy(ps);
+        }
+        else
+        {
+            uiCamp.SetNoEnnemy();
+        }
     }
     
     

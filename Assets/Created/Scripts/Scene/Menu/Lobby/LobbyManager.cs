@@ -21,9 +21,16 @@ public class LobbyManager : NetworkBehaviour
     public override void OnStartClient()
     {
         base.OnStartClient();
+        LobbyDiscovery.Instance.StopListening();
         if (IsServerStarted) return;
         Debug.Log("LobbyManager::OnStartClient");
         ServerTryJoinLobby();
+    }
+
+    public override void OnStopClient()
+    {
+        base.OnStopClient();
+        LobbyDiscovery.Instance.StartListening();
     }
 
     /*public override void OnStartClient()
@@ -54,6 +61,7 @@ public class LobbyManager : NetworkBehaviour
     
     private void OnClientConnectionState(NetworkConnection conn, RemoteConnectionStateArgs args)
     {
+        Debug.Log($"OnClientConnectionState : {conn.ClientId} → {args.ConnectionState}");
         if (args.ConnectionState != RemoteConnectionState.Stopped) return;
 
         PlayerLeaveInLobby(conn);
@@ -76,17 +84,17 @@ public class LobbyManager : NetworkBehaviour
             TargetJoinLobbyFailed(conn, "The lobby is closed");
             return;
         }
-        TargetJoinLobbySucceeded(conn);
+        TargetJoinLobbySucceeded(conn, _hostLobbyData);
         AddPlayerInLobby(conn);
         
         return;
     }
 
     [TargetRpc]
-    private void TargetJoinLobbySucceeded(NetworkConnection conn)
+    private void TargetJoinLobbySucceeded(NetworkConnection conn, LobbyData lobbyData)
     {
-        LobbyDiscovery.Instance.ConnectionFailed("Connected !", 1, 1);
-        MenuUIManager.Instance.SetLobbyPanelActive();
+        LobbyDiscovery.Instance.ConnectionState("Connected !", 1, 1);
+        MenuUIManager.Instance.SetLobbyPanelActive(false, lobbyData.lobbyName);
     }
     
     
@@ -94,7 +102,7 @@ public class LobbyManager : NetworkBehaviour
     [TargetRpc]
     private void TargetJoinLobbyFailed(NetworkConnection conn, string message)
     {
-        LobbyDiscovery.Instance.ConnectionFailed(message, 1, 1);
+        LobbyDiscovery.Instance.ConnectionState(message, 1, 1);
         conn.Disconnect(true);
     }
 
@@ -117,15 +125,18 @@ public class LobbyManager : NetworkBehaviour
     [Server]
     private void PlayerLeaveInLobby(NetworkConnection conn)
     {
+        Debug.Log($"PlayerLeaveInLobby appelé ! nbPlayers avant : {_hostLobbyData.nbPlayers}");
         if (_hostLobbyData.IsFull()) _hostLobbyData.isOpen = true;
         _hostLobbyData.nbPlayers--;
-        if (_hostLobbyData.nbPlayers <= 0)
+        Debug.Log($"nbPlayers après : {_hostLobbyData.nbPlayers}");
+        Debug.Log($"conn.IsHost = {conn.IsHost}");
+        /*if (conn.IsLocalClient || _hostLobbyData.nbPlayers <= 0 )
         {
             Debug.Log("RemoveInLobbyList");
             LobbyBroadcaster.Instance.StopBroadcast();
             ServerManager.StopConnection(false);
             return;
-        }
+        }*/
         _hostLobbyData.hasBeenModified = true;
         LobbyBroadcaster.Instance.UpdateLobbyData(_hostLobbyData);
         ObserversSendMessage($"Player {conn.ClientId} left the lobby");

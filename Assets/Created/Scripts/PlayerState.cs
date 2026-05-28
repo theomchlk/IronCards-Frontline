@@ -18,9 +18,15 @@ public class PlayerState : NetworkBehaviour
     public UIManager UIManager => uiManager;*/
         //Partie
     private readonly SyncVar<bool> isLobbyLeader = new ();
+    private readonly SyncVar<int> idPlayer = new ();
+    public int IdPlayer { get => idPlayer.Value; set => idPlayer.Value = value; }
     private readonly SyncVar<int> hp = new ();
+    public int Hp => hp.Value;
     public readonly SyncVar<int> money = new ();
     private int _moneyPerMills;
+    
+    public readonly SyncVar<string> playerName = new();
+    public readonly SyncVar<Color> playerColor = new();
     
     //Slot
     public readonly SyncVar<int> nbSlots = new ();
@@ -31,22 +37,23 @@ public class PlayerState : NetworkBehaviour
     //Mill
     public readonly SyncVar<int> nbMills = new();
     public readonly SyncVar<int> millCost = new();
+
     public readonly SyncVar<PlayerCamp> playerCamp = new();
     public readonly SyncVar<bool> isReady = new();
     public readonly SyncVar<int> campIndex = new();
-    public readonly SyncVar<int> playerId = new();
 
     
     private List<SlotItem> _slotItems = new();
     private int _slotsReadyCount = 0;
-
+    
     private void Awake()
     {
         hp.Value = playerConfig.hpByDefault;
         money.Value = playerConfig.moneyByDefault;
         _moneyPerMills = playerConfig.moneyPerMills;
+        idPlayer.OnChange += OnIdPlayerChange;
 
-       playerCamp.Value = defaultCamp;
+        playerCamp.Value = defaultCamp;
     }
 
 
@@ -72,76 +79,165 @@ public class PlayerState : NetworkBehaviour
     public override void OnStartServer()
     {
         base.OnStartServer();
-        PlayerRegistry.Register(Owner, this);
-        SetPlayerId(PlayerRegistry.Count - 1);
-        if (PlayerRegistry.Count == 1) SetLobbyLeader();
-        GameStateController.Instance.CurrentState.OnPlayerEnter(this);
+        Debug.Log("PlayerState::OnStartServer");
+        PlayerRegistry.Register(OwnerId, this);
+        /*GameStateController.Instance.CurrentState.OnPlayerEnter(this);*/
         Debug.Log(InstanceFinder.ClientManager.Connection);
+        
+        /*playerName.OnChange += OnSetPlayerName;
+        playerColor.OnChange += OnSetPlayerColor;*/
     }
 
     public override void OnStopServer()
     {
         base.OnStopServer();
         if (GameStateController.Instance.CurrentState == null) return;
-        GameStateController.Instance.CurrentState.OnPlayerExit(this);
+        /*GameStateController.Instance.CurrentState.OnPlayerExit(this);*/
         Debug.Log($"OnStopServer: {InstanceFinder.ClientManager.Connection}");
-        /*foreach (var slot in _slotItems)
+        
+        /*playerName.OnChange -= OnSetPlayerName;
+        playerColor.OnChange -= OnSetPlayerColor;*/
+        
+        /*foreach (var no in Owner.Objects)
         {
-            if (slot != null && slot.IsSpawned /*&& slot.IsOwnerPlayerState(this)#1#)
-                InstanceFinder.ServerManager.Despawn(slot.gameObject);
-        }
+            if (no != null && no.IsSpawned)
+                Debug.Log($"no : {no} and isSpawned : {no.IsSpawned}");
+                InstanceFinder.ServerManager.Despawn(no);
+        }*/
 
-        _slotItems.Clear();*/
-
-        PlayerRegistry.Unregister(Owner);
+        PlayerRegistry.Unregister(OwnerId);
     }
+    
 
     public override void OnStartClient()
     {
         base.OnStartClient();
-
-        PlayerRegistry.Register(Owner, this);
-
-        if (!IsOwner) return;
+        Debug.Log("Start of PlayerState::OnStartClient");
+        if (!IsOwner) return;   
+        if (IsHostStarted) isLobbyLeader.Value = true;
         Local = this;
         InstanceFinder.SceneManager.OnLoadEnd += OnGameSceneLoad;
+        ServerSetPlayerInfo(LocalPlayerPrefs.PlayerName,LocalPlayerPrefs.PlayerColor);
+        GameStateController.Instance.OnPlayerEnter(this);
+        Debug.Log("End of PlayerState::OnStartClient");
+    }
+
+    /*private void OnSetPlayerName(string previous, string next, bool asServer)
+    {
+        if (asServer) return;
+        if (!string.IsNullOrEmpty(playerName.Value) && playerColor.Value != default)
+        {
+            Debug.Log("OnSetPlayerName");
+            ObserversAddPanelPlayerInLobby(this);
+        }
+    }
+
+    private void OnSetPlayerColor(Color previous, Color next, bool asServer)
+    {
+        if (asServer) return;
+        if (!string.IsNullOrEmpty(playerName.Value) && next != default)
+        {
+            Debug.Log("OnSetPlayerColor");
+            ObserversAddPanelPlayerInLobby(this);
+        }
+    }*/
+
+    [ServerRpc]
+    private void ServerSetPlayerInfo(string namePlayer, Color color, NetworkConnection conn = null)
+    {
+        playerName.Value = namePlayer;
+        playerColor.Value = color;
+        Debug.Log($"ServerSetPlayerInfo {namePlayer}");
+        ObserversAddPanelPlayerInLobby(this, namePlayer, color);
+        SetAllPanelPlayersInLobby(conn);     
+    }
+    
+    [Server]
+    private void SetAllPanelPlayersInLobby(NetworkConnection conn)
+    {
+        var i = 0;
+        foreach (var ps in PlayerRegistry.GetAll)
+        {
+            i++;
+            Debug.Log($"foreach ps = {ps} and name {ps.playerName.Value}");
+            /*if (ps.Owner != conn)
+            {*/
+                TargetSetPanelPlayerInLobby(conn, ps.playerName.Value, ps.playerColor.Value,i == PlayerRegistry.PlayerCount);
+                Debug.Log($"TargetSetAllPanelPlayersInLobby ps {ps.playerName.Value}");
+            /*}*/
+        }
+        
+    }
+
+    [TargetRpc]
+    public void TargetSetPanelPlayerInLobby(NetworkConnection conn, string namePlayer, Color color, bool tryApplyNow)
+    {
+        Debug.Log("PlayerState::TargetSetAllPanelPlayersInLobby");
+        LobbyCache.PendingPlayers.Add((this, namePlayer, color));
+        Debug.Log($"TargetSetAllPanelPlayersInLobby name {namePlayer}");
+        if (tryApplyNow) LobbyCache.TryApply();
+    }
+
+    [ObserversRpc(RunLocally = false)]
+    public void ObserversAddPanelPlayerInLobby(PlayerState ps, string namePlayer, Color color)
+    {
+        if (IsOwner) return;
+        Debug.Log($"ObserversAddPanelPlayerInLobby ps = {namePlayer}");
+        LobbyCache.PendingPlayers.Add((ps, namePlayer, color));
+        LobbyCache.TryApply();
     }
 
     private void OnGameSceneLoad(SceneLoadEndEventArgs args)
     {
-        if (args.LoadedScenes == null) return;
-        bool fightSceneLoaded = false;
-        foreach (var scene in args.LoadedScenes)
-            if (scene.name == "Noah") { fightSceneLoaded = true; break; }
-        if (!fightSceneLoaded) return;
+    if (args.LoadedScenes == null) return;
+    bool fightSceneLoaded = false;
+    foreach (var scene in args.LoadedScenes)
+    if (scene.name == "Noah") { fightSceneLoaded = true; break; }
+    if (!fightSceneLoaded) return;
 
         InstanceFinder.SceneManager.OnLoadEnd -= OnGameSceneLoad;
+        
+    PlayerState enemyPs = null;
+    foreach (var ps in PlayerRegistry.GetAll)
+    {
+        if (!ps.IsOwner) { enemyPs = ps; break; }
+    }
 
-        PlayerState enemyPs = null;
-        foreach (var ps in PlayerRegistry.GetAll)
-        {
-            if (!ps.IsOwner) { enemyPs = ps; break; }
-        }
+    if (enemyPs == null)
+    {
+        Debug.LogError("[PlayerState] PlayerState ennemi introuvable — scène Noah chargée trop tôt ?");
+        return;
+    }
 
-        if (enemyPs == null)
-        {
-            Debug.LogError("[PlayerState] PlayerState ennemi introuvable — scène Noah chargée trop tôt ?");
-            return;
-        }
+    PlayerState leftPs  = campIndex.Value == 0 ? this : enemyPs;
+    PlayerState rightPs = campIndex.Value == 0 ? enemyPs : this;
 
-        // Le serveur a assigné campIndex : 0 = gauche, 1 = droite.
-        // Les deux clients arrivent à la même assignation de façon indépendante.
-        PlayerState leftPs  = campIndex.Value == 0 ? this : enemyPs;
-        PlayerState rightPs = campIndex.Value == 0 ? enemyPs : this;
-
-        FightManager.RegisterPlayerState(this, leftPs, rightPs);
+    FightManager.RegisterPlayerState(this, leftPs, rightPs);
+        UIManager.Instance.Bind(this);
     }
 
     public override void OnStopClient()
     {
         base.OnStopClient();
-        PlayerRegistry.Unregister(Owner);
         InstanceFinder.SceneManager.OnLoadEnd -= OnGameSceneLoad;
+        if (!IsHostStarted) GameStateController.Instance.OnPlayerExit(idPlayer.Value);
+        PlayerRegistry.Unregister(IdPlayer);
+        /*GameStateController.Instance.CurrentState.OnPlayerExit(this);
+        WhenClientLeave();*/
+    }
+    
+    /*[ServerRpc(RequireOwnership = false)]
+    public void WhenClientLeave(NetworkConnection conn = null)
+    {
+        GameStateController.Instance.CurrentState.OnPlayerExit(this);
+    }*/
+    
+    [ObserversRpc]
+    public void ObserversRemovePanelPlayerInLobby(PlayerState ps)
+    {
+        Debug.Log($"ObserversRemovePanelPlayerInLobby ps.name = {ps}");
+        Debug.Log($"Player Conn = {ps}");
+        InLobbyUI.Instance.RemovePlayer(ps);
     }
 
     
@@ -229,12 +325,9 @@ public class PlayerState : NetworkBehaviour
 
     [Server]
     public bool IsLobbyLeader() => isLobbyLeader.Value;
-
+        
     [Server]
     public void SetCampIndex(int index) => campIndex.Value = index;
-
-    [Server]
-    public void SetPlayerId(int id) => playerId.Value = id;
 
     [ServerRpc]
     public void ServerToggleReady(NetworkConnection conn = null)
@@ -261,14 +354,19 @@ public class PlayerState : NetworkBehaviour
     {
         if (conn != Owner) return;
         hp.Value = 0;
-        LoadBackMainMenu(conn);
+        TargetDisconnect(conn);
     }
 
-    [Server]
-    private void LoadBackMainMenu(NetworkConnection conn)
+    [TargetRpc]
+    private void TargetDisconnect(NetworkConnection conn)
     {
-        SceneUnloadData sceneUnloadData = new SceneUnloadData("Theo");
-        InstanceFinder.SceneManager.UnloadConnectionScenes(conn, sceneUnloadData);
+        InstanceFinder.ClientManager.StopConnection();
+    }
+
+    private void OnIdPlayerChange(int prev, int next, bool asServer)
+    {
+        if (asServer) return;
+        PlayerRegistry.Register(next, this);
     }
 
 

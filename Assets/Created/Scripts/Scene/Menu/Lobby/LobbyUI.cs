@@ -8,6 +8,7 @@ using UnityEngine.UI;
 public class LobbyUI : MonoBehaviour
 {
     private LobbyData _data;
+
     [SerializeField] private TMP_Text lobbyNameText;
     [SerializeField] private TMP_Text lobbyAddressText;
     [SerializeField] private TMP_Text lobbyPlayersText;
@@ -35,8 +36,8 @@ public class LobbyUI : MonoBehaviour
         lobbyNameText.text = data.lobbyName;
         lobbyAddressText.text = data.address;
         SetNbPlayersUI(data.nbPlayers, data.maxPlayers);
-
     }
+
 
     public void ResetTimerSeen()
     {

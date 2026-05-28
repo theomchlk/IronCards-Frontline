@@ -111,10 +111,10 @@ public class FightManager : NetworkBehaviour
 
         Canvas.ForceUpdateCanvases();
 
-        Instance.leftGroundRenderer.material = Instance.fightColorsSO.colors[psLeft.playerId.Value].goundColor;
-        Instance.rightGroundRenderer.material = Instance.fightColorsSO.colors[psRight.playerId.Value].goundColor;
-        Instance.SpawnSoldiers(Instance.playerLeftCamp, cardUILeft, psLeft.playerId.Value);
-        Instance.SpawnSoldiers(Instance.playerRightCamp, cardUIRight, psRight.playerId.Value);
+        Instance.leftGroundRenderer.material = Instance.fightColorsSO.colors[psLeft.IdPlayer].goundColor;
+        Instance.rightGroundRenderer.material = Instance.fightColorsSO.colors[psRight.IdPlayer].goundColor;
+        Instance.SpawnSoldiers(Instance.playerLeftCamp, cardUILeft, psLeft.IdPlayer);
+        Instance.SpawnSoldiers(Instance.playerRightCamp, cardUIRight, psRight.IdPlayer);
     }
 
     private void HideCards()
@@ -175,7 +175,7 @@ public class FightManager : NetworkBehaviour
         sol.SetOwnerId(playerId);
         _soldierByNetId[netId] = sol;
 
-        if (playerId == localPlayerState.playerId.Value)
+        if (playerId == localPlayerState.IdPlayer)
             sol.SetIsOwnerPlayer(true);
 
         soldier.transform.SetParent(transform);
@@ -189,7 +189,7 @@ public class FightManager : NetworkBehaviour
     {
         if (!_soldierByNetId.TryGetValue(soldierNetId, out soldier)) return false;
         var ps = conn?.FirstObject?.GetComponent<PlayerState>();
-        return ps != null && soldier.GetOwnerId() == ps.playerId.Value;
+        return ps != null && soldier.GetOwnerId() == ps.IdPlayer;
     }
 
 
