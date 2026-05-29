@@ -32,10 +32,13 @@
         public readonly SyncVar<int> slotCost = new();
         public readonly SyncVar<int> nbFreeSlots = new();
         //Cards
-        public readonly SyncDictionary<string, int> cardsOwned = new();
+        public readonly SyncDictionary<string, int> cardsInHand = new();
         //Mill
         public readonly SyncVar<int> nbMills = new();
         public readonly SyncVar<int> millCost = new();
+        //Camp
+        [SerializeField] private PlayerCamp camp;
+        public PlayerCamp Camp => camp;
 
         
         private List<SlotItem> _slotItems = new();
@@ -314,6 +317,7 @@
             if (asServer) return;
             PlayerRegistry.Register(next, this);
         }
+        
 
 
 

@@ -30,6 +30,7 @@ public class PreparationState : IGameState
     {
         Debug.Log($"PreparationState EnterClient");
         var uiManager = UIManager.Instance;
+        var gameManager = GameManager.Instance;
         var ps = PlayerRegistry.GetPlayerState(InstanceFinder.ClientManager.Connection.ClientId);
         
         Debug.Log($"Connection {InstanceFinder.ClientManager.Connection} and id {InstanceFinder.ClientManager.Connection.ClientId}");
@@ -37,7 +38,7 @@ public class PreparationState : IGameState
         Debug.Log($"and ShopItemUI {UIManager.Instance.shopItemUI}");
         Debug.Log($"and ps {ps}");
         uiManager.shopItemUI.OpenShuttereUI();
-        if (GameManager.Instance.IsFirstRound)uiManager.uiCamp.SetUI(ps);
+        if (gameManager.IsFirstRound)uiManager.uiCamp.SetUI(ps, gameManager.nbRow.Value, gameManager.nbCol.Value);
 
     }
     

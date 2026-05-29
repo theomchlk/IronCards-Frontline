@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 838987558728041247}
   - component: {fileID: 113154175964739823}
   - component: {fileID: -5552982683059724394}
+  - component: {fileID: 8153568903775915627}
   m_Layer: 0
   m_Name: PlayerV2
   m_TagString: Untagged
@@ -126,6 +127,7 @@ MonoBehaviour:
   _addedNetworkObject: {fileID: 4350343371047122656}
   _networkObjectCache: {fileID: 4350343371047122656}
   playerConfig: {fileID: 11400000, guid: 0034ef9e26a1c904abc06f38f5d85e03, type: 2}
+  camp: {fileID: 8153568903775915627}
 --- !u!114 &-5552982683059724394
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -141,3 +143,21 @@ MonoBehaviour:
   _componentIndexCache: 2
   _addedNetworkObject: {fileID: 4350343371047122656}
   _networkObjectCache: {fileID: 4350343371047122656}
+--- !u!114 &8153568903775915627
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5544882027916993423}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 984dc38c6d4d4874bbcf031744aba5be, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerCamp
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 4350343371047122656}
+  _networkObjectCache: {fileID: 0}
+  nbRow: 0
+  nbCol: 0
+  ps: {fileID: 113154175964739823}

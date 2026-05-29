@@ -3,6 +3,7 @@ using UnityEngine;
 public class CardItemLogic : IItem
 {
     private CardsSO _data;
+    private (int, int) _position;
     
     public CardItemLogic(CardsSO data)
     {
@@ -22,7 +23,7 @@ public class CardItemLogic : IItem
     public void Purchase(PurchaseContext context)
     {
         context.playerState.RemoveMoney(Cost(null));
-        CardCollection.AddCard(context.playerState.cardsOwned, _data.Id);
+        CardCollection.AddCard(context.playerState.cardsInHand, _data.Id);
         context.playerState.DecrementFreeSlot();
         context.shopItem.SpawnItemForPlayer(context.connection,_data);
     }

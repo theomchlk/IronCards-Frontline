@@ -10,6 +10,7 @@ public class SlotItem : ASpawnableItem
     /*private readonly SyncVar<string> _itemId = new SyncVar<string>();*/
     private SlotSO _data;
     private PlayerState _ownerPlayerState;
+    public PlayerState PlayerState => _ownerPlayerState;
     
     public override void OnStartClient()
     {
@@ -60,5 +61,12 @@ public class SlotItem : ASpawnableItem
     }
     
     public SlotSO Data => _data;
+
+    [ServerRpc(RequireOwnership = false)]
+    public void ServerRemoveCardFromCampToHand(Localisation loc, string cardId, NetworkConnection conn = null)
+    {
+        _ownerPlayerState.Camp.RemoveCardFromCampToHand(loc,cardId);
+
+    }
 }
   

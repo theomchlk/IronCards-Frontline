@@ -1470,6 +1470,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 3609699034410559431}
     m_Modifications:
+    - target: {fileID: 983952073287948322, guid: d8ef862fe880ff1418bb8e9d2929fa9e, type: 3}
+      propertyPath: m_TagString
+      value: Hand
+      objectReference: {fileID: 0}
     - target: {fileID: 1304769290984665564, guid: d8ef862fe880ff1418bb8e9d2929fa9e, type: 3}
       propertyPath: m_Name
       value: Scroll view (Hand)
@@ -1793,7 +1797,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 25.85
+  m_fontSize: 26.45
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -3584,8 +3588,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UICamp
   colorAlly: {fileID: 6956915296509530491}
+  allyCamp: {fileID: 6956915296509530490}
   colorEnnemy: {fileID: 1801383794503762474}
+  ennemyCamp: {fileID: 1801383794503762473}
   noEnnemyPanel: {fileID: 813697682}
+  linePrefab: {fileID: 60995858228405122, guid: 8316c0ba92d780443ad349bfc1b6552f, type: 3}
+  slotInCampPrefab: {fileID: 1365167524238765840, guid: 00cc12b72cb7dee4cb02e70426b2dd14, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
