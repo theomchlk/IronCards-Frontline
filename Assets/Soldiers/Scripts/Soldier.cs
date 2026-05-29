@@ -346,14 +346,14 @@ public abstract class Soldier : MonoBehaviour
         yield return new WaitForSeconds(GetAttackSpeed() - 0.1f);
         CombatActionSO combatAction = GetCombatAction();
         if (combatAction != null)
-            combatAction.Execute(this, target);
+            combatAction.Execute(this.gameObject, target.gameObject);
     }
 
     protected virtual IEnumerator DelayedNetworkAction(Soldier target)
     {
         yield return new WaitForSeconds(GetAttackSpeed() - 0.1f);
         if (target == null || !target.IsAlive()) yield break;
-        target.TakeDamage(this, GetDamage());
+        target.TakeDamage(this.gameObject, GetDamage());
     }
 
     public void SnapToPosition(Vector3 pos, Quaternion rot)
@@ -418,9 +418,9 @@ public abstract class Soldier : MonoBehaviour
         animator.SetBool("Running", false);
     }
 
-    public void TakeDamage(Soldier source, float damage)
+    public void TakeDamage(GameObject source, float damage)
     {
-        if (!source.IsOwnerPlayer) return;
+        if (!source.GetComponent<Soldier>().IsOwnerPlayer) return;
         FightManager.Instance?.CmdApplyDamage(_netId, damage);
     }
 

@@ -27,6 +27,7 @@ public class CardsSO : ItemSO
     [SerializeField, Range(0f, 1f)] public float armorProtection = 0f;
     public AudioClip protectionSound;
     public FightColorsSO fightColors;
+    public GameObject LobbySoldierPrefab;
 
     public override string Id => id;
 

@@ -253,6 +253,7 @@ public class GameStateController : NetworkBehaviour
     [ObserversRpc]
     private void ObserversHideLobbyCanvas()
     {
+        LobbyFightManager.Instance.SetActive(false);
         if (lobbyCanvas != null)
             lobbyCanvas.gameObject.SetActive(false);
     }

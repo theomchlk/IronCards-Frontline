@@ -39,7 +39,7 @@ public class Healer : Soldier
 
         CombatActionSO action = GetCombatAction();
         if (action != null) {
-            action.Execute(this, target);
+            action.Execute(this.gameObject, target.gameObject);
         }
         if (IsInRange(target))
         {

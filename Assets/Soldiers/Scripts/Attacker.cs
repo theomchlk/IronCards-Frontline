@@ -18,12 +18,12 @@ public class Attacker : Soldier
         
         CombatActionSO action = GetCombatAction();
         if (action != null) {
-            action.Execute(this, target);
+            action.Execute(this.gameObject, target.gameObject);
         }
 
-        if ((action == null || !action.HandlesDamage()) && IsInRange(target))
+        if (action == null && IsInRange(target))
         {
-            target.TakeDamage(this, GetDamage());
+            target.TakeDamage(this.gameObject, GetDamage());
         }
     }
 

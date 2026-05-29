@@ -8,9 +8,7 @@ public class ProjectileActionSO : CombatActionSO
     public float projectileSpeed;
     public float projectileLifetime;
 
-    public override bool HandlesDamage() => true;
-
-    public override void Execute(Soldier source, Soldier target)
+    public override void Execute(GameObject source, GameObject target)
     {
         if (projectilePrefab == null) return;
 
@@ -20,7 +18,8 @@ public class ProjectileActionSO : CombatActionSO
         Projectile proj = projGo.GetComponent<Projectile>();
         if (proj != null)
         {
-            proj.Launch(target, source, projectileSpeed, projectileLifetime, source.GetDamage());
+            proj.Launch(target.gameObject, projectileSpeed, projectileLifetime);
         }
     }
+
 }
