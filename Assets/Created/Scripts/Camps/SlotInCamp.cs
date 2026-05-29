@@ -64,6 +64,7 @@ public class SlotInCamp : MonoBehaviour, IReceiver
 
     public void CardBeingSwap(CardDragHandler newCard, CardDragHandler oldCard)
     {
+        Debug.Log($"CardBeingSwap({newCard}, {oldCard})");
         var newCardType = newCard.lastParent.GetComponent<IReceiver>().Type();
         if (!AllowedTransition().Contains(newCardType))
         {

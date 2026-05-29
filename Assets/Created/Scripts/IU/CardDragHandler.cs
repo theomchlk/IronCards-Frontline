@@ -69,7 +69,7 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         {
             var oldCard = receiver.GetComponent<CardDragHandler>();
             receiver.transform.parent.GetComponent<IReceiver>().CardBeingSwap(this, oldCard);
-
+            return;
 
         }
         SetNewParent(lastParent);

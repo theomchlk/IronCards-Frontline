@@ -37,6 +37,7 @@ public class SlotUI : MonoBehaviour, IReceiver
 
     public void CardBeingSwap(CardDragHandler newCard, CardDragHandler oldCard)
     {
+        Debug.Log("CardBeingSwap");
         if (!AllowedTransition().Contains(newCard.lastParent.GetComponent<IReceiver>().Type()))
         {
             newCard.ReturnToLastParent();
@@ -57,6 +58,6 @@ public class SlotUI : MonoBehaviour, IReceiver
     private void SetSlotInHand(CardDragHandler card,Transform newSlotInHand)
     {
         card.SlotInHand = newSlotInHand;
-        card.SetNewParent(card.SlotInHand);
+        card.SetNewParent(newSlotInHand);
     }
 }

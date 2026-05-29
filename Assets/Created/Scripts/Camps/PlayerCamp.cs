@@ -7,6 +7,7 @@ public class PlayerCamp : NetworkBehaviour
 {
     private int _nbRow, _nbCol;
     private readonly SyncDictionary<Localisation, string> cardsOnCamp = new();
+    public SyncDictionary<Localisation, string> CardsOnCamp => cardsOnCamp;
     [SerializeField] private PlayerState ps;
 
     [Server]
@@ -55,15 +56,18 @@ public class PlayerCamp : NetworkBehaviour
         if (!IsPossibleToPutCardOnCamp(cardId, loc, prev)) TargetRemoveCardFromCamp(conn,loc);
         else
         {
-            if (cardsOnCamp.ContainsKey(loc))
+            
+            if (prev != null) //Si la carte vient déjà de camp
             {
-                if (prev != null)
+                if (cardsOnCamp.ContainsKey(loc)) //Si il y a déjà un carte en loc
                 {
                     Debug.Log("Swap in camp");
                     SwapCards(cardsOnCamp[loc], cardsOnCamp[prev]);
                     return;
                 }
-                RemoveToHand(conn,loc);
+                cardsOnCamp.Remove(prev);
+                cardsOnCamp[loc] = cardId;
+                return;
             }
             cardsOnCamp[loc] = cardId;
             Debug.Log($"cardsOnCamp had set {cardsOnCamp[loc]} in {loc.Col}, {loc.Row}");
