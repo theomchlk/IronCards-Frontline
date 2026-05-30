@@ -48,6 +48,27 @@ public class ShopItem : NetworkBehaviour
         Debug.Log(msg);
     }
 
+    [ServerRpc(RequireOwnership = false)]
+    public void ServerRefundCard(string cardId, NetworkConnection conn = null)
+    {
+        var ps = PlayerRegistry.GetPlayerState(conn.ClientId);
+        if (ps.cardsInHand[cardId] < 1)
+        {
+            Debug.Log($"Card {cardId} isn't in hand.");
+            return;
+        }
+
+        RefundCard(cardId, ps);
+    }
+
+    [Server]
+    private void RefundCard(string cardId, PlayerState ps)
+    {
+        var cardData = DataBaseItem.Instance.GetDataItem(cardId);
+        ps.AddMoney(cardData.cost);
+        ps.IncrementFreeSlot();
+    }
+
     /*[TargetRpc]
     private void TargetBuySucceeded(NetworkConnection conn, string id)
     {
@@ -88,4 +109,6 @@ public class ShopItem : NetworkBehaviour
             InstanceFinder.ServerManager.Spawn(go/*, conn*/);
             nob.TargetSpawnItem(conn, itemData.Id);
         }
+        
+        
 }

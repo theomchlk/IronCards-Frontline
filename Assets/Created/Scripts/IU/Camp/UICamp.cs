@@ -31,6 +31,7 @@ public class UICamp : MonoBehaviour
     }
     public void SetEnnemy(PlayerState ps, int nbRow, int nbCol)
     {
+        if (ps == null) return;
         ClearEnnemyUI();
         colorEnnemy.color = ps.playerColor.Value;
         for (var i = 0; i < nbCol; i++)

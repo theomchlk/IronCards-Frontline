@@ -32,9 +32,11 @@ public class SlotInCamp : MonoBehaviour, IReceiver
         }
         if (canReceiveCard)
         {
+            card.CurrentSlotInCamp = this;
             Debug.Log($"Card is put and LastSlotInCamp = {card.LastSlotInCamp}");
             Debug.Log($"{card.CardId} is set in {Loc}");
             camp.ServerPutCardOnCamp(card.CardId, Loc, card.LastSlotInCamp?.Loc);
+            SetSlotInCamp(card,this);
         }
         else
         {
@@ -71,18 +73,26 @@ public class SlotInCamp : MonoBehaviour, IReceiver
             newCard.ReturnToLastParent();
             return;
         }
-
+        newCard.CurrentSlotInCamp = this;
         if (newCardType == ReceiverType.SlotCamp)
         {
-            var oldSlotInCamp = oldCard.LastSlotInCamp;
+            /*
+            var oldSlotInCamp = (oldCard.LastSlotInCamp != null) ? oldCard.LastSlotInCamp : oldCard.transform.parent.GetComponent<SlotInCamp>();
+            */
+            var oldSlotInCamp = oldCard.CurrentSlotInCamp;
+
+            Debug.Log($"oldSlotCamp = {oldSlotInCamp.Loc.Col},{oldSlotInCamp.Loc.Row} and newSlotCamp = {newCard.LastSlotInCamp.Loc.Col},{newCard.LastSlotInCamp.Loc.Row}");
+            camp.ServerPutCardOnCamp(newCard.CardId, oldSlotInCamp.Loc, newCard.LastSlotInCamp?.Loc);
             SetSlotInCamp(oldCard, newCard.LastSlotInCamp);
             SetSlotInCamp(newCard, oldSlotInCamp);
+            
             return;
         }
 
         if (newCardType == ReceiverType.SlotHand)
         {
-            SetSlotInCamp(newCard, oldCard.LastSlotInCamp);
+            camp.ServerRemoveCardFromCampToHand(oldCard.CurrentSlotInCamp.Loc, oldCard.CardId);
+            SetSlotInCamp(newCard, oldCard.CurrentSlotInCamp);
             oldCard.LastSlotInCamp = null;
             oldCard.SetNewParent(oldCard.SlotInHand);
             camp.ServerPutCardOnCamp(newCard.CardId, Loc, null);
@@ -98,6 +108,7 @@ public class SlotInCamp : MonoBehaviour, IReceiver
     private void SetSlotInCamp(CardDragHandler card, SlotInCamp newSlotInCamp)
     {
         card.LastSlotInCamp = newSlotInCamp;
+        card.CurrentSlotInCamp = newSlotInCamp;
         card.SetNewParent(card.LastSlotInCamp.transform);
     }
     

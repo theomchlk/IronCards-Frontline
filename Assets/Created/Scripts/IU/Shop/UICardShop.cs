@@ -31,6 +31,7 @@ public class UICardShop : MonoBehaviour
         cardUI.SetCardUI(card.Data);
         cardUI.EnableDragMode();
         slotFree.ChangeFreeState();
+        slotFree._cardOnSlot = cardUI.GetComponent<CardDragHandler>();
     }
 
     /*public void OnEnable()

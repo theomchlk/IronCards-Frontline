@@ -7,8 +7,11 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     public void SetCardId(string cardId) => _cardId = cardId;
     public string CardId => _cardId;
     public Transform lastParent;
-    private SlotInCamp _lastSlotInCamp = null;
+    public SlotInCamp LastSlotInCamp = null;
+    public SlotInCamp CurrentSlotInCamp = null;
+    /*
     public SlotInCamp LastSlotInCamp { get => _lastSlotInCamp; set => _lastSlotInCamp = value; }
+    */
     private Transform slotInHand;
     
     public Transform SlotInHand { get => slotInHand; set => slotInHand = value; }
@@ -24,6 +27,7 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     void Start()
     {
         if (transform.parent.parent.CompareTag("Hand")) slotInHand = transform.parent;
+        lastParent = transform.parent;
     }
 
     
@@ -33,7 +37,7 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     {
         Debug.Log($"Start drag {CardId}");
         if (transform.parent.parent.CompareTag("Hand")) slotInHand = transform.parent;
-        _lastSlotInCamp = transform.parent.GetComponent<SlotInCamp>();
+        LastSlotInCamp = transform.parent.GetComponent<SlotInCamp>();
         canvasGroup.blocksRaycasts = false;
         lastParent = transform.parent;
         
@@ -60,7 +64,6 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         //Si c'est un slot globabelement
         if (receiver.CompareTag("CardReceiver") )
         {
-            SetNewParent(receiver.transform);
             receiver.GetComponent<IReceiver>().CardBeingPut(this);
             return;
         }
@@ -69,10 +72,11 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         {
             var oldCard = receiver.GetComponent<CardDragHandler>();
             receiver.transform.parent.GetComponent<IReceiver>().CardBeingSwap(this, oldCard);
+            
             return;
 
         }
-        SetNewParent(lastParent);
+        ReturnToLastParent();
     }
     
     

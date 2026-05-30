@@ -48,24 +48,31 @@ public class PlayerCamp : NetworkBehaviour
         if (asServer) return;
         _nbCol = next;
     }
+    
+    [ServerRpc(RequireOwnership = false)]
+    public void ServerRemoveCardFromCampToHand(Localisation loc, string cardId, NetworkConnection conn = null)
+    {
+        RemoveCardFromCampToHand(loc,cardId);
+
+    }
 
     [ServerRpc(RequireOwnership = false)]
-    public void ServerPutCardOnCamp(string cardId, Localisation loc, Localisation prev, NetworkConnection conn = null)
+    public void ServerPutCardOnCamp(string cardId, Localisation loc, Localisation newCardLoc, NetworkConnection conn = null)
     {
         
-        if (!IsPossibleToPutCardOnCamp(cardId, loc, prev)) TargetRemoveCardFromCamp(conn,loc);
+        if (!IsPossibleToPutCardOnCamp(cardId, loc, newCardLoc)) TargetRemoveCardFromCamp(conn,loc);
         else
         {
             
-            if (prev != null) //Si la carte vient déjà de camp
+            if (newCardLoc != null) //Si la carte vient déjà de camp
             {
                 if (cardsOnCamp.ContainsKey(loc)) //Si il y a déjà un carte en loc
                 {
-                    Debug.Log("Swap in camp");
-                    SwapCards(cardsOnCamp[loc], cardsOnCamp[prev]);
+                    Debug.Log($"Swap in camp loc {loc.Row},{loc.Col} and new loc {newCardLoc.Row},{newCardLoc.Col}");
+                    SwapCards(loc, newCardLoc);
                     return;
                 }
-                cardsOnCamp.Remove(prev);
+                cardsOnCamp.Remove(newCardLoc);
                 cardsOnCamp[loc] = cardId;
                 return;
             }
@@ -76,9 +83,11 @@ public class PlayerCamp : NetworkBehaviour
     }
 
     [Server]
-    private void SwapCards(string card1, string card2)
+    private void SwapCards(Localisation oldLoc, Localisation newLoc)
     {
-        (card1, card2) = (card2, card1);
+        Debug.Log($"Before swap card1 {cardsOnCamp[oldLoc]}, card2 {cardsOnCamp[newLoc]}");
+        (cardsOnCamp[oldLoc], cardsOnCamp[newLoc]) = (cardsOnCamp[newLoc], cardsOnCamp[oldLoc]);
+        Debug.Log($"After swap card1 {cardsOnCamp[oldLoc]}, card2 {cardsOnCamp[newLoc]}");
     }
 
     [Server]
@@ -111,7 +120,7 @@ public class PlayerCamp : NetworkBehaviour
         
     }
 
-    private bool IsPossibleToPutCardOnCamp(string cardId, Localisation loc, Localisation prev)
+    private bool IsPossibleToPutCardOnCamp(string cardId, Localisation loc, Localisation newCardLoc)
     {
         if (loc.Row < 0 || loc.Row >= _nbRow) return WhyItsImpossibleToPutCardOnCamp("Row invalid");
         if (loc.Col < 0 || loc.Col >= _nbCol) return  WhyItsImpossibleToPutCardOnCamp("Col invalid");
@@ -119,9 +128,9 @@ public class PlayerCamp : NetworkBehaviour
         /*if (cardsOnCamp.ContainsKey(loc)) return  WhyItsImpossibleToPutCardOnCamp("Loc already used");*/
         if (!CardCollection.HasCard(ps.cardsInHand, cardId))
         { 
-            if (prev == null) return WhyItsImpossibleToPutCardOnCamp("previous location is null");
-            if (!cardsOnCamp.ContainsKey(prev)) return WhyItsImpossibleToPutCardOnCamp($"Card's from nowhere {prev.Col}, {prev.Row}"); 
-            if (cardsOnCamp[prev] != cardId) return WhyItsImpossibleToPutCardOnCamp("Card id mismatch");
+            if (newCardLoc == null) return WhyItsImpossibleToPutCardOnCamp("previous location is null");
+            if (!cardsOnCamp.ContainsKey(newCardLoc)) return WhyItsImpossibleToPutCardOnCamp($"Card's from nowhere {newCardLoc.Col}, {newCardLoc.Row}"); 
+            if (cardsOnCamp[newCardLoc] != cardId) return WhyItsImpossibleToPutCardOnCamp("Card id mismatch");
         }
        
         return true;

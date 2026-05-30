@@ -62,11 +62,6 @@ public class SlotItem : ASpawnableItem
     
     public SlotSO Data => _data;
 
-    [ServerRpc(RequireOwnership = false)]
-    public void ServerRemoveCardFromCampToHand(Localisation loc, string cardId, NetworkConnection conn = null)
-    {
-        _ownerPlayerState.Camp.RemoveCardFromCampToHand(loc,cardId);
 
-    }
 }
   

@@ -273,6 +273,12 @@
         {
             nbFreeSlots.Value--;
         }
+
+        [Server]
+        public void IncrementFreeSlot()
+        {
+            nbFreeSlots.Value++;
+        }
         
         [Server]
         public bool CanAfford(int price) => money.Value >= price ;
@@ -284,7 +290,7 @@
         }
 
         [Server]
-        private void AddMoney(int amount)
+        public void AddMoney(int amount)
         {
             money.Value += amount;
         }
