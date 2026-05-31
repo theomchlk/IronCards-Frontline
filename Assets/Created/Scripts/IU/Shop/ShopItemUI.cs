@@ -1,9 +1,13 @@
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
-public class ShopItemUI : MonoBehaviour, IReceiver
+public class ShopItemUI : MonoBehaviour, IReceiver, IPointerEnterHandler, IPointerExitHandler
 {
     [SerializeField] private GameObject shutter;
+    [SerializeField] private GameObject sellingPanel;
+    [SerializeField] private TMP_Text sellingText;
     
 
     public void OpenShuttereUI()
@@ -18,26 +22,46 @@ public class ShopItemUI : MonoBehaviour, IReceiver
 
     public void CardBeingPut(CardDragHandler card)
     {
-        throw new System.NotImplementedException();
+        if (!AllowedTransition().Contains(card.lastParent.GetComponent<IReceiver>().Type()))
+        {
+            card.ReturnToLastParent();
+            return;
+        }
+
+        var cardItem = card.GetComponent<CardUI>().CardItem;
+        card.CleanAll();
+        if (cardItem) ShopItem.Instance.ServerRefundCard(cardItem);
     }
 
     public void DragRejected()
     {
-        throw new System.NotImplementedException();
+        
     }
 
-    public List<ReceiverType> AllowedTransition()
+    public List<ReceiverType> AllowedTransition() => new()
     {
-        throw new System.NotImplementedException();
-    }
+        ReceiverType.SlotHand
+    };
 
-    public ReceiverType Type()
-    {
-        throw new System.NotImplementedException();
-    }
+    public ReceiverType Type() => ReceiverType.Shop;
 
     public void CardBeingSwap(CardDragHandler newCard, CardDragHandler oldCard)
     {
-        throw new System.NotImplementedException();
+        
+    }
+    
+
+    public void OnPointerEnter(PointerEventData e)
+    {
+        if (e.dragging)
+        {
+            sellingPanel.SetActive(true);
+
+        }
+    }
+
+    public void OnPointerExit(PointerEventData e)
+    {
+        sellingPanel.SetActive(false);
     }
 }

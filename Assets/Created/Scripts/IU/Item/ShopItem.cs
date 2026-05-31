@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class ShopItem : NetworkBehaviour
 {
-
+    public static ShopItem Instance;
     /*public override void OnStartClient()
     {
         base.OnStartClient();
@@ -15,8 +15,13 @@ public class ShopItem : NetworkBehaviour
             ServerInitUIsItems();
         }
     }*/
+
+    void Awake()
+    {
+        Instance = this;
+    }
     
-    [ServerRpc] 
+    [ServerRpc(RequireOwnership = false)] 
     public void BuyItemServerRpc(string id, NetworkConnection conn = null)
     {
         var itemData = DataBaseItem.Instance.GetDataItem(id);
@@ -49,24 +54,28 @@ public class ShopItem : NetworkBehaviour
     }
 
     [ServerRpc(RequireOwnership = false)]
-    public void ServerRefundCard(string cardId, NetworkConnection conn = null)
+    public void ServerRefundCard(NetworkObject card, NetworkConnection conn = null)
     {
+        var cardItem = card.GetComponent<CardItem>();
+        if (cardItem == null) return;
         var ps = PlayerRegistry.GetPlayerState(conn.ClientId);
-        if (ps.cardsInHand[cardId] < 1)
+        if (ps.cardsInHand[cardItem.Data.Id] < 1)
         {
-            Debug.Log($"Card {cardId} isn't in hand.");
+            Debug.Log($"Card {cardItem.Data.Id} isn't in hand.");
             return;
         }
-
-        RefundCard(cardId, ps);
+        Destroy(cardItem.CardUI.gameObject);
+        RefundCard(cardItem.Data.Id, card,ps);
+        
     }
 
     [Server]
-    private void RefundCard(string cardId, PlayerState ps)
+    private void RefundCard(string cardId, NetworkObject card, PlayerState ps)
     {
         var cardData = DataBaseItem.Instance.GetDataItem(cardId);
         ps.AddMoney(cardData.cost);
         ps.IncrementFreeSlot();
+        card.Despawn();
     }
 
     /*[TargetRpc]

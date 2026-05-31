@@ -27,6 +27,8 @@ public class UICardShop : MonoBehaviour
         Debug.Log(slotFree.name);
         var cardPrefab = card.Data.goItemUI;
         var cardUI= Instantiate(cardPrefab, slotFree.transform).GetComponent<CardUI>();
+        card.CardUI = cardUI;
+        cardUI.tag = "Card";
         cardUI.Bind(card);
         cardUI.SetCardUI(card.Data);
         cardUI.EnableDragMode();

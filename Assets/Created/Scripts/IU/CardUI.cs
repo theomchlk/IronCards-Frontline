@@ -17,6 +17,7 @@ public class CardUI : MonoBehaviour
     
 
     private CardItem _cardItem;
+    public CardItem CardItem => _cardItem;
 
 
     public void SetCardUI(CardsSO data)

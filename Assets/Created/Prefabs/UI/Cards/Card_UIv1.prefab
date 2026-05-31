@@ -506,7 +506,7 @@ GameObject:
   - component: {fileID: 9011485174343214194}
   m_Layer: 5
   m_Name: Card_UIv1
-  m_TagString: Card
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -583,6 +583,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5de28b6e1ec941f0bf80dc2c34979a71, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CardDragHandler
+  lastParent: {fileID: 0}
+  LastSlotInCamp: {fileID: 0}
+  CurrentSlotInCamp: {fileID: 0}
 --- !u!225 &-3140333512932112195
 CanvasGroup:
   m_ObjectHideFlags: 0

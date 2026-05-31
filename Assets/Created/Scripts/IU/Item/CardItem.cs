@@ -6,6 +6,8 @@ using UnityEngine;
 public class CardItem : ASpawnableItem
 {
     private CardsSO _data;
+    private CardUI _cardUI;
+    public CardUI CardUI { get => _cardUI;  set => _cardUI = value;  }
     
     [TargetRpc]
     public override void TargetSpawnItem(NetworkConnection conn, string itemId)

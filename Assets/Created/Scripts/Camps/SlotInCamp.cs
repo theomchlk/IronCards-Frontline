@@ -112,4 +112,5 @@ public class SlotInCamp : MonoBehaviour, IReceiver
         card.SetNewParent(card.LastSlotInCamp.transform);
     }
     
+    
 }

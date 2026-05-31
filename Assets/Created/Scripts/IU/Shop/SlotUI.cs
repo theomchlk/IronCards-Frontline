@@ -86,4 +86,5 @@ public class SlotUI : MonoBehaviour, IReceiver
         if (newSlotUI) newSlotUI._cardOnSlot = card;
         card.SetNewParent(newSlotInHand);
     }
+    
 }

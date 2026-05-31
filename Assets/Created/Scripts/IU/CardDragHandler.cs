@@ -50,24 +50,20 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
          /*rectTransform.anchoredPosition += e.delta / canvas.scaleFactor;*/
          Vector3 pos = e.position;
          transform.position = pos;
+         
     }
 
     public void OnEndDrag(PointerEventData e)
     {
         canvasGroup.blocksRaycasts = true;
         var receiver = e.pointerEnter;
+        Debug.Log($"Receiver = {receiver.name}");
+        var hoveredGO = e.hovered;
         if (receiver == null)
         {
             ReturnToLastParent();
             return;
         }
-        //Si c'est un slot globabelement
-        if (receiver.CompareTag("CardReceiver") )
-        {
-            receiver.GetComponent<IReceiver>().CardBeingPut(this);
-            return;
-        }
-
         if (receiver.CompareTag("Card"))
         {
             var oldCard = receiver.GetComponent<CardDragHandler>();
@@ -76,6 +72,23 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
             return;
 
         }
+        if (receiver.CompareTag("CardReceiver"))
+        {
+            
+            receiver.GetComponentInParent<IReceiver>().CardBeingPut(this);
+            return;
+        }
+
+        /*foreach (var go in hoveredGO)
+        {
+            if (go.CompareTag("CardReceiver") )
+            {
+                Debug.Log($"IReceiver is {go.name}");
+                go.GetComponent<IReceiver>().CardBeingPut(this);
+                return;
+            }
+
+        }*/
         ReturnToLastParent();
     }
     
@@ -98,6 +111,13 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         rectTransform.anchorMax = Vector2.one;
         rectTransform.offsetMin = Vector2.zero;
         rectTransform.offsetMax = Vector2.zero;
+    }
+
+    public void CleanAll()
+    {
+        var slotInHand = SlotInHand.GetComponent<SlotUI>();
+        slotInHand.ChangeFreeState();
+        slotInHand._cardOnSlot = null;
     }
     
 }

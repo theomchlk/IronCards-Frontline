@@ -12,7 +12,9 @@ public class PurchaseContext
     public static PurchaseContext FromPlayer(NetworkObject player)
     {
         var ps = player.GetComponent<PlayerState>();
-        var shop = player.GetComponent<ShopItem>();
+        /*var shop = player.GetComponent<ShopItem>();*/
+        var shop = ShopItem.Instance;
+        
 
         return new PurchaseContext
         {
