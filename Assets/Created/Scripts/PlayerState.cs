@@ -197,11 +197,8 @@ public class PlayerState : NetworkBehaviour
 
         InstanceFinder.SceneManager.OnLoadEnd -= OnGameSceneLoad;
         
-    PlayerState enemyPs = null;
-    foreach (var ps in PlayerRegistry.GetAll)
-    {
-        if (!ps.IsOwner) { enemyPs = ps; break; }
-    }
+    int opponentId = GameManager.Instance.GetOpponent(IdPlayer);
+    PlayerState enemyPs = PlayerRegistry.GetPlayerState(opponentId);
 
     if (enemyPs == null)
     {
