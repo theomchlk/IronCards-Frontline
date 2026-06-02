@@ -9327,7 +9327,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1473708098}
   m_Layer: 0
-  m_Name: Background Fight
+  m_Name: FightContainer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -204,7 +204,7 @@ public class GameStateController : NetworkBehaviour
         SceneManager.OnLoadEnd += OnGameSceneLoaded;
         SceneManager.LoadGlobalScenes(data);
 
-        ObserversHideLobbyCanvas();
+        ObserversHideLobbyContent();
     }
 
     [Server]
@@ -250,10 +250,11 @@ public class GameStateController : NetworkBehaviour
     }
 
     [ObserversRpc]
-    private void ObserversHideLobbyCanvas()
+    private void ObserversHideLobbyContent()
     {
         if (lobbyCanvas != null)
             lobbyCanvas.gameObject.SetActive(false);
+        LobbyFightManager.SetActive(false);
     }
 
     private void OnGameSceneLoaded(SceneLoadEndEventArgs args)

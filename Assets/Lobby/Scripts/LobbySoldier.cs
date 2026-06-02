@@ -16,7 +16,7 @@ public class LobbySoldier : MonoBehaviour
     private Rigidbody mainRigidbody;
     private Collider[] ragdollColliders;
     private float lastMaterialChangeTime = 0f;
-    private static List<LobbySoldier> allSoldiers = new List<LobbySoldier>();
+    public static List<LobbySoldier> allSoldiers = new List<LobbySoldier>();
     private Vector3 destination;
     private bool movementRequested;
 
@@ -318,7 +318,6 @@ public class LobbySoldier : MonoBehaviour
         if (IsInRange(target) && target.IsAlive() && Time.time >= GetLastActionTime() + GetAttackSpeed()) {
             SetLastActionTime(Time.time);
 
-            Animator animator = GetAnimator();
             if (animator != null) {
                 animator.SetTrigger("Action");
             }
@@ -331,7 +330,9 @@ public class LobbySoldier : MonoBehaviour
 
     private IEnumerator DelayedDamage(LobbySoldier target) {
         yield return new WaitForSeconds(GetAttackSpeed()-0.1f);
-        
+
+        if (this == null || target == null) yield break;
+
         CombatActionSO action = GetCombatAction();
         if (action != null) {
             action.Execute(gameObject, target.gameObject);

@@ -64,8 +64,20 @@ public class LobbyFightManager : MonoBehaviour
         return soldierComponent;
     }
 
-    public void SetActive(bool active)
+    public static void SetActive(bool active)
     {
-        isActive = active;
+        Instance.isActive = active;
+        Instance.fightGroundMeshRenderer.gameObject.SetActive(active);
+        if (!active)
+        {
+            while (LobbySoldier.allSoldiers.Count > 0)
+            {
+                LobbySoldier soldier = LobbySoldier.allSoldiers[0];
+                LobbySoldier.allSoldiers.RemoveAt(0);
+                if (soldier != null)
+                    Destroy(soldier.gameObject);
+            }
+        }
     }
+
 }
