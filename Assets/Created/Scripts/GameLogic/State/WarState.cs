@@ -28,7 +28,6 @@ public class WarState : IGameState
     public void EnterServer()
     {
         Debug.Log("WarState EnterServer");
-        InstanceFinder.SceneManager.UnloadGlobalScenes(new SceneUnloadData("Noah_shop"));
         InstanceFinder.SceneManager.LoadGlobalScenes(new SceneLoadData("Noah"));
     }
 
