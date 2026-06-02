@@ -15,9 +15,10 @@ public class FightManager : NetworkBehaviour
     [SerializeField] private Canvas canvasRight;
     [SerializeField] private SoldierRegistry soldierRegistry;
     [SerializeField] private AllCardsSO allCardsSO;
-    [SerializeField] private FightColorsSO fightColorsSO;
     [SerializeField] private Renderer leftGroundRenderer;
     [SerializeField] private Renderer rightGroundRenderer;
+    private Material _leftGroundMaterial;
+    private Material _rightGroundMaterial;
     private PlayerState localPlayerState;
     private CardsSO[] playerLeftCamp;
     private CardsSO[] playerRightCamp;
@@ -111,10 +112,10 @@ public class FightManager : NetworkBehaviour
 
         Canvas.ForceUpdateCanvases();
 
-        Instance.leftGroundRenderer.material = Instance.fightColorsSO.colors[psLeft.IdPlayer].goundColor;
-        Instance.rightGroundRenderer.material = Instance.fightColorsSO.colors[psRight.IdPlayer].goundColor;
-        Instance.SpawnSoldiers(Instance.playerLeftCamp, cardUILeft, psLeft.IdPlayer);
-        Instance.SpawnSoldiers(Instance.playerRightCamp, cardUIRight, psRight.IdPlayer);
+        Instance.SetGroundColor(Instance.leftGroundRenderer, ref Instance._leftGroundMaterial, psLeft.playerColor.Value);
+        Instance.SetGroundColor(Instance.rightGroundRenderer, ref Instance._rightGroundMaterial, psRight.playerColor.Value);
+        Instance.SpawnSoldiers(Instance.playerLeftCamp, cardUILeft, psLeft.IdPlayer, psLeft.playerColor.Value);
+        Instance.SpawnSoldiers(Instance.playerRightCamp, cardUIRight, psRight.IdPlayer, psRight.playerColor.Value);
     }
 
     private void HideCards()
@@ -144,7 +145,7 @@ public class FightManager : NetworkBehaviour
         }
     }
 
-    private void SpawnSoldiers(CardsSO[] cards, CardUI[] cardUIs, int playerId)
+    private void SpawnSoldiers(CardsSO[] cards, CardUI[] cardUIs, int playerId, Color playerColor)
     {
         for (int i = 0; i < cards.Length; i++)
         {
@@ -153,19 +154,19 @@ public class FightManager : NetworkBehaviour
                 GameObject soldierPrefab = cards[i].soldierPrefab;
                 RectTransform cardRect = cardUIs[i].GetComponent<RectTransform>();
                 for (int j = 0; j < cards[i].nbSoldiers; j++)
-                {                    
+                {
                     float angle = j * Mathf.PI * 2 / cards[i].nbSoldiers;
                     float radius = 2f;
                     Vector3 circleOffset = new Vector3(Mathf.Cos(angle) * radius, 0, Mathf.Sin(angle) * radius);
 
                     Vector3 spawnPosition = cardRect.position + new Vector3(0, spawnHeight, 0) + circleOffset;
-                    SpawnSoldier(soldierPrefab, spawnPosition, playerId);
+                    SpawnSoldier(soldierPrefab, spawnPosition, playerId, playerColor);
                 }
             }
         }
     }
 
-    private void SpawnSoldier(GameObject soldierPrefab, Vector3 spawnPosition, int playerId)
+    private void SpawnSoldier(GameObject soldierPrefab, Vector3 spawnPosition, int playerId, Color playerColor)
     {
         GameObject soldier = Instantiate(soldierPrefab, spawnPosition, Quaternion.identity);
         Soldier sol = soldier.GetComponent<Soldier>();
@@ -173,6 +174,7 @@ public class FightManager : NetworkBehaviour
         int netId = _nextSoldierNetId++;
         sol.SetNetId(netId);
         sol.SetOwnerId(playerId);
+        sol.SetPlayerColor(playerColor);
         sol.SetFightManager(this);
         _soldierByNetId[netId] = sol;
 
@@ -180,6 +182,16 @@ public class FightManager : NetworkBehaviour
             sol.SetIsOwnerPlayer(true);
 
         soldier.transform.SetParent(transform);
+    }
+
+    private void SetGroundColor(Renderer groundRenderer, ref Material matInstance, Color playerColor)
+    {
+        if (matInstance == null)
+        {
+            matInstance = new Material(groundRenderer.sharedMaterial);
+            groundRenderer.material = matInstance;
+        }
+        matInstance.color = playerColor * 0.35f;
     }
 
     public PlayerState GetLocalPlayerState() => localPlayerState;

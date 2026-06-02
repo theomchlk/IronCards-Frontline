@@ -386,7 +386,7 @@ MonoBehaviour:
   fightGroundMeshRenderer: {fileID: 438361730}
   camera: {fileID: 636559299}
   spawnHeight: 1
-  spawnFrequency: 1
+  spawnFrequency: 3
 --- !u!1 &34355943
 GameObject:
   m_ObjectHideFlags: 0

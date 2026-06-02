@@ -16,6 +16,7 @@ public class LobbyFightManager : MonoBehaviour
     private Vector2 rightFightGroundCoordsZ;
     private int soldierIdCounter = 0;
     private bool isActive = true;
+    private int lastId = 0;
 
     
     void Awake()
@@ -60,7 +61,8 @@ public class LobbyFightManager : MonoBehaviour
         GameObject newSoldier = Instantiate(card.LobbySoldierPrefab, spawnPosition, Quaternion.identity);
         LobbySoldier soldierComponent = newSoldier.GetComponent<LobbySoldier>();
         soldierComponent.bind(card);
-        soldierComponent.SetOwnerId(id%2); // Le %2 est temporaire le temps de pouvoir fix les couleurs des soldats
+        soldierComponent.SetOwnerId(lastId++);
+        soldierComponent.SetPlayerColor(new Color(Random.value, Random.value, Random.value));
         newSoldier.transform.SetParent(transform);
         return soldierComponent;
     }

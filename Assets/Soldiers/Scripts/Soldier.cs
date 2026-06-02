@@ -17,6 +17,8 @@ public abstract class Soldier : MonoBehaviour
     private Rigidbody mainRigidbody;
     private Collider[] ragdollColliders;
     private float lastMaterialChangeTime = 0f;
+    private Color _playerColor = Color.white;
+    private Material _materialInstance;
     private SoldierState state = SoldierState.Idle;
     private Vector3 destination;
     private bool movementRequested;
@@ -54,7 +56,7 @@ public abstract class Soldier : MonoBehaviour
     public float GetSoundVolume() => data.soundVolume;
     public float GetArmorProtection() => data.armorProtection;
     public AudioClip GetProtectionSound() => data.protectionSound;
-    private FightColorsSO GetMaterials() => data.fightColors;
+
     public SoldierState GetState() => state;
     public bool IsOwnerPlayer => isOwnerPlayer;
     public FightManager GetFightManager() => fightManager;
@@ -108,30 +110,39 @@ public abstract class Soldier : MonoBehaviour
             GetComponent<Collider>().enabled = !enabled;
     }
 
-    public void SetMaterial(Material mat)
+    private Material GetOrCreateMaterialInstance()
     {
-        SkinnedMeshRenderer renderer = GetComponentInChildren<SkinnedMeshRenderer>();
-        if (renderer != null)
-        {
-            renderer.material = mat;
-            lastMaterialChangeTime = Time.time;
-        }
+        if (_materialInstance != null) return _materialInstance;
+        SkinnedMeshRenderer r = GetComponentInChildren<SkinnedMeshRenderer>();
+        if (r == null) return null;
+        _materialInstance = new Material(r.sharedMaterial);
+        r.material = _materialInstance;
+        return _materialInstance;
+    }
+
+    public void SetPlayerColor(Color color)
+    {
+        _playerColor = color;
+        SetDefaultMaterial();
     }
 
     public void SetDefaultMaterial()
     {
-        if (GetMaterials() != null && GetMaterials().colors.Length > ownerId)
-        {
-            SetMaterial(GetMaterials().colors[ownerId].material);
-        }
+        Material mat = GetOrCreateMaterialInstance();
+        if (mat == null) return;
+        mat.color = _playerColor;
+        mat.DisableKeyword("_EMISSION");
+        lastMaterialChangeTime = Time.time;
     }
 
     public void SetBloomMaterial()
     {
-        if (GetMaterials() != null && GetMaterials().colors.Length > ownerId)
-        {
-            SetMaterial(GetMaterials().colors[ownerId].bloomMaterial);
-        }
+        Material mat = GetOrCreateMaterialInstance();
+        if (mat == null) return;
+        mat.color = _playerColor;
+        mat.EnableKeyword("_EMISSION");
+        mat.SetColor("_EmissionColor", _playerColor * Mathf.Pow(2f, 4f));
+        lastMaterialChangeTime = Time.time;
     }
 
     public void SetNetId(int id) => netId = id;
