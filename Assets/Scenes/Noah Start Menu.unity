@@ -384,6 +384,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LobbyFightManager
   lobbySoldiersList: {fileID: 11400000, guid: 5dd9c0e117213ad4485c162ee2ecaf34, type: 2}
   fightGroundMeshRenderer: {fileID: 438361730}
+  camera: {fileID: 636559299}
   spawnHeight: 1
   spawnFrequency: 1
 --- !u!1 &34355943

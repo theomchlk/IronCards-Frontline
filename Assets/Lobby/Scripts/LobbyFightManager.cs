@@ -6,6 +6,7 @@ public class LobbyFightManager : MonoBehaviour
     public static LobbyFightManager Instance { get; private set; }
     [SerializeField] private LobbySoldiersList lobbySoldiersList;
     [SerializeField] private MeshRenderer fightGroundMeshRenderer;
+    [SerializeField] private GameObject camera;
     [SerializeField] private float spawnHeight = 1f;
     [SerializeField] private float spawnFrequency = 1f;
     private float spawnTimer = 0f;
@@ -68,6 +69,7 @@ public class LobbyFightManager : MonoBehaviour
     {
         Instance.isActive = active;
         Instance.fightGroundMeshRenderer.gameObject.SetActive(active);
+        Instance.camera.SetActive(active);
         if (!active)
         {
             while (LobbySoldier.allSoldiers.Count > 0)
