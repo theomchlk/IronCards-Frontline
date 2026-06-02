@@ -7,7 +7,7 @@ public abstract class Soldier : MonoBehaviour
     [SerializeField] private CardsSO data;
     [SerializeField] private HealthBar healthBar;
     public int ownerId;
-    private int _netId = -1;
+    private int netId = -1;
     private float health;
     private Soldier target;
     private float activationTime;
@@ -22,13 +22,14 @@ public abstract class Soldier : MonoBehaviour
     private bool movementRequested;
     private bool isOwnerPlayer = false;
 
-    private float _aiSyncTimer;
-    private const float AiSyncInterval = 0.1f;
-    private Vector3 _lastSentDestination;
-    private bool _lastSentMoving;
+    private float aiSyncTimer;
+    private const float aiSyncInterval = 0.1f;
+    private Vector3 lastSentDestination;
+    private bool lastSentMoving;
 
-    private float _actionCooldown;
-    private float _positionSyncTimer;
+    private float actionCooldown;
+    private float positionSyncTimer;
+    private FightManager fightManager;
 
     // ==========================================
     // GETTERS
@@ -45,7 +46,7 @@ public abstract class Soldier : MonoBehaviour
     public float GetHealth() => health;
     public float GetLastActionTime() => lastActionTime;
     public int GetOwnerId() => ownerId;
-    public int GetNetId() => _netId;
+    public int GetNetId() => netId;
     public bool IsAlive() => health > 0;
     public Animator GetAnimator() => animator;
     public CombatActionSO GetCombatAction() => data.combatAction;
@@ -56,6 +57,7 @@ public abstract class Soldier : MonoBehaviour
     private FightColorsSO GetMaterials() => data.fightColors;
     public SoldierState GetState() => state;
     public bool IsOwnerPlayer => isOwnerPlayer;
+    public FightManager GetFightManager() => fightManager;
 
     // ==========================================
     // ABSTRACT METHODS
@@ -70,6 +72,8 @@ public abstract class Soldier : MonoBehaviour
     // ==========================================
     // SETTERS
     // ==========================================
+
+    public void SetFightManager(FightManager fm) => fightManager = fm;
 
     public void SetHealth(float value) => health = value;
     public void SetLastActionTime(float value) => lastActionTime = value;
@@ -130,7 +134,7 @@ public abstract class Soldier : MonoBehaviour
         }
     }
 
-    public void SetNetId(int id) => _netId = id;
+    public void SetNetId(int id) => netId = id;
 
     public void SetOwnerId(int id)
     {
@@ -206,11 +210,11 @@ public abstract class Soldier : MonoBehaviour
 
         if (!isOwnerPlayer) return;
 
-        _positionSyncTimer += Time.deltaTime;
-        if (_positionSyncTimer >= 2f)
+        positionSyncTimer += Time.deltaTime;
+        if (positionSyncTimer >= 2f)
         {
-            _positionSyncTimer = 0f;
-            FightManager.Instance?.CmdSyncPosition(_netId, transform.position, transform.rotation);
+            positionSyncTimer = 0f;
+            fightManager?.CmdSyncPosition(netId, transform.position, transform.rotation);
         }
 
         if (state == SoldierState.PlayerControlled)
@@ -256,25 +260,25 @@ public abstract class Soldier : MonoBehaviour
 
     private void RequestMoveTo(Vector3 dest)
     {
-        _aiSyncTimer += Time.deltaTime;
-        bool destinationChanged = Vector3.Distance(dest, _lastSentDestination) > 0.3f;
-        bool intervalElapsed    = _aiSyncTimer >= AiSyncInterval;
+        aiSyncTimer += Time.deltaTime;
+        bool destinationChanged = Vector3.Distance(dest, lastSentDestination) > 0.3f;
+        bool intervalElapsed    = aiSyncTimer >= aiSyncInterval;
 
-        if (!_lastSentMoving || destinationChanged || intervalElapsed)
+        if (!lastSentMoving || destinationChanged || intervalElapsed)
         {
-            FightManager.Instance?.CmdMoveSoldier(_netId, dest);
-            _lastSentDestination = dest;
-            _lastSentMoving      = true;
-            _aiSyncTimer         = 0f;
+            fightManager?.CmdMoveSoldier(netId, dest);
+            lastSentDestination = dest;
+            lastSentMoving      = true;
+            aiSyncTimer         = 0f;
         }
     }
 
     private void RequestStop()
     {
-        if (!_lastSentMoving) return;
-        FightManager.Instance?.CmdStopSoldier(_netId);
-        _lastSentMoving = false;
-        _aiSyncTimer    = 0f;
+        if (!lastSentMoving) return;
+        fightManager?.CmdStopSoldier(netId);
+        lastSentMoving = false;
+        aiSyncTimer    = 0f;
     }
 
     private void HandlePlayerBehavior()
@@ -285,7 +289,7 @@ public abstract class Soldier : MonoBehaviour
             if (remainingDistance < 0.1f && movementRequested)
             {
                 movementRequested = false;
-                FightManager.Instance?.CmdStopSoldier(_netId);
+                fightManager?.CmdStopSoldier(netId);
             }
         }
         else
@@ -305,9 +309,9 @@ public abstract class Soldier : MonoBehaviour
     private void RequestAction(Soldier target)
     {
         if (target == null || !target.IsAlive()) return;
-        if (Time.time - _actionCooldown < GetAttackSpeed()) return;
-        _actionCooldown = Time.time;
-        FightManager.Instance?.CmdRequestAction(_netId, target.GetNetId());
+        if (Time.time - actionCooldown < GetAttackSpeed()) return;
+        actionCooldown = Time.time;
+        fightManager?.CmdRequestAction(netId, target.GetNetId());
     }
 
     public void ExecuteNetworkAction(Soldier target)
@@ -329,7 +333,7 @@ public abstract class Soldier : MonoBehaviour
         yield return null;
         if (!IsAlive()) yield break;
 
-        if (movementRequested || _lastSentMoving) yield break;
+        if (movementRequested || lastSentMoving) yield break;
 
         Animator anim = GetAnimator();
         if (anim == null) yield break;
@@ -421,7 +425,7 @@ public abstract class Soldier : MonoBehaviour
     public void TakeDamage(GameObject source, float damage)
     {
         if (!source.GetComponent<Soldier>().IsOwnerPlayer) return;
-        FightManager.Instance?.CmdApplyDamage(_netId, damage);
+        fightManager?.CmdApplyDamage(netId, damage);
     }
 
     public void ApplyDamageLocal(float damage, bool blocked)

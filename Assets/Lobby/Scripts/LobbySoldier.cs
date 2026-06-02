@@ -134,7 +134,6 @@ public class LobbySoldier : MonoBehaviour
         mainRigidbody = GetComponent<Rigidbody>();
 
         SetRagdollState(false);
-
         SetDefaultMaterial();
     }
 
@@ -142,12 +141,10 @@ public class LobbySoldier : MonoBehaviour
     // MÉTHODES UNITY
     // ==========================================
 
-    void Start()
+     void Start()
     {
         if (animator != null)
-        {
-            animator.SetFloat("AttackSpeedMultiplier", 1 / GetAttackSpeed());
-        }
+            animator.SetFloat("AttackSpeedMultiplier", 1f / GetAttackSpeed());
     }
 
     void Update()

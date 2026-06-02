@@ -31,7 +31,7 @@ public class Healer : Soldier
     {
         yield return new WaitForSeconds(GetAttackSpeed() - 0.1f);
         if (target == null || !target.IsAlive()) yield break;
-        FightManager.Instance?.CmdApplyHeal(target.GetNetId(), GetDamage());
+        GetFightManager()?.CmdApplyHeal(target.GetNetId(), GetDamage());
     }
 
     private IEnumerator DelayedHeal(Soldier target) {

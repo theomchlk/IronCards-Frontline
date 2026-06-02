@@ -173,6 +173,7 @@ public class FightManager : NetworkBehaviour
         int netId = _nextSoldierNetId++;
         sol.SetNetId(netId);
         sol.SetOwnerId(playerId);
+        sol.SetFightManager(this);
         _soldierByNetId[netId] = sol;
 
         if (playerId == localPlayerState.IdPlayer)

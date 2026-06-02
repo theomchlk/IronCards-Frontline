@@ -8,7 +8,6 @@ using FishNet.Managing.Scened;
 using FishNet.Transporting;
 using LiteNetLib;
 using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 
 public class GameStateController : NetworkBehaviour
@@ -253,7 +252,6 @@ public class GameStateController : NetworkBehaviour
     [ObserversRpc]
     private void ObserversHideLobbyCanvas()
     {
-        LobbyFightManager.Instance.SetActive(false);
         if (lobbyCanvas != null)
             lobbyCanvas.gameObject.SetActive(false);
     }

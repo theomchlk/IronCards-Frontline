@@ -219,6 +219,7 @@ public class PlayerState : NetworkBehaviour
     public override void OnStopClient()
     {
         base.OnStopClient();
+        if (IsOwner) Local = null;
         InstanceFinder.SceneManager.OnLoadEnd -= OnGameSceneLoad;
         if (!IsHostStarted) GameStateController.Instance.OnPlayerExit(idPlayer.Value);
         PlayerRegistry.Unregister(IdPlayer);
