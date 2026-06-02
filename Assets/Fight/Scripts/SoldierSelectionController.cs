@@ -64,7 +64,7 @@ public class SoldierSelectionController : MonoBehaviour
 
     private void SelectSoldier(Soldier soldier)
     {
-        if (soldier.GetOwnerId() != selectedSoldier.GetFightManager().GetLocalPlayerState().IdPlayer)
+        if (soldier.GetOwnerId() != soldier.GetFightManager().GetLocalPlayerState().IdPlayer)
             return;
 
         selectedSoldier = soldier;
