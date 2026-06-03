@@ -19,6 +19,7 @@ public abstract class Soldier : MonoBehaviour
     private float lastMaterialChangeTime = 0f;
     private Color _playerColor = Color.white;
     private Material _materialInstance;
+    private int groupId = -1;
     private SoldierState state = SoldierState.Idle;
     private Vector3 destination;
     private bool movementRequested;
@@ -60,6 +61,7 @@ public abstract class Soldier : MonoBehaviour
     public SoldierState GetState() => state;
     public bool IsOwnerPlayer => isOwnerPlayer;
     public FightManager GetFightManager() => fightManager;
+    public int GetGroupId() => groupId;
 
     // ==========================================
     // ABSTRACT METHODS
@@ -74,6 +76,8 @@ public abstract class Soldier : MonoBehaviour
     // ==========================================
     // SETTERS
     // ==========================================
+
+    public void SetGroupId(int id) => groupId = id;
 
     public void SetFightManager(FightManager fm) => fightManager = fm;
 
@@ -476,6 +480,7 @@ public abstract class Soldier : MonoBehaviour
         if (SoldierRegistry.Instance != null)
             SoldierRegistry.Instance.Unregister(this);
 
+        fightManager.RemoveSoldierFromGroupId(groupId, this);
         Destroy(gameObject, 4f);
     }
 

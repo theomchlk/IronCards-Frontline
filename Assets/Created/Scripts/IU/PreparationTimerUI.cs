@@ -7,7 +7,7 @@ public class PreparationTimerUI : MonoBehaviour
 
     private void Start()
     {
-        var gsc = GameStateController.Instance;
+        GameStateController gsc = GameStateController.Instance;
         if (gsc == null) return;
 
         gsc.preparationTimeRemaining.OnChange += OnTimeChanged;

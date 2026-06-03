@@ -1,10 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-/// <summary>
-/// Gère la sélection, la commande et l'affichage UI des soldats contrôlés par le joueur.
-/// Extrait de FreeCamController pour respecter le principe de responsabilité unique.
-/// </summary>
 [RequireComponent(typeof(Camera))]
 public class SoldierSelectionController : MonoBehaviour
 {
@@ -21,10 +17,11 @@ public class SoldierSelectionController : MonoBehaviour
 
     private Camera cam;
     private Soldier hoveredSoldier;
-    private Soldier selectedSoldier;
+    private int selectedGroupId = -1;
+    private FightManager selectedFightManager;
 
     public Soldier HoveredSoldier => hoveredSoldier;
-    public Soldier SelectedSoldier => selectedSoldier;
+    public int SelectedGroupId => selectedGroupId;
 
     private void Awake()
     {
@@ -46,55 +43,60 @@ public class SoldierSelectionController : MonoBehaviour
     {
         if (Mouse.current == null || !Mouse.current.leftButton.wasPressedThisFrame) return;
 
-        if (selectedSoldier == null && hoveredSoldier != null)
+        if (hoveredSoldier != null)
         {
-            SelectSoldier(hoveredSoldier);
+            int localId = hoveredSoldier.GetFightManager().GetLocalPlayerState().IdPlayer;
+            if (hoveredSoldier.GetOwnerId() == localId)
+            {
+                SelectGroup(hoveredSoldier);
+            }
+            else if (selectedGroupId >= 0)
+            {
+                selectedFightManager.CmdSetGroupTarget(selectedGroupId, hoveredSoldier.GetNetId());
+            }
         }
-        else if (selectedSoldier != null && hoveredSoldier != null
-                 && hoveredSoldier != selectedSoldier
-                 && selectedSoldier.GetOwnerId() != hoveredSoldier.GetOwnerId())
+        else if (selectedGroupId >= 0)
         {
-            selectedSoldier.GetFightManager().CmdSetTarget(selectedSoldier.GetNetId(), hoveredSoldier.GetNetId());
-        }
-        else if (selectedSoldier != null && hoveredSoldier == null)
-        {
-            CommandSoldierToMove();
+            Vector3 targetPoint = GetMouseClickedPoint();
+            if (targetPoint != Vector3.zero)
+                selectedFightManager.CmdMoveGroupTo(selectedGroupId, targetPoint);
         }
     }
 
-    private void SelectSoldier(Soldier soldier)
+    private void SelectGroup(Soldier soldier)
     {
-        if (soldier.GetOwnerId() != soldier.GetFightManager().GetLocalPlayerState().IdPlayer)
-            return;
+        if (selectedGroupId >= 0)
+            selectedFightManager.CmdSetGroupControlled(selectedGroupId, false);
 
-        selectedSoldier = soldier;
-        selectedSoldier.GetFightManager().CmdSetSoldierControlled(soldier.GetNetId(), true);
-    }
-
-    private void CommandSoldierToMove()
-    {
-        Vector3 targetPoint = GetMouseClickedPoint();
-        if (targetPoint != Vector3.zero)
-            selectedSoldier.GetFightManager().CmdMoveTo(selectedSoldier.GetNetId(), targetPoint);
+        selectedGroupId = soldier.GetGroupId();
+        selectedFightManager = soldier.GetFightManager();
+        selectedFightManager.CmdSetGroupControlled(selectedGroupId, true);
     }
 
     private void HandleEscapeKey()
     {
-        if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame && selectedSoldier != null)
+        if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame && selectedGroupId >= 0)
         {
-            selectedSoldier.GetFightManager().CmdSetSoldierControlled(selectedSoldier.GetNetId(), false);
-            selectedSoldier = null;
+            selectedFightManager.CmdSetGroupControlled(selectedGroupId, false);
+            selectedGroupId = -1;
+            selectedFightManager = null;
         }
     }
 
     private void UpdateCursorState()
     {
-        if (selectedSoldier != null)
+        if (selectedGroupId >= 0)
         {
-            if (hoveredSoldier != null && selectedSoldier.GetOwnerId() != hoveredSoldier.GetOwnerId())
-                SetCursor(attackCursor, Vector2.zero);
+            if (hoveredSoldier != null)
+            {
+                int localId = selectedFightManager.GetLocalPlayerState().IdPlayer;
+                bool isEnemy = hoveredSoldier.GetOwnerId() != localId;
+                SetCursor(isEnemy ? attackCursor : defaultCursor, Vector2.zero);
+            }
             else
+            {
                 SetCursor(stepCursor, new Vector2(stepCursor.width / 2f, stepCursor.height / 2f));
+            }
         }
         else
         {
@@ -109,11 +111,6 @@ public class SoldierSelectionController : MonoBehaviour
             hoveredSoldier.SetBloomMaterial();
             uiManager.ShowAndUpdateUI(hoveredSoldier);
         }
-        else if (selectedSoldier != null)
-        {
-            selectedSoldier.SetBloomMaterial();
-            uiManager.ShowAndUpdateUI(selectedSoldier);
-        }
         else
         {
             uiManager.HideUI();
@@ -126,9 +123,7 @@ public class SoldierSelectionController : MonoBehaviour
 
         Ray ray = cam.ScreenPointToRay(Mouse.current.position.ReadValue());
         if (Physics.Raycast(ray, out RaycastHit hit, 500f))
-        {
             return hit.collider.GetComponentInParent<Soldier>();
-        }
 
         return null;
     }

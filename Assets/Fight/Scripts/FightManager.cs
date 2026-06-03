@@ -14,7 +14,7 @@ public class FightManager : NetworkBehaviour
     [SerializeField] private Canvas canvasLeft;
     [SerializeField] private Canvas canvasRight;
     [SerializeField] private SoldierRegistry soldierRegistry;
-    [SerializeField] private AllCardsSO allCardsSO;
+
     [SerializeField] private Renderer leftGroundRenderer;
     [SerializeField] private Renderer rightGroundRenderer;
     private Material _leftGroundMaterial;
@@ -24,7 +24,8 @@ public class FightManager : NetworkBehaviour
     private CardsSO[] playerRightCamp;
     public static FightManager Instance;
 
-    private readonly Dictionary<int, Soldier> _soldierByNetId = new();
+    private readonly Dictionary<int, Soldier> soldierByNetId = new();
+    private readonly Dictionary<int, List<Soldier>> soldiersByGroupId = new();
     private int _nextSoldierNetId;
 
 
@@ -51,25 +52,22 @@ public class FightManager : NetworkBehaviour
         Instance.localPlayerState = psOwner;
         Instance.playerLeftCamp = new CardsSO[35];
         Instance.playerRightCamp = new CardsSO[35];
-        Instance._soldierByNetId.Clear();
+        Instance.soldierByNetId.Clear();
+        Instance.soldiersByGroupId.Clear();
         Instance._nextSoldierNetId = 0;
 
         for (int i = 0; i < psLeft.playerCamp.Value.campCardsId.Length; i++)
         {
-            int cardId = psLeft.playerCamp.Value.campCardsId[i];
-            if (cardId >= 0 && cardId < Instance.allCardsSO.allCards.Length)
-            {
-                Instance.playerLeftCamp[i] = Instance.allCardsSO.allCards[cardId];
-            }
+            string cardId = psLeft.playerCamp.Value.campCardsId[i];
+            if (!string.IsNullOrEmpty(cardId))
+                Instance.playerLeftCamp[i] = DataBaseItem.Instance.GetDataItem(cardId) as CardsSO;
         }
 
         for (int i = 0; i < psRight.playerCamp.Value.campCardsId.Length; i++)
         {
-            int cardId = psRight.playerCamp.Value.campCardsId[i];
-            if (cardId >= 0 && cardId < Instance.allCardsSO.allCards.Length)
-            {
-                Instance.playerRightCamp[i] = Instance.allCardsSO.allCards[cardId];
-            }
+            string cardId = psRight.playerCamp.Value.campCardsId[i];
+            if (!string.IsNullOrEmpty(cardId))
+                Instance.playerRightCamp[i] = DataBaseItem.Instance.GetDataItem(cardId) as CardsSO;
         }
 
 
@@ -151,6 +149,7 @@ public class FightManager : NetworkBehaviour
         {
             if (cards[i] != null)
             {
+                int groupId = playerId * 100 + i;
                 GameObject soldierPrefab = cards[i].soldierPrefab;
                 RectTransform cardRect = cardUIs[i].GetComponent<RectTransform>();
                 for (int j = 0; j < cards[i].nbSoldiers; j++)
@@ -160,13 +159,13 @@ public class FightManager : NetworkBehaviour
                     Vector3 circleOffset = new Vector3(Mathf.Cos(angle) * radius, 0, Mathf.Sin(angle) * radius);
 
                     Vector3 spawnPosition = cardRect.position + new Vector3(0, spawnHeight, 0) + circleOffset;
-                    SpawnSoldier(soldierPrefab, spawnPosition, playerId, playerColor);
+                    SpawnSoldier(soldierPrefab, spawnPosition, playerId, playerColor, groupId);
                 }
             }
         }
     }
 
-    private void SpawnSoldier(GameObject soldierPrefab, Vector3 spawnPosition, int playerId, Color playerColor)
+    private void SpawnSoldier(GameObject soldierPrefab, Vector3 spawnPosition, int playerId, Color playerColor, int groupId)
     {
         GameObject soldier = Instantiate(soldierPrefab, spawnPosition, Quaternion.identity);
         Soldier sol = soldier.GetComponent<Soldier>();
@@ -175,13 +174,24 @@ public class FightManager : NetworkBehaviour
         sol.SetNetId(netId);
         sol.SetOwnerId(playerId);
         sol.SetPlayerColor(playerColor);
+        sol.SetGroupId(groupId);
         sol.SetFightManager(this);
-        _soldierByNetId[netId] = sol;
+        soldierByNetId[netId] = sol;
+
+        if (!soldiersByGroupId.ContainsKey(groupId))
+            soldiersByGroupId[groupId] = new List<Soldier>();
+        soldiersByGroupId[groupId].Add(sol);
 
         if (playerId == localPlayerState.IdPlayer)
             sol.SetIsOwnerPlayer(true);
 
         soldier.transform.SetParent(transform);
+    }
+
+    public List<Soldier> GetGroup(int groupId)
+    {
+        soldiersByGroupId.TryGetValue(groupId, out List<Soldier> group);
+        return group;
     }
 
     private void SetGroundColor(Renderer groundRenderer, ref Material matInstance, Color playerColor)
@@ -196,12 +206,22 @@ public class FightManager : NetworkBehaviour
 
     public PlayerState GetLocalPlayerState() => localPlayerState;
 
+    public void RemoveSoldierFromGroupId(int groupId, Soldier soldier)
+    {
+        if (soldiersByGroupId.TryGetValue(groupId, out List<Soldier> group))
+        {
+            group.Remove(soldier);
+            if (group.Count == 0)
+                soldiersByGroupId.Remove(groupId);
+        }
+    }
+
     // Méthode pour le networking
 
     private bool ValidateOwnership(int soldierNetId, NetworkConnection conn, out Soldier soldier)
     {
-        if (!_soldierByNetId.TryGetValue(soldierNetId, out soldier)) return false;
-        var ps = conn?.FirstObject?.GetComponent<PlayerState>();
+        if (!soldierByNetId.TryGetValue(soldierNetId, out soldier)) return false;
+        PlayerState ps = conn?.FirstObject?.GetComponent<PlayerState>();
         return ps != null && soldier.GetOwnerId() == ps.IdPlayer;
     }
 
@@ -216,7 +236,7 @@ public class FightManager : NetworkBehaviour
     [ObserversRpc]
     private void RpcSetSoldierControlled(int soldierNetId, bool controlled)
     {
-        if (!_soldierByNetId.TryGetValue(soldierNetId, out var soldier)) return;
+        if (!soldierByNetId.TryGetValue(soldierNetId, out Soldier soldier)) return;
         soldier.SetIsControlledByPlayer(controlled);
     }
 
@@ -225,7 +245,7 @@ public class FightManager : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     public void CmdMoveTo(int soldierNetId, Vector3 destination, NetworkConnection conn = null)
     {
-        if (!ValidateOwnership(soldierNetId, conn, out var soldier)) return;
+        if (!ValidateOwnership(soldierNetId, conn, out Soldier soldier)) return;
         if (soldier.GetState() != SoldierState.PlayerControlled) return;
         RpcMoveTo(soldierNetId, destination);
     }
@@ -233,7 +253,7 @@ public class FightManager : NetworkBehaviour
     [ObserversRpc]
     private void RpcMoveTo(int soldierNetId, Vector3 destination)
     {
-        if (!_soldierByNetId.TryGetValue(soldierNetId, out var soldier)) return;
+        if (!soldierByNetId.TryGetValue(soldierNetId, out Soldier soldier)) return;
         soldier.HandleMovementRigidbody(destination);
         soldier.SetTarget(null);
     }
@@ -243,7 +263,7 @@ public class FightManager : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     public void CmdSetTarget(int soldierNetId, int targetNetId, NetworkConnection conn = null)
     {
-        if (!ValidateOwnership(soldierNetId, conn, out var soldier)) return;
+        if (!ValidateOwnership(soldierNetId, conn, out Soldier soldier)) return;
         if (soldier.GetState() != SoldierState.PlayerControlled) return;
         RpcSetTarget(soldierNetId, targetNetId);
     }
@@ -251,9 +271,68 @@ public class FightManager : NetworkBehaviour
     [ObserversRpc]
     private void RpcSetTarget(int soldierNetId, int targetNetId)
     {
-        if (!_soldierByNetId.TryGetValue(soldierNetId, out var soldier)) return;
-        _soldierByNetId.TryGetValue(targetNetId, out var target);
+        if (!soldierByNetId.TryGetValue(soldierNetId, out Soldier soldier)) return;
+        soldierByNetId.TryGetValue(targetNetId, out Soldier target);
         soldier.SetTarget(target);
+    }
+
+    // Commandes de groupe
+
+    [ServerRpc(RequireOwnership = false)]
+    public void CmdSetGroupControlled(int groupId, bool controlled, NetworkConnection conn = null)
+    {
+        PlayerState ps = conn?.FirstObject?.GetComponent<PlayerState>();
+        if (ps == null || !soldiersByGroupId.TryGetValue(groupId, out List<Soldier> group)) return;
+        if (group.Count == 0 || group[0].GetOwnerId() != ps.IdPlayer) return;
+        RpcSetGroupControlled(groupId, controlled);
+    }
+
+    [ObserversRpc]
+    private void RpcSetGroupControlled(int groupId, bool controlled)
+    {
+        if (!soldiersByGroupId.TryGetValue(groupId, out List<Soldier> group)) return;
+        foreach (Soldier sol in group) sol.SetIsControlledByPlayer(controlled);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void CmdMoveGroupTo(int groupId, Vector3 center, NetworkConnection conn = null)
+    {
+        PlayerState ps = conn?.FirstObject?.GetComponent<PlayerState>();
+        if (ps == null || !soldiersByGroupId.TryGetValue(groupId, out List<Soldier> group)) return;
+        if (group.Count == 0 || group[0].GetOwnerId() != ps.IdPlayer) return;
+        RpcMoveGroupTo(groupId, center);
+    }
+
+    [ObserversRpc]
+    private void RpcMoveGroupTo(int groupId, Vector3 center)
+    {
+        if (!soldiersByGroupId.TryGetValue(groupId, out List<Soldier> group)) return;
+        int count = group.Count;
+        for (int i = 0; i < count; i++)
+        {
+            if (!group[i].IsAlive()) continue;
+            float angle = i * Mathf.PI * 2f / count;
+            Vector3 offset = new Vector3(Mathf.Cos(angle) * 1.5f, 0f, Mathf.Sin(angle) * 1.5f);
+            group[i].HandleMovementRigidbody(center + offset);
+            group[i].SetTarget(null);
+        }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void CmdSetGroupTarget(int groupId, int targetNetId, NetworkConnection conn = null)
+    {
+        PlayerState ps = conn?.FirstObject?.GetComponent<PlayerState>();
+        if (ps == null || !soldiersByGroupId.TryGetValue(groupId, out List<Soldier> group)) return;
+        if (group.Count == 0 || group[0].GetOwnerId() != ps.IdPlayer) return;
+        RpcSetGroupTarget(groupId, targetNetId);
+    }
+
+    [ObserversRpc]
+    private void RpcSetGroupTarget(int groupId, int targetNetId)
+    {
+        if (!soldiersByGroupId.TryGetValue(groupId, out List<Soldier> group)) return;
+        soldierByNetId.TryGetValue(targetNetId, out Soldier target);
+        foreach (Soldier sol in group) sol.SetTarget(target);
     }
 
     // Déplacement (IA + joueur)
@@ -268,7 +347,7 @@ public class FightManager : NetworkBehaviour
     [ObserversRpc]
     private void RpcMoveSoldier(int soldierNetId, Vector3 destination)
     {
-        if (!_soldierByNetId.TryGetValue(soldierNetId, out var soldier)) return;
+        if (!soldierByNetId.TryGetValue(soldierNetId, out Soldier soldier)) return;
         soldier.HandleMovementRigidbody(destination);
     }
 
@@ -284,7 +363,7 @@ public class FightManager : NetworkBehaviour
     [ObserversRpc]
     private void RpcStopSoldier(int soldierNetId)
     {
-        if (!_soldierByNetId.TryGetValue(soldierNetId, out var soldier)) return;
+        if (!soldierByNetId.TryGetValue(soldierNetId, out Soldier soldier)) return;
         soldier.StopMovementRigidbody();
     }
 
@@ -294,15 +373,15 @@ public class FightManager : NetworkBehaviour
     public void CmdRequestAction(int soldierNetId, int targetNetId, NetworkConnection conn = null)
     {
         if (!ValidateOwnership(soldierNetId, conn, out _)) return;
-        if (!_soldierByNetId.TryGetValue(targetNetId, out _)) return;
+        if (!soldierByNetId.TryGetValue(targetNetId, out _)) return;
         RpcExecuteAction(soldierNetId, targetNetId);
     }
 
     [ObserversRpc]
     private void RpcExecuteAction(int soldierNetId, int targetNetId)
     {
-        if (!_soldierByNetId.TryGetValue(soldierNetId, out var soldier)) return;
-        _soldierByNetId.TryGetValue(targetNetId, out var target);
+        if (!soldierByNetId.TryGetValue(soldierNetId, out Soldier soldier)) return;
+        soldierByNetId.TryGetValue(targetNetId, out Soldier target);
         soldier.ExecuteNetworkAction(target);
     }
 
@@ -311,7 +390,7 @@ public class FightManager : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     public void CmdApplyDamage(int targetNetId, float damage, NetworkConnection conn = null)
     {
-        if (!_soldierByNetId.TryGetValue(targetNetId, out var target)) return;
+        if (!soldierByNetId.TryGetValue(targetNetId, out Soldier target)) return;
         bool blocked = UnityEngine.Random.value < target.GetArmorProtection();
         RpcApplyDamage(targetNetId, damage, blocked);
     }
@@ -319,7 +398,7 @@ public class FightManager : NetworkBehaviour
     [ObserversRpc]
     private void RpcApplyDamage(int targetNetId, float damage, bool blocked)
     {
-        if (!_soldierByNetId.TryGetValue(targetNetId, out var soldier)) return;
+        if (!soldierByNetId.TryGetValue(targetNetId, out Soldier soldier)) return;
         soldier.ApplyDamageLocal(damage, blocked);
     }
 
@@ -335,7 +414,7 @@ public class FightManager : NetworkBehaviour
     [ObserversRpc]
     private void RpcSyncPosition(int soldierNetId, Vector3 position, Quaternion rotation)
     {
-        if (!_soldierByNetId.TryGetValue(soldierNetId, out var soldier)) return;
+        if (!soldierByNetId.TryGetValue(soldierNetId, out Soldier soldier)) return;
         if (soldier.IsOwnerPlayer) return;
         soldier.SnapToPosition(position, rotation);
     }
@@ -345,14 +424,14 @@ public class FightManager : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     public void CmdApplyHeal(int targetNetId, float amount, NetworkConnection conn = null)
     {
-        if (!_soldierByNetId.TryGetValue(targetNetId, out _)) return;
+        if (!soldierByNetId.TryGetValue(targetNetId, out _)) return;
         RpcApplyHeal(targetNetId, amount);
     }
 
     [ObserversRpc]
     private void RpcApplyHeal(int targetNetId, float amount)
     {
-        if (!_soldierByNetId.TryGetValue(targetNetId, out var soldier)) return;
+        if (!soldierByNetId.TryGetValue(targetNetId, out Soldier soldier)) return;
         soldier.ApplyHealLocal(amount);
     }
 }

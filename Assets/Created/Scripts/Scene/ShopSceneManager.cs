@@ -6,14 +6,15 @@ public class ShopSceneManager : MonoBehaviour
 {
     [SerializeField] private Canvas shopCanvas;
 
-    private void OnEnable()
+    private void Start()
     {
         InstanceFinder.SceneManager.OnLoadEnd += OnSceneLoadEnd;
     }
 
-    private void OnDisable()
+    private void OnDestroy()
     {
-        InstanceFinder.SceneManager.OnLoadEnd -= OnSceneLoadEnd;
+        if (InstanceFinder.SceneManager != null)
+            InstanceFinder.SceneManager.OnLoadEnd -= OnSceneLoadEnd;
     }
 
     private void OnSceneLoadEnd(SceneLoadEndEventArgs args)

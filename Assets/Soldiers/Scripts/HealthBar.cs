@@ -10,7 +10,7 @@ public class HealthBar : MonoBehaviour
     {
         if (targetCamera != null) return;
 
-        foreach (var cam in Camera.allCameras)
+        foreach (Camera cam in Camera.allCameras)
         {
             if (cam.gameObject.scene == gameObject.scene)
             {

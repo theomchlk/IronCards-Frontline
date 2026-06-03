@@ -338,11 +338,11 @@ public class PlayerState : NetworkBehaviour
     [Server]
     private void CheckAllPlayersReady()
     {
-        var allPlayers = new List<PlayerState>(PlayerRegistry.GetAll);
+        List<PlayerState> allPlayers = new List<PlayerState>(PlayerRegistry.GetAll);
         if (allPlayers.Count < 2) return;
-        foreach (var ps in allPlayers)
+        foreach (PlayerState ps in allPlayers)
             if (!ps.isReady.Value) return;
-        foreach (var ps in allPlayers)
+        foreach (PlayerState ps in allPlayers)
             ps.isReady.Value = false;
         GameStateController.Instance.TransitionToWar();
     }
