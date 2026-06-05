@@ -11,17 +11,22 @@ using Unity.VisualScripting;
 public class FightManager : NetworkBehaviour
 {
     [SerializeField] private float spawnHeight = 1f;
-    [SerializeField] private Canvas canvasLeft;
-    [SerializeField] private Canvas canvasRight;
     [SerializeField] private SoldierRegistry soldierRegistry;
 
+    [Header("Ground")]
     [SerializeField] private Renderer leftGroundRenderer;
     [SerializeField] private Renderer rightGroundRenderer;
+
+    [Header("Camp Canvases")]
+    [SerializeField] private Canvas canvasLeft;
+    [SerializeField] private Canvas canvasRight;
+    [SerializeField] private GameObject cardUIPrefab;
+
     private Material _leftGroundMaterial;
     private Material _rightGroundMaterial;
     private PlayerState localPlayerState;
-    private CardsSO[] playerLeftCamp;
-    private CardsSO[] playerRightCamp;
+    private Dictionary<Localisation, CardsSO> playerLeftCamp;
+    private Dictionary<Localisation, CardsSO> playerRightCamp;
     public static FightManager Instance;
 
     private readonly Dictionary<int, Soldier> soldierByNetId = new();
@@ -50,117 +55,94 @@ public class FightManager : NetworkBehaviour
 
 
         Instance.localPlayerState = psOwner;
-        Instance.playerLeftCamp = new CardsSO[35];
-        Instance.playerRightCamp = new CardsSO[35];
         Instance.soldierByNetId.Clear();
         Instance.soldiersByGroupId.Clear();
         Instance._nextSoldierNetId = 0;
 
-        for (int i = 0; i < psLeft.playerCamp.Value.campCardsId.Length; i++)
-        {
-            string cardId = psLeft.playerCamp.Value.campCardsId[i];
-            if (!string.IsNullOrEmpty(cardId))
-                Instance.playerLeftCamp[i] = DataBaseItem.Instance.GetDataItem(cardId) as CardsSO;
-        }
-
-        for (int i = 0; i < psRight.playerCamp.Value.campCardsId.Length; i++)
-        {
-            string cardId = psRight.playerCamp.Value.campCardsId[i];
-            if (!string.IsNullOrEmpty(cardId))
-                Instance.playerRightCamp[i] = DataBaseItem.Instance.GetDataItem(cardId) as CardsSO;
-        }
-
+        Instance.playerLeftCamp  = BuildCamp(psLeft.Camp);
+        Instance.playerRightCamp = BuildCamp(psRight.Camp);
 
         if (Instance.soldierRegistry == null)
             Instance.soldierRegistry = Instance.GetComponentInChildren<SoldierRegistry>();
 
-        Instance.HideCards();
-        CardUI[] cardUILeft = Instance.canvasLeft.GetComponentsInChildren<CardUI>();
-        CardUI[] cardUIRight = Instance.canvasRight.GetComponentsInChildren<CardUI>();
+        int nbRow = GameManager.Instance.nbRow.Value;
+        int nbCol = GameManager.Instance.nbCol.Value;
 
-        for (int i = 0; i < Instance.playerLeftCamp.Length; i++)
-        {
-            if (Instance.playerLeftCamp[i] != null)
-            {
-                cardUILeft[i].SetCardUI(Instance.playerLeftCamp[i]);
-                CanvasGroup canvasGroup = cardUILeft[i].GetComponent<CanvasGroup>();
-                if (canvasGroup != null)
-                {
-                    canvasGroup.alpha = 1f;
-                    canvasGroup.interactable = true;
-                    canvasGroup.blocksRaycasts = true;
-                }
-            }
-        }
-
-        for (int i = 0; i < Instance.playerRightCamp.Length; i++)
-        {
-            if (Instance.playerRightCamp[i] != null)
-            {
-                cardUIRight[i].SetCardUI(Instance.playerRightCamp[i]);
-                CanvasGroup canvasGroup = cardUIRight[i].GetComponent<CanvasGroup>();
-                if (canvasGroup != null)
-                {
-                    canvasGroup.alpha = 1f;
-                    canvasGroup.interactable = true;
-                    canvasGroup.blocksRaycasts = true;
-                }
-            }
-        }
+        Instance.PopulateCanvas(Instance.canvasLeft,  Instance.playerLeftCamp,  nbRow, nbCol);
+        Instance.PopulateCanvas(Instance.canvasRight, Instance.playerRightCamp, nbRow, nbCol);
 
         Canvas.ForceUpdateCanvases();
 
-        Instance.SetGroundColor(Instance.leftGroundRenderer, ref Instance._leftGroundMaterial, psLeft.playerColor.Value);
+        Instance.SetGroundColor(Instance.leftGroundRenderer,  ref Instance._leftGroundMaterial,  psLeft.playerColor.Value);
         Instance.SetGroundColor(Instance.rightGroundRenderer, ref Instance._rightGroundMaterial, psRight.playerColor.Value);
-        Instance.SpawnSoldiers(Instance.playerLeftCamp, cardUILeft, psLeft.IdPlayer, psLeft.playerColor.Value);
-        Instance.SpawnSoldiers(Instance.playerRightCamp, cardUIRight, psRight.IdPlayer, psRight.playerColor.Value);
+        Instance.SpawnSoldiers(Instance.playerLeftCamp,  Instance.canvasLeft,  psLeft.IdPlayer,  psLeft.playerColor.Value);
+        Instance.SpawnSoldiers(Instance.playerRightCamp, Instance.canvasRight, psRight.IdPlayer, psRight.playerColor.Value);
     }
 
-    private void HideCards()
+    private static Dictionary<Localisation, CardsSO> BuildCamp(PlayerCamp camp)
     {
-        CardUI[] cardUILeft = canvasLeft.GetComponentsInChildren<CardUI>();
-        CardUI[] cardUIRight = canvasRight.GetComponentsInChildren<CardUI>();
-
-        for (int i = 0; i < cardUILeft.Length; i++)
+        var dict = new Dictionary<Localisation, CardsSO>();
+        if (camp == null) return dict;
+        foreach (var kvp in camp.CardsOnCamp)
         {
-            CanvasGroup canvasGroup = cardUILeft[i].GetComponent<CanvasGroup>();
-            if (canvasGroup != null)
-            {
-                canvasGroup.alpha = 0f;
-                canvasGroup.interactable = false;
-                canvasGroup.blocksRaycasts = false;
-            }
+            if (string.IsNullOrEmpty(kvp.Value)) continue;
+            var card = DataBaseItem.Instance.GetDataItem(kvp.Value) as CardsSO;
+            if (card != null) dict[kvp.Key] = card;
         }
-        for (int i = 0; i < cardUIRight.Length; i++)
-        {
-            CanvasGroup canvasGroup = cardUIRight[i].GetComponent<CanvasGroup>();
-            if (canvasGroup != null)
-            {
-                canvasGroup.alpha = 0f;
-                canvasGroup.interactable = false;
-                canvasGroup.blocksRaycasts = false;
-            }
-        }
+        return dict;
     }
 
-    private void SpawnSoldiers(CardsSO[] cards, CardUI[] cardUIs, int playerId, Color playerColor)
+    // VLG du canvas : nbRow HLG × nbCol cartes, cache les slots sans carte
+    private void PopulateCanvas(Canvas canvas, Dictionary<Localisation, CardsSO> camp, int nbRow, int nbCol)
     {
-        for (int i = 0; i < cards.Length; i++)
+        Transform vlg = canvas.GetComponentInChildren<UnityEngine.UI.VerticalLayoutGroup>().transform;
+
+        for (int row = 0; row < nbRow; row++)
         {
-            if (cards[i] != null)
+            var hlgGo = new GameObject($"Row_{row}");
+            hlgGo.transform.SetParent(vlg, false);
+            var hlg = hlgGo.AddComponent<UnityEngine.UI.HorizontalLayoutGroup>();
+            hlg.childControlWidth  = true;
+            hlg.childControlHeight = true;
+            hlg.childForceExpandWidth  = true;
+            hlg.childForceExpandHeight = true;
+            hlg.spacing = 1f;
+
+            for (int col = 0; col < nbCol; col++)
             {
-                int groupId = playerId * 100 + i;
-                GameObject soldierPrefab = cards[i].soldierPrefab;
-                RectTransform cardRect = cardUIs[i].GetComponent<RectTransform>();
-                for (int j = 0; j < cards[i].nbSoldiers; j++)
+                var loc  = new Localisation(row, col);
+                var slot = Instantiate(cardUIPrefab, hlgGo.transform);
+
+                if (camp.TryGetValue(loc, out CardsSO card))
+                    slot.GetComponent<CardUI>().SetCardUI(card);
+                else
                 {
-                    float angle = j * Mathf.PI * 2 / cards[i].nbSoldiers;
-                    float radius = 2f;
-                    Vector3 circleOffset = new Vector3(Mathf.Cos(angle) * radius, 0, Mathf.Sin(angle) * radius);
-
-                    Vector3 spawnPosition = cardRect.position + new Vector3(0, spawnHeight, 0) + circleOffset;
-                    SpawnSoldier(soldierPrefab, spawnPosition, playerId, playerColor, groupId);
+                    var cg = slot.GetComponent<CanvasGroup>() ?? slot.AddComponent<CanvasGroup>();
+                    cg.alpha = 0f;
+                    cg.blocksRaycasts = false;
+                    cg.interactable   = false;
                 }
+            }
+        }
+    }
+
+    private void SpawnSoldiers(Dictionary<Localisation, CardsSO> camp, Canvas canvas, int playerId, Color playerColor)
+    {
+        Transform vlg = canvas.GetComponentInChildren<UnityEngine.UI.VerticalLayoutGroup>().transform;
+
+        foreach (var kvp in camp)
+        {
+            Localisation loc = kvp.Key;
+            CardsSO card     = kvp.Value;
+            int groupId      = playerId * 10000 + loc.Row * 100 + loc.Col;
+
+            Vector3 basePos = vlg.GetChild(loc.Row).GetChild(loc.Col).position + Vector3.up * spawnHeight;
+
+            for (int j = 0; j < card.nbSoldiers; j++)
+            {
+                float angle = j * Mathf.PI * 2f / card.nbSoldiers;
+                Vector3 circleOffset = new Vector3(Mathf.Cos(angle) * 2f, 0f, Mathf.Sin(angle) * 2f);
+                SpawnSoldier(card.soldierPrefab, basePos + circleOffset, playerId, playerColor, groupId);
             }
         }
     }

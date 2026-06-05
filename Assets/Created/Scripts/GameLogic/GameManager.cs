@@ -8,6 +8,10 @@ using FishNet.Connection;
 public class GameManager : NetworkBehaviour
 {
     public static GameManager Instance;
+    [SerializeField] private int _nbRow, _nbCol;
+    
+    public readonly SyncVar<int> nbRow = new();
+    public readonly SyncVar<int> nbCol = new();
 
     void Awake()
     {
@@ -19,7 +23,9 @@ public class GameManager : NetworkBehaviour
     {
         base.OnStartServer();
         _rounds.Value = 1;
-        
+        nbRow.Value = _nbRow;
+        nbCol.Value = _nbCol;
+
     }
 
     public override void OnStartClient()
@@ -104,7 +110,7 @@ public class GameManager : NetworkBehaviour
     private void TargetSetOpponent(NetworkConnection conn, int opponentId)
     {
         var opponent = PlayerRegistry.GetPlayerState(opponentId);
-        UIManager.Instance.SetEnnemy(opponent);
+        UIManager.Instance.SetEnnemy(opponent, _nbRow, _nbCol);
     }
 
     

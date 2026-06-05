@@ -1,6 +1,11 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Fight/kenney_cursor-pack/License.txt.meta
 guid: 366c19114440d5748abb1d827d286c04
 TextScriptImporter:
+========
+guid: 1ac7bec6757bc9f45a867908bfbcd3ea
+PrefabImporter:
+>>>>>>>> test_shop_unique:Assets/Created/Prefabs/Main Menu/PlayerPanel.prefab.meta
   externalObjects: {}
   userData: 
   assetBundleName: 

@@ -1,12 +1,12 @@
-using System;
-using UnityEngine;
-using FishNet.Connection;
-using FishNet.Object;
-using FishNet.Object.Synchronizing;
-using System.Collections.Generic;
-using FishNet;
-using FishNet.Managing.Scened;
-using Unity.VisualScripting;
+    using System;
+    using UnityEngine;
+    using FishNet.Connection;
+    using FishNet.Object;
+    using FishNet.Object.Synchronizing;
+    using System.Collections.Generic;
+    using FishNet;
+    using FishNet.Managing.Scened;
+    using Unity.VisualScripting;
 
 public class PlayerState : NetworkBehaviour
 {
@@ -33,12 +33,14 @@ public class PlayerState : NetworkBehaviour
     public readonly SyncVar<int> slotCost = new();
     public readonly SyncVar<int> nbFreeSlots = new();
     //Cards
-    public readonly SyncDictionary<string, int> cardsOwned = new();
+    public readonly SyncDictionary<string, int> cardsInHand = new();
     //Mill
     public readonly SyncVar<int> nbMills = new();
     public readonly SyncVar<int> millCost = new();
 
-    public readonly SyncVar<PlayerCamp> playerCamp = new();
+    [SerializeField] private PlayerCamp camp;
+    public PlayerCamp Camp => camp;
+
     public readonly SyncVar<bool> isReady = new();
     public readonly SyncVar<int> campIndex = new();
 
@@ -52,21 +54,19 @@ public class PlayerState : NetworkBehaviour
         money.Value = playerConfig.moneyByDefault;
         _moneyPerMills = playerConfig.moneyPerMills;
         idPlayer.OnChange += OnIdPlayerChange;
-
-        playerCamp.Value = defaultCamp;
     }
 
 
-    [Server]
-    public void InitItemsFromDatabase()
-    {
-        var slotSo = DataBaseItem.Instance.GetDataItem("slot") as SlotSO;
-        if (slotSo != null)
+        [Server]
+        public void InitItemsFromDatabase()
         {
-            nbSlots.Value  = slotSo.nbSlotByDefault;
-            slotCost.Value = slotSo.cost;
-            InitDefaultSlots(slotSo, slotSo.nbSlotByDefault);
-        }
+            var slotSo = DataBaseItem.Instance.GetDataItem("slot") as SlotSO;
+            if (slotSo != null)
+            {
+                nbSlots.Value  = slotSo.nbSlotByDefault;
+                slotCost.Value = slotSo.cost;
+                InitDefaultSlots(slotSo, slotSo.nbSlotByDefault);
+            }
 
         var millSo = DataBaseItem.Instance.GetDataItem("mill") as MillSO;
         if (millSo != null)
@@ -192,7 +192,7 @@ public class PlayerState : NetworkBehaviour
     if (args.LoadedScenes == null) return;
     bool fightSceneLoaded = false;
     foreach (var scene in args.LoadedScenes)
-    if (scene.name == "Noah") { fightSceneLoaded = true; break; }
+    if (scene.name == "War") { fightSceneLoaded = true; break; }
     if (!fightSceneLoaded) return;
 
         InstanceFinder.SceneManager.OnLoadEnd -= OnGameSceneLoad;
@@ -202,7 +202,7 @@ public class PlayerState : NetworkBehaviour
 
     if (enemyPs == null)
     {
-        Debug.LogError("[PlayerState] PlayerState ennemi introuvable — scène Noah chargée trop tôt ?");
+        Debug.LogError("[PlayerState] PlayerState ennemi introuvable — scène War chargée trop tôt ?");
         return;
     }
 
@@ -238,88 +238,94 @@ public class PlayerState : NetworkBehaviour
         InLobbyUI.Instance.RemovePlayer(ps);
     }
 
-    
-    [Server]
-    private void InitDefaultSlots(SlotSO data, int count)
-    {
-        _slotsReadyCount = 0;
-
-        for (int i = 0; i < count; i++)
+        
+        [Server]
+        private void InitDefaultSlots(SlotSO data, int count)
         {
-            var slot = Instantiate(data.goItem).GetComponent<SlotItem>();
-            InstanceFinder.ServerManager.Spawn(slot.gameObject);
-            slot.Init(data);
-            slot.SetOwnerPlayerState(this);   // ← lie le slot à ce PlayerState
-            _slotItems.Add(slot);
+            _slotsReadyCount = 0;
+
+            for (int i = 0; i < count; i++)
+            {
+                var slot = Instantiate(data.goItem).GetComponent<SlotItem>();
+                InstanceFinder.ServerManager.Spawn(slot.gameObject);
+                slot.Init(data);
+                slot.SetOwnerPlayerState(this);   // ← lie le slot à ce PlayerState
+                _slotItems.Add(slot);
+            }
+
+            nbFreeSlots.Value = count;
         }
 
-        nbFreeSlots.Value = count;
-    }
+        [Server]
+        public void SetNewMoney()
+        {
+            var newMoney = nbMills.Value * _moneyPerMills; 
+            AddMoney(newMoney);
+        }
+        
+        [Server]
+        public void OnSlotClientReady(SlotItem slot, NetworkConnection conn)
+        {
+            _slotsReadyCount++;
 
-    [Server]
-    public void SetNewMoney()
-    {
-        var newMoney = nbMills.Value * _moneyPerMills; 
-        AddMoney(newMoney);
-    }
-    
-    [Server]
-    public void OnSlotClientReady(SlotItem slot, NetworkConnection conn)
-    {
-        _slotsReadyCount++;
+            Debug.Log($"[Server] Slot prêt {_slotsReadyCount}/{_slotItems.Count}");
 
-        Debug.Log($"[Server] Slot prêt {_slotsReadyCount}/{_slotItems.Count}");
+            if (_slotsReadyCount < _slotItems.Count) return;
 
-        if (_slotsReadyCount < _slotItems.Count) return;
+            // Tous les slots sont confirmés côté client → on envoie les TargetRpc
+            Debug.Log("[Server] Tous les slots prêts, envoi des TargetRpc");
+            foreach (var s in _slotItems)
+                s.TargetSpawnItem(Owner, s.Data.Id);
+        }
 
-        // Tous les slots sont confirmés côté client → on envoie les TargetRpc
-        Debug.Log("[Server] Tous les slots prêts, envoi des TargetRpc");
-        foreach (var s in _slotItems)
-            s.TargetSpawnItem(Owner, s.Data.Id);
-    }
+        [Server]
+        public void IncreaseNbItem(SyncVar<int> item) => item.Value++;
 
-    [Server]
-    public void IncreaseNbItem(SyncVar<int> item) => item.Value++;
+        
+        [Server]
+        public void NewCostItemByMultiplier(SyncVar<int> itemCost ,float multiplier)
+        {
+            itemCost.Value = (int) Math.Ceiling(itemCost.Value * multiplier);
+        }
 
-    
-    [Server]
-    public void NewCostItemByMultiplier(SyncVar<int> itemCost ,float multiplier)
-    {
-        itemCost.Value = (int) Math.Ceiling(itemCost.Value * multiplier);
-    }
+        [Server]
+        public bool HaveFreeSlot()
+        {
+            return nbFreeSlots.Value > 0;
+        }
 
-    [Server]
-    public bool HaveFreeSlot()
-    {
-        return nbFreeSlots.Value > 0;
-    }
+        [Server]
+        public void DecrementFreeSlot()
+        {
+            nbFreeSlots.Value--;
+        }
 
-    [Server]
-    public void DecrementFreeSlot()
-    {
-        nbFreeSlots.Value--;
-    }
-    
-    [Server]
-    public bool CanAfford(int price) => money.Value >= price ;
-    
-    [Server]
-    public void RemoveMoney(int amount)
-    {
-        money.Value -= amount;
-    }
+        [Server]
+        public void IncrementFreeSlot()
+        {
+            nbFreeSlots.Value++;
+        }
+        
+        [Server]
+        public bool CanAfford(int price) => money.Value >= price ;
+        
+        [Server]
+        public void RemoveMoney(int amount)
+        {
+            money.Value -= amount;
+        }
 
-    [Server]
-    private void AddMoney(int amount)
-    {
-        money.Value += amount;
-    }
+        [Server]
+        public void AddMoney(int amount)
+        {
+            money.Value += amount;
+        }
 
-    [Server]
-    public void SetLobbyLeader()
-    {
-        isLobbyLeader.Value = true;
-    }
+        [Server]
+        public void SetLobbyLeader()
+        {
+            isLobbyLeader.Value = true;
+        }
 
     [Server]
     public bool IsLobbyLeader() => isLobbyLeader.Value;
@@ -369,4 +375,4 @@ public class PlayerState : NetworkBehaviour
 
 
 
-}
+    }

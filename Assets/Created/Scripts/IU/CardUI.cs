@@ -13,9 +13,11 @@ public class CardUI : MonoBehaviour
     [SerializeField] private Image cardImage;
     [SerializeField] private TMP_Text cardNotFoundText;
     [SerializeField] private BuyItemButton buyButton;
+    [SerializeField] private CardDragHandler cardDragHandler;
     
 
     private CardItem _cardItem;
+    public CardItem CardItem => _cardItem;
 
 
     public void SetCardUI(CardsSO data)
@@ -28,6 +30,7 @@ public class CardUI : MonoBehaviour
         cardMSText.text = data.movementSpeed.ToString("F0");
         if (data.sprite) cardImage.sprite = data.sprite;
         else cardNotFoundText.gameObject.SetActive(true);
+        cardDragHandler.SetCardId(data.Id);
         
     }
 
@@ -41,12 +44,14 @@ public class CardUI : MonoBehaviour
     public void EnableBuyMode()
     {
         buyButton.gameObject.SetActive(true);
-        //Désactiver le drag mode
+        //Désactiver le drag mode   
+        cardDragHandler.enabled = false;
     }
 
     public void EnableDragMode()
     {
         buyButton.gameObject.SetActive(false);
         //Activer le drag mode
+        cardDragHandler.enabled = true;
     }
 }

@@ -66,11 +66,11 @@ public class UIManager : MonoBehaviour
         ps.ServerPlayerSurrender();
     }
 
-    public void SetEnnemy(PlayerState ps)
+    public void SetEnnemy(PlayerState ps, int nbRow, int nbCol)
     {
         if (ps)
         {
-            uiCamp.SetEnnemy(ps);
+            uiCamp.SetEnnemy(ps, nbRow, nbCol);
         }
         else
         {

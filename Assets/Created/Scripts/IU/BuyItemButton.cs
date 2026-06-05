@@ -10,7 +10,7 @@ public class BuyItemButton : MonoBehaviour
     
     public void OnClickBuyItem()
     {
-        if (!_shopItem) _shopItem = UIManager.Instance.ps.GetComponent<ShopItem>();
+        if (!_shopItem) _shopItem = ShopItem.Instance;
         _shopItem.BuyItemServerRpc(_itemData.Id);
     }
 

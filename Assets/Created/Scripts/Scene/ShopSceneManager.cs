@@ -22,7 +22,7 @@ public class ShopSceneManager : MonoBehaviour
         if (args.LoadedScenes == null) return;
         foreach (var scene in args.LoadedScenes)
         {
-            if (scene.name == "Noah")
+            if (scene.name == "War")
             {
                 shopCanvas.gameObject.SetActive(false);
                 return;
