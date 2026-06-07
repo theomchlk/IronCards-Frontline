@@ -111,6 +111,13 @@ public class SlotInCamp : MonoBehaviour, IReceiver
         card.CurrentSlotInCamp = newSlotInCamp;
         card.SetNewParent(card.LastSlotInCamp.transform);
     }
+
+    public CardItem GetCardItem()
+    {
+        if (transform.childCount <= 0) return null;
+        return transform.GetChild(transform.childCount - 1).GetComponent<CardUI>()?.CardItem;
+
+    }
     
     
 }

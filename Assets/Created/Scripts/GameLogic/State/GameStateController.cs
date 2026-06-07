@@ -95,7 +95,7 @@ public class GameStateController : NetworkBehaviour
         if (CurrentState == null) return;
         if (_serverState == null) return;
 
-        var ps = PlayerRegistry.GetPlayerState(conn.ClientId);
+        PlayerState ps = PlayerRegistry.GetPlayerState(conn.ClientId);
         if (ps == null) return;
 
         CurrentState.OnPlayerExit(ps);
@@ -112,7 +112,7 @@ public class GameStateController : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     public void OnPlayerExit(int playerId, NetworkConnection conn = null)
     {
-        var ps = PlayerRegistry.GetPlayerState(playerId);
+        PlayerState ps = PlayerRegistry.GetPlayerState(playerId);
         if (ps == null) return;
         if (ps.IsHostStarted) return;
         if (PlayerRegistry.GetPlayerState(conn.ClientId) != ps) return;
@@ -133,7 +133,7 @@ public class GameStateController : NetworkBehaviour
     public void ServerSetState(GameStateType type)
     {
         if (!_serverState.AllowedTransitions().Contains(type)) return;
-        var newState = CreateState(type);
+        IGameState newState  = CreateState(type);
         Debug.Log($"ServerSetState {type}");
         SetState(newState);
     }

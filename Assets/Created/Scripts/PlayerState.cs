@@ -33,6 +33,7 @@
         public readonly SyncVar<int> nbFreeSlots = new();
         //Cards
         public readonly SyncDictionary<string, int> cardsInHand = new();
+        public readonly SyncList<int> cardOwned = new();
         //Mill
         public readonly SyncVar<int> nbMills = new();
         public readonly SyncVar<int> millCost = new();

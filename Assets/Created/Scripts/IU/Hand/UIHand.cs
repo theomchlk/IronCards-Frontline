@@ -4,14 +4,14 @@ using System.Linq;
 
 public class UIHand : MonoBehaviour
 {
-    public static UIHand Instance;
+    /*public static UIHand Instance;*/
     
     public List<SlotItem> slots;
 
-    void Awake()
+    /*void Awake()
     {
         Instance = this;
-    }
+    }*/
 
     /*public SlotUI GetSlotFree()
     {

@@ -7,6 +7,7 @@ public class CardItem : ASpawnableItem
 {
     private CardsSO _data;
     private CardUI _cardUI;
+    public bool isBoughtThisRound;
     public CardUI CardUI { get => _cardUI;  set => _cardUI = value;  }
     
     [TargetRpc]
@@ -18,7 +19,11 @@ public class CardItem : ASpawnableItem
     }
 
     
-    public override void Init(ItemSO itemData) => _data = (CardsSO)itemData;
+    public override void Init(ItemSO itemData) 
+    {
+        _data = (CardsSO)itemData;
+        isBoughtThisRound = true;
+    }
     
     public CardsSO Data => _data;
 }

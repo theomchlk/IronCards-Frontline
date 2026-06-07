@@ -1,10 +1,19 @@
 using FishNet;
 using FishNet.Object;
 using FishNet.Connection;
+using Unity.Mathematics.Geometry;
 using UnityEngine;
 
 public class ShopItem : NetworkBehaviour
 {
+    private bool _isOpen;
+    [Range(0,1)]
+    [SerializeField] private float priceLoseWhenRefund = 0.7f;
+
+    public float PriceLoseWhenRefund => priceLoseWhenRefund;
+
+    public bool IsOpen { get => _isOpen; set => _isOpen = value; }
+    
     public static ShopItem Instance;
     /*public override void OnStartClient()
     {
@@ -24,6 +33,7 @@ public class ShopItem : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)] 
     public void BuyItemServerRpc(string id, NetworkConnection conn = null)
     {
+        if (!IsOpen) return;
         var itemData = DataBaseItem.Instance.GetDataItem(id);
         var item = itemData.CreateItemInstance();
         
@@ -56,6 +66,7 @@ public class ShopItem : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     public void ServerRefundCard(NetworkObject card, NetworkConnection conn = null)
     {
+        if (!IsOpen) return;
         var cardItem = card.GetComponent<CardItem>();
         if (cardItem == null) return;
         var ps = PlayerRegistry.GetPlayerState(conn.ClientId);
@@ -65,15 +76,16 @@ public class ShopItem : NetworkBehaviour
             return;
         }
         Destroy(cardItem.CardUI.gameObject);
-        RefundCard(cardItem.Data.Id, card,ps);
+        RefundCard(cardItem.Data.Id, card, cardItem.isBoughtThisRound, ps);
         
     }
 
     [Server]
-    private void RefundCard(string cardId, NetworkObject card, PlayerState ps)
+    private void RefundCard(string cardId, NetworkObject card, bool isBoughtThisRound, PlayerState ps)
     {
         var cardData = DataBaseItem.Instance.GetDataItem(cardId);
-        ps.AddMoney(cardData.cost);
+        var moneyBack = (isBoughtThisRound) ? cardData.cost : Mathf.CeilToInt(cardData.cost * PriceLoseWhenRefund);
+        ps.AddMoney(moneyBack);
         ps.IncrementFreeSlot();
         card.Despawn();
     }

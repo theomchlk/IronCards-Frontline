@@ -24,6 +24,7 @@ public class PlanificationState : IGameState
 
     public void EnterServer()
     {
+        ShopItem.Instance.IsOpen = false;
         Debug.Log($"PlanificationState EnterServer");
     }
 

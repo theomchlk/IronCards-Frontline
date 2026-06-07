@@ -90,7 +90,7 @@ public class GameManager : NetworkBehaviour
         for (var i = 0; i < nbPlayers ; i++)
         {
             if (!playersInGame[i]) return;
-            var opponent = playersInGame[(i + NbRounds) % nbPlayers];
+            PlayerState opponent = playersInGame[(i + NbRounds) % nbPlayers];
             if (opponent) _duelDictionary[playersInGame[i].IdPlayer] = opponent.IdPlayer;
             else _duelDictionary[playersInGame[i].IdPlayer] = -1;
         }
@@ -100,7 +100,7 @@ public class GameManager : NetworkBehaviour
     {
         if (asServer)
         {
-            var conn = InstanceFinder.ServerManager.Clients[key];
+            NetworkConnection conn = InstanceFinder.ServerManager.Clients[key];
             TargetSetOpponent(conn, value);
         }
     }
@@ -109,7 +109,7 @@ public class GameManager : NetworkBehaviour
     [TargetRpc]
     private void TargetSetOpponent(NetworkConnection conn, int opponentId)
     {
-        var opponent = PlayerRegistry.GetPlayerState(opponentId);
+        PlayerState opponent = PlayerRegistry.GetPlayerState(opponentId);
         UIManager.Instance.SetEnnemy(opponent, _nbRow, _nbCol);
     }
 

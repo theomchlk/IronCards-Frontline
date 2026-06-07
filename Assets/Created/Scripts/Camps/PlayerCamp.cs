@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using FishNet.Connection;
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
@@ -5,10 +6,14 @@ using UnityEngine;
 
 public class PlayerCamp : NetworkBehaviour
 {
+    /*
     private int _nbRow, _nbCol;
+    */
+    private GameManager _gameManager;
     private readonly SyncDictionary<Localisation, string> cardsOnCamp = new();
     public SyncDictionary<Localisation, string> CardsOnCamp => cardsOnCamp;
     [SerializeField] private PlayerState ps;
+    private Dictionary<Localisation, Localisation> truc;
 
     [Server]
     public void RemoveCardFromCampToHand(Localisation loc, string cardId)
@@ -21,33 +26,62 @@ public class PlayerCamp : NetworkBehaviour
         }
         Debug.LogWarning($"The card {cardId} from {loc.Col}, {loc.Row} isn't in camp.");
     }
+
+    void Start()
+    {
+        _gameManager = GameManager.Instance;
+    }
     
     public override void OnStartServer()
     {
         base.OnStartServer();
-        var gameManager = GameManager.Instance;
-        gameManager.nbRow.OnChange += SetNbRow;
-        gameManager.nbCol.OnChange += SetNbCol;
+        _gameManager = GameManager.Instance;
+        /*gameManager.nbRow.OnChange += SetNbRow;
+        gameManager.nbCol.OnChange += SetNbCol;*/
     }
 
     public override void OnStopServer()
     {
         base.OnStopServer();
-        var gameManager = GameManager.Instance;
-        gameManager.nbRow.OnChange -= SetNbRow;
-        gameManager.nbCol.OnChange -= SetNbCol;   
+        _gameManager = GameManager.Instance;
+        /*gameManager.nbRow.OnChange -= SetNbRow;
+        gameManager.nbCol.OnChange -= SetNbCol;  */ 
     }
 
-    private void SetNbRow(int prev, int next, bool asServer)
+    /*private void SetNbRow(int prev, int next, bool asServer)
     {
-        if (asServer) return;
+        if (asServer)
+        {
+            Debug.Log("asServer Row");
+            TargetSetNbRow(Owner,next);
+            return;
+        }
         _nbRow = next;
-    }
-    private void SetNbCol(int prev, int next, bool asServer)
+        TargetSetNbRow(Owner,next);
+    }*/
+    /*private void SetNbCol(int prev, int next, bool asServer)
     {
-        if (asServer) return;
+        if (asServer)
+        {
+            Debug.Log("asServer Col");
+            TargetSetNbCol(Owner,next);
+            return;
+        }
         _nbCol = next;
+        TargetSetNbCol(Owner,next);
+    }*/
+
+    /*[TargetRpc]
+    private void TargetSetNbRow(NetworkConnection conn, int newRow)
+    {
+        _nbRow = newRow;
     }
+    
+    [TargetRpc]
+    private void TargetSetNbCol(NetworkConnection conn, int newCol)
+    {
+        _nbCol = newCol;
+    }*/
     
     [ServerRpc(RequireOwnership = false)]
     public void ServerRemoveCardFromCampToHand(Localisation loc, string cardId, NetworkConnection conn = null)
@@ -55,12 +89,16 @@ public class PlayerCamp : NetworkBehaviour
         RemoveCardFromCampToHand(loc,cardId);
 
     }
+    
 
     [ServerRpc(RequireOwnership = false)]
     public void ServerPutCardOnCamp(string cardId, Localisation loc, Localisation newCardLoc, NetworkConnection conn = null)
     {
         
-        if (!IsPossibleToPutCardOnCamp(cardId, loc, newCardLoc)) TargetRemoveCardFromCamp(conn,loc);
+        if (!IsPossibleToPutCardOnCamp(cardId, loc, newCardLoc))
+        {
+            TargetRemoveCardFromCamp(conn, loc, " ServerPutCardOnCamp");
+        }
         else
         {
             
@@ -94,7 +132,7 @@ public class PlayerCamp : NetworkBehaviour
     private void RemoveToHand(NetworkConnection conn,Localisation loc)
     {
         CardCollection.AddCard(ps.cardsInHand,cardsOnCamp[loc]);
-        TargetRemoveCardFromCamp(conn, loc);
+        TargetRemoveCardFromCamp(conn, loc, "RemoveToHand");
     }
 
     [Server]
@@ -108,9 +146,9 @@ public class PlayerCamp : NetworkBehaviour
     }
 
     [TargetRpc]
-    private void TargetRemoveCardFromCamp(NetworkConnection conn, Localisation loc)
+    private void TargetRemoveCardFromCamp(NetworkConnection conn, Localisation loc, string reason)
     {
-        Debug.Log("TargetPutCardFailed");
+        Debug.Log("TargetPutCardFailed" + reason);
         UIManager.Instance.uiCamp.RemoveCardFromCamp(CampType.Ally, loc);
     }
 
@@ -122,8 +160,8 @@ public class PlayerCamp : NetworkBehaviour
 
     private bool IsPossibleToPutCardOnCamp(string cardId, Localisation loc, Localisation newCardLoc)
     {
-        if (loc.Row < 0 || loc.Row >= _nbRow) return WhyItsImpossibleToPutCardOnCamp("Row invalid");
-        if (loc.Col < 0 || loc.Col >= _nbCol) return  WhyItsImpossibleToPutCardOnCamp("Col invalid");
+        if (loc.Row < 0 || loc.Row >= _gameManager.nbRow.Value) return WhyItsImpossibleToPutCardOnCamp($"Row invalid : loc.Row {loc.Row}, _nbRow {_gameManager.nbRow.Value}");
+        if (loc.Col < 0 || loc.Col >= _gameManager.nbCol.Value) return  WhyItsImpossibleToPutCardOnCamp($"Col invalid loc.Col {loc.Col}, _nbCol {_gameManager.nbRow.Value}");
         DebugAllKeyInCardsOnCamp();
         /*if (cardsOnCamp.ContainsKey(loc)) return  WhyItsImpossibleToPutCardOnCamp("Loc already used");*/
         if (!CardCollection.HasCard(ps.cardsInHand, cardId))

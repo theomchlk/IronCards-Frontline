@@ -21,6 +21,7 @@ public class UIManager : MonoBehaviour
     public LocalPlayerUIBinder localPlayerUIBinder;
     public UICamp uiCamp;
     public PlayerState ps;
+    public UIHand uiHand;
 
     public void Bind(PlayerState ps)
     {

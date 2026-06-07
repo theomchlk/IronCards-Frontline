@@ -17,6 +17,7 @@ public class PreparationState : IGameState
     public void ExitServer()
     {
         Debug.Log($"PreparationState ExitServer");
+        ShopItem.Instance.IsOpen = false;
     }
 
     public void ExitClient()
@@ -48,6 +49,7 @@ public class PreparationState : IGameState
         var gameManager = GameManager.Instance;
         Debug.Log($"Preparation EnterServer");
         Debug.Log($"PlayerRegistry {PlayerRegistry.GetAll}");
+        ShopItem.Instance.IsOpen = true;
         if (gameManager.IsFirstRound) gameManager.InitGame(PlayerRegistry.GetAll.ToList());
         else gameManager.InitRound();
         
