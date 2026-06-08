@@ -373,6 +373,11 @@ public class PlayerState : NetworkBehaviour
         PlayerRegistry.Register(next, this);
     }
 
+    [Server]
+    public void DecreaseHealth(int amount)
+    {
+        hp.Value -= amount;
+    }
 
 
     }

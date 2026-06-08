@@ -7,12 +7,13 @@ using FishNet.Managing.Scened;
 public class WarState : IGameState
 {
     public GameStateType GameStateType => GameStateType.War;
-    public List<GameStateType> AllowedTransitions() => new() { GameStateType.End , GameStateType.Planification };
+    public List<GameStateType> AllowedTransitions() => new() { GameStateType.End , GameStateType.Preparation };
     
     public void ExitServer()
     {
         Debug.Log($"WarState ExitServer");
         GameManager.Instance.IncreaseNbRounds();
+        InstanceFinder.SceneManager.UnloadGlobalScenes(new SceneUnloadData("War"));
     }
 
     public void ExitClient()

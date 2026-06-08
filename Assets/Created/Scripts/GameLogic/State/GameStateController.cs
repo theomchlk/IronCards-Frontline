@@ -146,8 +146,9 @@ public class GameStateController : NetworkBehaviour
     }
 
     [Server]
-    private void SetState(IGameState newState)
+    public void SetState(IGameState newState)
     {
+        if (_serverState != null && !_serverState.AllowedTransitions().Contains(newState.GameStateType)) Debug.LogWarning($"ServerState {_serverState.GameStateType} => {newState.GameStateType} is not allowed");
         Debug.Log($"SetState {newState.GetType().Name}");
         _serverState?.ExitServer();
         _serverState = newState;

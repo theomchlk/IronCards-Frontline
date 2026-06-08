@@ -4021,7 +4021,7 @@ AudioListener:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 636559299}
-  m_Enabled: 0
+  m_Enabled: 1
 --- !u!20 &636559301
 Camera:
   m_ObjectHideFlags: 0
@@ -4895,7 +4895,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 72
+  m_fontSize: 41.6
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -5555,7 +5555,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 37.6
+  m_fontSize: 9.55
   m_fontSizeBase: 37
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -5927,7 +5927,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 54.95
+  m_fontSize: 23.65
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -6768,7 +6768,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 72
+  m_fontSize: 41.6
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -8416,7 +8416,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 37.6
+  m_fontSize: 18
   m_fontSizeBase: 14
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -8803,7 +8803,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 31.6
+  m_fontSize: 11
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -10783,7 +10783,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LobbyFightManager
   lobbySoldiersList: {fileID: 11400000, guid: 5dd9c0e117213ad4485c162ee2ecaf34, type: 2}
   fightGroundMeshRenderer: {fileID: 1942978566}
-  camera: {fileID: 0}
+  camera: {fileID: 636559299}
   spawnHeight: 1
   spawnFrequency: 3
 --- !u!1 &1694799809
@@ -12853,7 +12853,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 58.2
+  m_fontSize: 30.15
   m_fontSizeBase: 90
   m_fontWeight: 400
   m_enableAutoSizing: 1

@@ -84,4 +84,9 @@ public class LobbyFightManager : MonoBehaviour
         }
     }
 
+    public void DesactiveCamera()
+    {
+        camera.SetActive(false);
+    }
+
 }

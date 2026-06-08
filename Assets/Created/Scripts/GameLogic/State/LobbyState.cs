@@ -18,6 +18,7 @@ public class LobbyState : IGameState
     public void ExitClient()
     {
         Debug.Log($"LobbyState ExitClient");
+        LobbyFightManager.Instance.DesactiveCamera();
     }
     
     public void EnterClient()

@@ -480,7 +480,8 @@ public abstract class Soldier : MonoBehaviour
         if (SoldierRegistry.Instance != null)
             SoldierRegistry.Instance.Unregister(this);
 
-        fightManager.RemoveSoldierFromGroupId(groupId, this);
+        fightManager.RemoveSoldierFromGroupId(groupId, netId);
+
         Destroy(gameObject, 4f);
     }
 

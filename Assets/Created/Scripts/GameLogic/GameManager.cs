@@ -68,11 +68,11 @@ public class GameManager : NetworkBehaviour
 
     public void InitRound()
     {
-        SetPlayerStillInGame();
+        /*SetPlayerStillInGame();*/
         SetOpponent();
     }
     
-    private void SetPlayerStillInGame()
+    private int SetPlayerStillInGame()
     {
         //On enlève les joueurs ayant perdu
         for (var i = playersInGame.Count - 1; i >= 0; i--)
@@ -80,21 +80,60 @@ public class GameManager : NetworkBehaviour
             if (playersInGame[i] == null || playersInGame[i].Hp <= 0) playersInGame.RemoveAt(i);
         }
         //On ajoute un joueur null si nombre de joueur impaire
-        if (playersInGame.Count % 2 == 1) playersInGame.Add(null);
+        if (playersInGame.Count % 2 == 1)
+        {
+            playersInGame.Add(null);
+            return playersInGame.Count - 1;
+        }
+        return playersInGame.Count;
     }
 
     private void SetOpponent()
     {
-        var nbPlayers = playersInGame.Count;
-        _duelDictionary.Clear();
-        for (var i = 0; i < nbPlayers ; i++)
+        // Copie locale pour ne pas modifier la liste originale
+        List<PlayerState> list = new(playersInGame);
+
+        // Si impair → on ajoute un joueur fantôme
+        if (list.Count % 2 != 0)
+            list.Add(null);
+
+        int n = list.Count;
+        int half = n / 2;
+
+        // On calcule le round actuel (NbRounds commence à 1)
+        int roundIndex = (NbRounds - 1) % (n - 1);
+
+        // Rotation round-robin
+        // On fixe le premier joueur, on fait tourner les autres
+        List<PlayerState> rotated = new(list);
+        for (int r = 0; r < roundIndex; r++)
         {
-            if (!playersInGame[i]) return;
-            var opponent = playersInGame[(i + NbRounds) % nbPlayers];
-            if (opponent) _duelDictionary[playersInGame[i].IdPlayer] = opponent.IdPlayer;
-            else _duelDictionary[playersInGame[i].IdPlayer] = -1;
+            var last = rotated[n - 1];
+            rotated.RemoveAt(n - 1);
+            rotated.Insert(1, last);
+        }
+
+        // On vide les duels
+        _duelDictionary.Clear();
+
+        // On génère les paires du round
+        for (int i = 0; i < half; i++)
+        {
+            PlayerState p1 = rotated[i];
+            PlayerState p2 = rotated[n - 1 - i];
+
+            int id1 = p1 != null ? p1.IdPlayer : -1;
+            int id2 = p2 != null ? p2.IdPlayer : -1;
+
+            // On remplit le dictionnaire pour chaque joueur réel
+            if (id1 != -1)
+                _duelDictionary[id1] = id2;
+
+            if (id2 != -1)
+                _duelDictionary[id2] = id1;
         }
     }
+
 
     private void DuelChanged(SyncDictionaryOperation op, int key, int value, bool asServer)
     {
@@ -111,6 +150,33 @@ public class GameManager : NetworkBehaviour
     {
         var opponent = PlayerRegistry.GetPlayerState(opponentId);
         UIManager.Instance.SetEnnemy(opponent, _nbRow, _nbCol);
+    }
+
+    public int nbDuelsEnd;
+    public void SetEndDuel()
+    {
+        nbDuelsEnd++;
+
+        var nbDuels = playersInGame.Count % 2 == 1 ? (playersInGame.Count - 1) / 2 : playersInGame.Count / 2;
+        if (nbDuelsEnd >= nbDuels)
+        {
+            nbDuelsEnd = 0;
+            OnEndWar();
+        }
+    }
+
+    public void OnEndWar()
+    {
+        var gameStateController = GameStateController.Instance;
+        int playersLastInGame = SetPlayerStillInGame();
+        if (playersLastInGame == 1) gameStateController.SetState(new EndState());
+        else gameStateController.SetState(new PreparationState());
+    }
+
+    public int GetWinner()
+    {
+        if (playersInGame.Count == 2 && playersInGame[1] == null || playersInGame.Count == 1) return playersInGame[0].IdPlayer;
+        return -1;
     }
 
     

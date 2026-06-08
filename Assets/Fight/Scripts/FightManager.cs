@@ -188,15 +188,32 @@ public class FightManager : NetworkBehaviour
 
     public PlayerState GetLocalPlayerState() => localPlayerState;
 
-    public void RemoveSoldierFromGroupId(int groupId, Soldier soldier)
+    [ServerRpc(RequireOwnership = false)]
+    public void RemoveSoldierFromGroupId(int groupId, int soldierNetId, NetworkConnection conn = null)
     {
-        if (soldiersByGroupId.TryGetValue(groupId, out List<Soldier> group))
+        if (!soldiersByGroupId.TryGetValue(groupId, out List<Soldier> group))
+            return;
+
+        if (!soldierByNetId.TryGetValue(soldierNetId, out Soldier soldier))
+            return;
+
+        group.Remove(soldier);
+
+        if (group.Count == 0)
         {
-            group.Remove(soldier);
-            if (group.Count == 0)
-                soldiersByGroupId.Remove(groupId);
+            soldiersByGroupId.Remove(groupId);
+
+            int ownerId = soldier.GetOwnerId();
+
+            if (IsPlayerDefeated(ownerId))
+            {
+                Debug.Log($"Player {ownerId} has no troops left!");
+                OnPlayerDefeated(ownerId);
+            }
         }
     }
+
+
 
     // Méthode pour le networking
 
@@ -416,4 +433,23 @@ public class FightManager : NetworkBehaviour
         if (!soldierByNetId.TryGetValue(targetNetId, out Soldier soldier)) return;
         soldier.ApplyHealLocal(amount);
     }
+    
+    private bool IsPlayerDefeated(int playerId)
+    {
+        foreach (var kvp in soldiersByGroupId)
+        {
+            if (kvp.Value.Count > 0 && kvp.Value[0].GetOwnerId() == playerId)
+                return false;
+        }
+        return true;
+    }
+
+    private void OnPlayerDefeated(int ownerId)
+    {
+        PlayerState ps = PlayerRegistry.GetPlayerState(ownerId);
+        int nbGroupOpponentLeft = soldiersByGroupId.Count;
+        ps.DecreaseHealth(nbGroupOpponentLeft);
+        GameManager.Instance.SetEndDuel();
+    }
+
 }

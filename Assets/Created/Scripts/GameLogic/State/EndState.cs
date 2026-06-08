@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
-using FishNet.Connection;
+using FishNet;
+using FishNet.Managing.Scened;
 
 public class EndState : IGameState
 {
@@ -26,6 +27,7 @@ public class EndState : IGameState
     public void EnterServer()
     {
         Debug.Log($"EndState EnterServer");
+        InstanceFinder.SceneManager.LoadGlobalScenes(new SceneLoadData("End"));
     }
 
     public void Update()
