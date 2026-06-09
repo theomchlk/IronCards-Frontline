@@ -17,6 +17,20 @@ public class UICamp : MonoBehaviour
     [SerializeField] private GameObject cardInCampPrefab;
 
     private PlayerCamp _enemyCamp;
+    private bool _allyBuilt;
+
+    public void OnEnterPreparation(PlayerState ps, int nbRow, int nbCol)
+    {
+        if (!_allyBuilt)
+        {
+            SetUI(ps, nbRow, nbCol);
+            _allyBuilt = true;
+        }
+        else
+        {
+            ReturnCampCardsToHand();
+        }
+    }
 
     public void SetUI(PlayerState ps, int nbRow, int nbCol)
     {
@@ -29,6 +43,22 @@ public class UICamp : MonoBehaviour
             {
                 var slotInCamp = Instantiate(slotInCampPrefab, line.transform).GetComponent<SlotInCamp>();
                 slotInCamp.SetupAlly(j, i, ps.Camp);
+            }
+        }
+    }
+
+    public void ReturnCampCardsToHand()
+    {
+        foreach (Transform line in allyCamp)
+        {
+            foreach (Transform slot in line)
+            {
+                var card = slot.GetComponentInChildren<CardDragHandler>();
+                if (card == null || card.SlotInHand == null) continue;
+
+                card.LastSlotInCamp = null;
+                card.CurrentSlotInCamp = null;
+                card.SetNewParent(card.SlotInHand);
             }
         }
     }
@@ -72,7 +102,17 @@ public class UICamp : MonoBehaviour
             case SyncDictionaryOperation.Remove:
                 RefreshEnemySlot(loc, null);
                 break;
+            case SyncDictionaryOperation.Clear:
+                ClearAllEnemyCards();
+                break;
         }
+    }
+
+    private void ClearAllEnemyCards()
+    {
+        foreach (Transform col in ennemyCamp)
+            foreach (Transform slotTr in col)
+                slotTr.GetComponent<SlotInCamp>()?.HideCard();
     }
 
     private void RefreshEnemySlot(Localisation loc, string cardId)

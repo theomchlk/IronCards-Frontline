@@ -4,14 +4,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-/// <summary>
-/// Menu de partie affiché sur la droite de l'écran : liste triée des joueurs
-/// (vie + pseudo), bouton abandonner et bouton collapse.
-/// </summary>
 public class GameMenuUI : MonoBehaviour
 {
     [Header("Liste des joueurs")]
-    [SerializeField] private Transform playerListContainer; // possède un VerticalLayoutGroup
+    [SerializeField] private Transform playerListContainer;
     [SerializeField] private GameObject playerEntryPrefab;
 
     [Header("Boutons")]
@@ -19,7 +15,7 @@ public class GameMenuUI : MonoBehaviour
     [SerializeField] private Button collapseButton;
 
     [Header("Animation collapse")]
-    [SerializeField] private RectTransform menuPanel;       // le panneau qui glisse hors écran
+    [SerializeField] private RectTransform menuPanel;
     [SerializeField] private float collapseAnimDuration = 0.3f;
 
     private readonly Dictionary<PlayerState, PlayerHealthEntry> _entries = new();
@@ -58,7 +54,6 @@ public class GameMenuUI : MonoBehaviour
 
     private void OnAnyHpChanged(int previous, int next, bool asServer) => SortEntries();
 
-    // Tri : vie décroissante, puis ordre alphabétique
     private void SortEntries()
     {
         var sorted = new List<PlayerState>(_entries.Keys);

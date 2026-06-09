@@ -449,7 +449,24 @@ public class FightManager : NetworkBehaviour
         PlayerState ps = PlayerRegistry.GetPlayerState(ownerId);
         int nbGroupOpponentLeft = soldiersByGroupId.Count;
         ps.DecreaseHealth(nbGroupOpponentLeft);
+
+        var duels = GameManager.Instance._duelDictionary;
+        if (duels.TryGetValue(ownerId, out int winnerId) && winnerId != -1)
+        {
+            PlayerState winnerPs = PlayerRegistry.GetPlayerState(winnerId);
+            string winnerName = winnerPs != null ? winnerPs.playerName.Value : "?";
+            if (ps != null && ps.Owner != null) TargetShowBattleResult(ps.Owner, winnerName);
+            if (winnerPs != null && winnerPs.Owner != null) TargetShowBattleResult(winnerPs.Owner, winnerName);
+        }
+
         GameManager.Instance.SetEndDuel();
+    }
+
+    [TargetRpc]
+    private void TargetShowBattleResult(NetworkConnection conn, string winnerName)
+    {
+        if (BattleMessageUI.Instance != null)
+            BattleMessageUI.Instance.Show($"{winnerName} a gagné cette bataille");
     }
 
 }

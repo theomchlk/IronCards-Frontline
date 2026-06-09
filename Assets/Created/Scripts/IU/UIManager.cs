@@ -51,6 +51,8 @@ public class UIManager : MonoBehaviour
         OnActivatePanel?.Invoke(panel);
     }
 
+    public void ShowDefaultPanel() => ShowPanel(defaultPanel);
+
     public void SetUIsItems()
     {
         OnSetUIsItems?.Invoke();

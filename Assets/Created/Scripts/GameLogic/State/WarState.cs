@@ -13,7 +13,7 @@ public class WarState : IGameState
     {
         Debug.Log($"WarState ExitServer");
         GameManager.Instance.IncreaseNbRounds();
-        InstanceFinder.SceneManager.UnloadGlobalScenes(new SceneUnloadData("War"));
+        InstanceFinder.SceneManager.UnloadGlobalScenes(new SceneUnloadData(GameStateController.Instance.Scenes.War));
     }
 
     public void ExitClient()

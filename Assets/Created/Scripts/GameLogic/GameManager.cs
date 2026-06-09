@@ -2,6 +2,7 @@ using UnityEngine;
 using FishNet;
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
+using System.Collections;
 using System.Collections.Generic;
 using FishNet.Connection;
 
@@ -44,6 +45,7 @@ public class GameManager : NetworkBehaviour
     
     private readonly SyncVar<int> _rounds = new();
     public readonly SyncDictionary<int, int> _duelDictionary = new();
+    public readonly SyncVar<int> winnerId = new();
 
     public int GetOpponent(int clientId)
     {
@@ -165,12 +167,39 @@ public class GameManager : NetworkBehaviour
         }
     }
 
+    [SerializeField] private float endWarDelay = 3f;
+
     public void OnEndWar()
     {
+        // Laisse le temps de voir le message de fin de bataille avant de décharger la scène War
+        StartCoroutine(EndWarRoutine());
+    }
+
+    private IEnumerator EndWarRoutine()
+    {
+        yield return new WaitForSeconds(endWarDelay);
+
         var gameStateController = GameStateController.Instance;
         int playersLastInGame = SetPlayerStillInGame();
-        if (playersLastInGame == 1) gameStateController.SetState(new EndState());
-        else gameStateController.SetState(new PreparationState());
+
+        if (playersLastInGame == 1)
+        {
+            winnerId.Value = GetWinner();
+            gameStateController.SetState(new EndState());
+        }
+        else
+        {
+            ReturnAllCampCardsToHand();
+            gameStateController.SetState(new PreparationState());
+        }
+    }
+
+    [Server]
+    private void ReturnAllCampCardsToHand()
+    {
+        foreach (PlayerState ps in PlayerRegistry.GetAll)
+            if (ps != null && ps.Camp != null)
+                ps.Camp.ResetCardsOnCamp();
     }
 
     public int GetWinner()

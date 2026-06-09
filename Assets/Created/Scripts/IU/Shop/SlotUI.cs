@@ -29,7 +29,7 @@ public class SlotUI : MonoBehaviour, IReceiver
             card.ReturnToLastParent();
             return;
         }
-        if (card.LastSlotInCamp) _slotItem.PlayerState.Camp.ServerRemoveCardFromCampToHand(card.LastSlotInCamp.Loc, card.CardId);
+        if (card.LastSlotInCamp) PlayerState.Local.Camp.ServerRemoveCardFromCampToHand(card.LastSlotInCamp.Loc, card.CardId);
         if (_cardOnSlot)
         {
             _cardOnSlot.SlotInHand = card.SlotInHand;
@@ -57,7 +57,7 @@ public class SlotUI : MonoBehaviour, IReceiver
 
         if (newCardType == ReceiverType.SlotCamp)
         {
-            _slotItem.PlayerState.Camp.ServerRemoveCardFromCampToHand(newCard.LastSlotInCamp.Loc, newCard.CardId);
+            PlayerState.Local.Camp.ServerRemoveCardFromCampToHand(newCard.LastSlotInCamp.Loc, newCard.CardId);
             SetSlotInHand(newCard, newCard.SlotInHand);
             SetSlotInHand(oldCard, oldCard.SlotInHand);
 

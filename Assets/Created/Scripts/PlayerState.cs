@@ -197,8 +197,7 @@ public class PlayerState : NetworkBehaviour
     if (scene.name == GameStateController.Instance.Scenes.War) { fightSceneLoaded = true; break; }
     if (!fightSceneLoaded) return;
 
-        InstanceFinder.SceneManager.OnLoadEnd -= OnGameSceneLoad;
-        
+
     int opponentId = GameManager.Instance.GetOpponent(IdPlayer);
     PlayerState enemyPs = PlayerRegistry.GetPlayerState(opponentId);
 

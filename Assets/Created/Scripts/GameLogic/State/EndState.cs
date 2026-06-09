@@ -27,7 +27,10 @@ public class EndState : IGameState
     public void EnterServer()
     {
         Debug.Log($"EndState EnterServer");
-        InstanceFinder.SceneManager.LoadGlobalScenes(new SceneLoadData("End"));
+        var scenes = GameStateController.Instance.Scenes;
+
+        InstanceFinder.SceneManager.UnloadGlobalScenes(new SceneUnloadData(new[] { scenes.Shop, scenes.UI }));
+        InstanceFinder.SceneManager.LoadGlobalScenes(new SceneLoadData(scenes.End));
     }
 
     public void Update()

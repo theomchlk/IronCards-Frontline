@@ -40,7 +40,8 @@ public class PreparationState : IGameState
         Debug.Log($"and ps {ps}");
         uiManager.Bind(ps);
         uiManager.shopItemUI.OpenShuttereUI();
-        if (gameManager.IsFirstRound) uiManager.uiCamp.SetUI(ps, gameManager.nbRow.Value, gameManager.nbCol.Value);
+        uiManager.ShowDefaultPanel();
+        uiManager.uiCamp.OnEnterPreparation(ps, gameManager.nbRow.Value, gameManager.nbCol.Value);
 
     }
     

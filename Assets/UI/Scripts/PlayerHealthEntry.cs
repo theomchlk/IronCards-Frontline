@@ -2,10 +2,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-/// <summary>
-/// Une ligne de la liste des joueurs : chiffre de vie à gauche,
-/// pseudo (au-dessus) + barre de vie (en-dessous) à droite.
-/// </summary>
 public class PlayerHealthEntry : MonoBehaviour
 {
     [SerializeField] private TMP_Text hpText;

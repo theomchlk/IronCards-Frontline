@@ -427,7 +427,7 @@ public class GameStateController : NetworkBehaviour
         if (InstanceFinder.ClientManager.Started)
             InstanceFinder.ClientManager.StopConnection();
     
-        UnityEngine.SceneManagement.SceneManager.LoadScene("Start Menu");
+        UnityEngine.SceneManagement.SceneManager.LoadScene(scenes.MainMenu);
     }
 
 }
