@@ -141,6 +141,8 @@ public class PlanificationManager : MonoBehaviour
 
         int targetGroupId = FightManager.ComputeGroupId(target.OwnerPlayerId, target.Loc.Row, target.Loc.Col);
         _local.Camp.ServerSetCardTarget(from.Loc, targetGroupId);
+        Debug.Log($"[Planification] Cible posée : carte ({from.Loc.Row},{from.Loc.Col}) -> groupe {targetGroupId} " +
+                  $"(joueur {target.OwnerPlayerId}, case ({target.Loc.Row},{target.Loc.Col}))");
     }
 
     // Trouve la carte sous le curseur, que le raycast tombe sur la carte ou sur son slot parent.
