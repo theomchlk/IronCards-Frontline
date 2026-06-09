@@ -200,7 +200,7 @@ public class GameStateController : NetworkBehaviour
 
         Debug.Log("ServerStartGame");
 
-        SceneLoadData data = new SceneLoadData("Preparation");
+        SceneLoadData data = new SceneLoadData(new[] { "Preparation", "UI" });
         SceneManager.OnLoadEnd += OnGameSceneLoaded;
         SceneManager.LoadGlobalScenes(data);
 

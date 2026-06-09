@@ -22,6 +22,8 @@ public class PlayerState : NetworkBehaviour
     public int IdPlayer { get => idPlayer.Value; set => idPlayer.Value = value; }
     private readonly SyncVar<int> hp = new ();
     public int Hp => hp.Value;
+    public SyncVar<int> HpVar => hp;
+    public int MaxHp => playerConfig.hpByDefault;
     public readonly SyncVar<int> money = new ();
     private int _moneyPerMills;
     
