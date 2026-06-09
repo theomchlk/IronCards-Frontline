@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 023960ac90e7f274591186b5733746f1, type: 3}
   m_Name: SceneCatalog
   m_EditorClassIdentifier: Assembly-CSharp::SceneCatalog
-  preparation: Preparation
+  shop: Shop
   ui: UI
   war: War

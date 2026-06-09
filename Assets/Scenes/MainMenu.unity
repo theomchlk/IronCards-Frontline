@@ -508,6 +508,7 @@ MonoBehaviour:
   _networkObjectCache: {fileID: 0}
   _nbRow: 5
   _nbCol: 7
+  nbDuelsEnd: 0
 --- !u!4 &36286305
 Transform:
   m_ObjectHideFlags: 0

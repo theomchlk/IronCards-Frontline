@@ -8,11 +8,11 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "SceneCatalog", menuName = "Game/Scene Catalog")]
 public class SceneCatalog : ScriptableObject
 {
-    [SerializeField] private string preparation = "Preparation";
+    [SerializeField] private string shop = "Shop";
     [SerializeField] private string ui = "UI";
     [SerializeField] private string war = "War";
 
-    public string Preparation => preparation;
+    public string Shop => shop;
     public string UI => ui;
     public string War => war;
 }
