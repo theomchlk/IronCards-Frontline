@@ -55,8 +55,12 @@ public class ShopItemUI : MonoBehaviour, IReceiver, IPointerEnterHandler, IPoint
     {
         if (e.dragging)
         {
+            var cardUI = e.pointerDrag.GetComponent<CardUI>();
+            if (cardUI == null) return;
+            var cardItem = cardUI.CardItem;
             sellingPanel.SetActive(true);
-
+            var cost = (cardItem.isBoughtThisRound) ? cardItem.Data.cost : Mathf.CeilToInt(cardItem.Data.cost * ShopItem.Instance.PriceLoseWhenRefund);
+            sellingText.text = cost+ " PO";
         }
     }
 
