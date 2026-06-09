@@ -29,7 +29,7 @@ public class WarState : IGameState
     public void EnterServer()
     {
         Debug.Log("WarState EnterServer");
-        InstanceFinder.SceneManager.LoadGlobalScenes(new SceneLoadData("War"));
+        InstanceFinder.SceneManager.LoadGlobalScenes(new SceneLoadData(GameStateController.Instance.Scenes.War));
     }
 
     public void Update()

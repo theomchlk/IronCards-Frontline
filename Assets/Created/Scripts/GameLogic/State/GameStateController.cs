@@ -14,8 +14,10 @@ public class GameStateController : NetworkBehaviour
 {
     [SerializeField] private Canvas lobbyCanvas;
     [SerializeField] private int preparationDuration = 30;
+    [SerializeField] private SceneCatalog scenes;
 
     public static GameStateController Instance;
+    public SceneCatalog Scenes => scenes;
     /*private int _nbRounds = 0;*/
 
     public readonly SyncVar<int> preparationTimeRemaining = new();
@@ -201,7 +203,7 @@ public class GameStateController : NetworkBehaviour
 
         Debug.Log("ServerStartGame");
 
-        SceneLoadData data = new SceneLoadData("Preparation");
+        SceneLoadData data = new SceneLoadData(new[] { scenes.Preparation, scenes.UI });
         SceneManager.OnLoadEnd += OnGameSceneLoaded;
         SceneManager.LoadGlobalScenes(data);
 
