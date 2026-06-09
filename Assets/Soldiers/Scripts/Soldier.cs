@@ -20,6 +20,7 @@ public abstract class Soldier : MonoBehaviour
     private Color _playerColor = Color.white;
     private Material _materialInstance;
     private int groupId = -1;
+    private bool _groupTargetAbandoned;
     private SoldierState state = SoldierState.Idle;
     private Vector3 destination;
     private bool movementRequested;
@@ -161,6 +162,8 @@ public abstract class Soldier : MonoBehaviour
     {
         if (value)
         {
+            // Prendre le contrôle abandonne définitivement la cible de groupe de la planification
+            _groupTargetAbandoned = true;
             state = SoldierState.PlayerControlled;
             StopMovementRigidbody();
             target = null;
@@ -265,12 +268,28 @@ public abstract class Soldier : MonoBehaviour
         }
         else
         {
-            target = GetNearestTarget();
+            target = ResolveTarget();
             if (target != null)
                 RequestMoveTo(target.GetPosition());
             else
                 RequestStop();
         }
+    }
+
+    // Priorité à la cible de groupe (planification) tant qu'elle existe et n'a pas été abandonnée,
+    // sinon retour au ciblage normal (plus proche ennemi / allié blessé selon le type).
+    protected Soldier ResolveTarget()
+    {
+        if (!_groupTargetAbandoned && fightManager != null && SoldierRegistry.Instance != null)
+        {
+            int targetGroupId = fightManager.GetTargetGroupId(groupId);
+            if (targetGroupId >= 0)
+            {
+                Soldier groupTarget = SoldierRegistry.Instance.GetNearestInGroup(this, targetGroupId);
+                if (groupTarget != null) return groupTarget;
+            }
+        }
+        return GetNearestTarget();
     }
 
     private void RequestMoveTo(Vector3 dest)

@@ -24,14 +24,17 @@ EditorBuildSettings:
     path: Assets/Scenes/MainMenu.unity
     guid: 61211258757aadc4a9aaacec3c8fccc9
   - enabled: 1
+    path: Assets/Scenes/UI.unity
+    guid: 3ba2ff833368e4640950a6191270b542
+  - enabled: 1
     path: Assets/Scenes/Shop.unity
     guid: 3fcbe5c5deb2f0e4f90790d3822ed964
   - enabled: 1
+    path: Assets/Scenes/Planification.unity
+    guid: 44bfdc37cb251e94c81fb5108ac0e162
+  - enabled: 1
     path: Assets/Scenes/War.unity
     guid: 4c48b84c8445ca24f8823a3c98640728
-  - enabled: 1
-    path: Assets/Scenes/UI.unity
-    guid: 3ba2ff833368e4640950a6191270b542
   - enabled: 1
     path: Assets/Scenes/End.unity
     guid: ec5e2771695145b4fae1cf15b23bab53

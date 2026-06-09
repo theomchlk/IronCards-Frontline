@@ -29,9 +29,9 @@ public class CardUI : MonoBehaviour
         cardNbText.text = data.nbSoldiers.ToString("F0");
         cardMSText.text = data.movementSpeed.ToString("F0");
         if (data.sprite) cardImage.sprite = data.sprite;
-        else cardNotFoundText.gameObject.SetActive(true);
-        cardDragHandler.SetCardId(data.Id);
-        
+        else if (cardNotFoundText != null) cardNotFoundText.gameObject.SetActive(true);
+        if (cardDragHandler != null) cardDragHandler.SetCardId(data.Id);
+
     }
 
     public void SetButton(CardsSO data, ShopItem shopItem)

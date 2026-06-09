@@ -343,7 +343,8 @@ public class PlayerState : NetworkBehaviour
     [ServerRpc]
     public void ServerToggleReady(NetworkConnection conn = null)
     {
-        if (GameStateController.Instance.CurrentState?.GameStateType != GameStateType.Preparation) return;
+        var stateType = GameStateController.Instance.CurrentState?.GameStateType;
+        if (stateType != GameStateType.Preparation && stateType != GameStateType.Planification) return;
         isReady.Value = !isReady.Value;
         CheckAllPlayersReady();
     }
@@ -357,7 +358,7 @@ public class PlayerState : NetworkBehaviour
             if (!ps.isReady.Value) return;
         foreach (PlayerState ps in allPlayers)
             ps.isReady.Value = false;
-        GameStateController.Instance.TransitionToWar();
+        GameStateController.Instance.AdvancePhase();
     }
 
     [ServerRpc]

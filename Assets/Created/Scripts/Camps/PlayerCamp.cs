@@ -8,7 +8,23 @@ public class PlayerCamp : NetworkBehaviour
     private int _nbRow, _nbCol;
     private readonly SyncDictionary<Localisation, string> cardsOnCamp = new();
     public SyncDictionary<Localisation, string> CardsOnCamp => cardsOnCamp;
+
+    private readonly SyncDictionary<Localisation, int> cardTargets = new();
+    public SyncDictionary<Localisation, int> CardTargets => cardTargets;
     [SerializeField] private PlayerState ps;
+
+    [ServerRpc(RequireOwnership = false)]
+    public void ServerSetCardTarget(Localisation from, int targetGroupId, NetworkConnection conn = null)
+    {
+        if (!cardsOnCamp.ContainsKey(from)) return; // pas de carte alliée ici
+        cardTargets[from] = targetGroupId;
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void ServerClearCardTarget(Localisation from, NetworkConnection conn = null)
+    {
+        cardTargets.Remove(from);
+    }
 
     [Server]
     public void RemoveCardFromCampToHand(Localisation loc, string cardId)
@@ -105,6 +121,7 @@ public class PlayerCamp : NetworkBehaviour
             CardCollection.AddCard(ps.cardsInHand, cards.Value);
         }
         cardsOnCamp.Clear();
+        cardTargets.Clear();
     }
 
     [TargetRpc]

@@ -67,6 +67,27 @@ public class SoldierRegistry : MonoBehaviour
         return nearest;
     }
 
+    public Soldier GetNearestInGroup(Soldier requester, int groupId)
+    {
+        Soldier nearest = null;
+        float shortestSqDist = float.MaxValue;
+
+        foreach (Soldier s in _soldiers)
+        {
+            if (s == requester || !s.IsAlive() || s.GetGroupId() != groupId)
+                continue;
+
+            float sqDist = (requester.GetPosition() - s.GetPosition()).sqrMagnitude;
+            if (sqDist < shortestSqDist)
+            {
+                shortestSqDist = sqDist;
+                nearest = s;
+            }
+        }
+
+        return nearest;
+    }
+
     public Soldier GetMostWoundedAlly(Soldier requester)
     {
         Soldier mostWounded = null;

@@ -218,6 +218,14 @@ public class GameStateController : NetworkBehaviour
     }
 
     [Server]
+    public void AdvancePhase()
+    {
+        var current = _serverState?.GameStateType;
+        if (current == GameStateType.Preparation) SetState(new PlanificationState());
+        else if (current == GameStateType.Planification) TransitionToWar();
+    }
+
+    [Server]
     private void AssignCampIndicesRandomly()
     {
         var allPlayers = new List<PlayerState>(PlayerRegistry.GetAll);
@@ -249,7 +257,7 @@ public class GameStateController : NetworkBehaviour
             yield return new WaitForSeconds(1f);
             preparationTimeRemaining.Value--;
         }
-        TransitionToWar();
+        AdvancePhase();
     }
 
     [ObserversRpc]

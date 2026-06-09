@@ -31,7 +31,12 @@ public class FightManager : NetworkBehaviour
 
     private readonly Dictionary<int, Soldier> soldierByNetId = new();
     private readonly Dictionary<int, List<Soldier>> soldiersByGroupId = new();
+    private readonly Dictionary<int, int> groupTargets = new(); // groupId allié -> groupId ciblé
     private int _nextSoldierNetId;
+
+    public static int ComputeGroupId(int playerId, int row, int col) => playerId * 10000 + row * 100 + col;
+
+    public int GetTargetGroupId(int groupId) => groupTargets.TryGetValue(groupId, out int t) ? t : -1;
 
 
     void Awake()
@@ -57,10 +62,15 @@ public class FightManager : NetworkBehaviour
         Instance.localPlayerState = psOwner;
         Instance.soldierByNetId.Clear();
         Instance.soldiersByGroupId.Clear();
+        Instance.groupTargets.Clear();
         Instance._nextSoldierNetId = 0;
 
         Instance.playerLeftCamp  = BuildCamp(psLeft.Camp);
         Instance.playerRightCamp = BuildCamp(psRight.Camp);
+
+        // Cibles de groupe définies pendant la planification (ally groupId -> target groupId)
+        BuildGroupTargets(psLeft);
+        BuildGroupTargets(psRight);
 
         if (Instance.soldierRegistry == null)
             Instance.soldierRegistry = Instance.GetComponentInChildren<SoldierRegistry>();
@@ -77,6 +87,16 @@ public class FightManager : NetworkBehaviour
         Instance.SetGroundColor(Instance.rightGroundRenderer, ref Instance._rightGroundMaterial, psRight.playerColor.Value);
         Instance.SpawnSoldiers(Instance.playerLeftCamp,  Instance.canvasLeft,  psLeft.IdPlayer,  psLeft.playerColor.Value);
         Instance.SpawnSoldiers(Instance.playerRightCamp, Instance.canvasRight, psRight.IdPlayer, psRight.playerColor.Value);
+    }
+
+    private static void BuildGroupTargets(PlayerState ps)
+    {
+        if (ps == null || ps.Camp == null) return;
+        foreach (var kvp in ps.Camp.CardTargets)
+        {
+            int myGroupId = ComputeGroupId(ps.IdPlayer, kvp.Key.Row, kvp.Key.Col);
+            Instance.groupTargets[myGroupId] = kvp.Value; // la valeur est déjà le groupId cible
+        }
     }
 
     private static Dictionary<Localisation, CardsSO> BuildCamp(PlayerCamp camp)
@@ -134,7 +154,7 @@ public class FightManager : NetworkBehaviour
         {
             Localisation loc = kvp.Key;
             CardsSO card     = kvp.Value;
-            int groupId      = playerId * 10000 + loc.Row * 100 + loc.Col;
+            int groupId      = ComputeGroupId(playerId, loc.Row, loc.Col);
 
             Vector3 basePos = vlg.GetChild(loc.Row).GetChild(loc.Col).position + Vector3.up * spawnHeight;
 

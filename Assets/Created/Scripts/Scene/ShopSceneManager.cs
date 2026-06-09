@@ -22,9 +22,10 @@ public class ShopSceneManager : MonoBehaviour
     private void OnSceneLoadEnd(SceneLoadEndEventArgs args)
     {
         if (args.LoadedScenes == null) return;
+        var scenes = GameStateController.Instance.Scenes;
         foreach (var scene in args.LoadedScenes)
         {
-            if (scene.name == GameStateController.Instance.Scenes.War)
+            if (scene.name == scenes.Planification || scene.name == scenes.War)
             {
                 shopCanvas.gameObject.SetActive(false);
                 return;
