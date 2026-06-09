@@ -9,7 +9,7 @@ public class SlotItemLogic : IItem
         _data = data;
     }
     
-    public int Cost(PurchaseContext context) => _data.cost;
+    public int Cost(PurchaseContext context) => context.playerState.slotCost.Value;
     
     
     public bool CanBePurchased(PurchaseContext context)
@@ -30,7 +30,7 @@ public class SlotItemLogic : IItem
     public void Purchase(PurchaseContext context)
     {
         context.playerState.RemoveMoney(Cost(context));
-        context.playerState.NewCostItemByMultiplier(context.playerState.slotCost,_data.costMultiplier);
+        context.playerState.NewCostItemByGeometrical(context.playerState.slotCost,_data.costMultiplier);
         context.playerState.IncreaseNbItem(context.playerState.nbSlots);
         context.playerState.IncreaseNbItem(context.playerState.nbFreeSlots);
         

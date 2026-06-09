@@ -288,6 +288,12 @@ public class PlayerState : NetworkBehaviour
         {
             itemCost.Value = (int) Math.Ceiling(itemCost.Value * multiplier);
         }
+        
+        [Server]
+        public void NewCostItemByGeometrical(SyncVar<int> itemCost ,float denominator)
+        {
+            itemCost.Value = (int) Math.Ceiling(itemCost.Value + itemCost.Value / denominator);
+        }
 
         [Server]
         public bool HaveFreeSlot()

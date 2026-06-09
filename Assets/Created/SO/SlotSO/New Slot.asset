@@ -17,4 +17,4 @@ MonoBehaviour:
   goItemUI: {fileID: 1365167524238765840, guid: 8e8baf7c204d48a4c99e1aae7d84b5b0, type: 3}
   nbSlotMax: 10
   nbSlotByDefault: 4
-  costMultiplier: 1
+  costMultiplier: 1.25

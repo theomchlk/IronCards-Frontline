@@ -35,16 +35,13 @@ public class EndState : IGameState
 
     public void Update()
     {
-        throw new System.NotImplementedException();
     }
 
     public void OnPlayerEnter(PlayerState playerState)
     {
-        throw new System.NotImplementedException();
     }
 
     public void OnPlayerExit(PlayerState playerState)
     {
-        throw new System.NotImplementedException();
     }
 }

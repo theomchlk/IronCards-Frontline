@@ -62,7 +62,7 @@ public class UISlotShop : MonoBehaviour
         var slotPrefab = slot.Data.goItemUI;
         var slotUi = Instantiate(slotPrefab, slotsHand).GetComponent<SlotUI>();
         _slots.Add(slotUi);
-        slotUi.Bind(slot);
+        /*slotUi.Bind(slot);*/
         AnimationNewSlot();
     }
 

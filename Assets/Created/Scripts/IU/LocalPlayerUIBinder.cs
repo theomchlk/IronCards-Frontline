@@ -54,7 +54,7 @@ public class LocalPlayerUIBinder : MonoBehaviour
 
     private void OnSlotChanged(int previous, int next, bool asServer)
     {
-        UIManager.Instance.uiSlotShop.SetUI(_ps.slotCost.Value);
+        UIManager.Instance.uiSlotShop.SetUI(next);
     }
     
     private void OnDestroy()

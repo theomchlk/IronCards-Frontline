@@ -508,6 +508,8 @@ MonoBehaviour:
   _networkObjectCache: {fileID: 0}
   _nbRow: 5
   _nbCol: 5
+  nbDuelsEnd: 0
+  endWarDelay: 3
 --- !u!4 &36286305
 Transform:
   m_ObjectHideFlags: 0
@@ -1356,6 +1358,7 @@ MonoBehaviour:
   _networkObjectCache: {fileID: 0}
   lobbyCanvas: {fileID: 1939099422}
   preparationDuration: 30
+  scenes: {fileID: 11400000, guid: 181b884c37219da44a54c1d674459ebd, type: 2}
 --- !u!4 &145974770
 Transform:
   m_ObjectHideFlags: 0
@@ -4895,7 +4898,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 41.6
+  m_fontSize: 33.4
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -5555,7 +5558,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 9.55
+  m_fontSize: 5.4
   m_fontSizeBase: 37
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -5927,7 +5930,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 23.65
+  m_fontSize: 19
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -6768,7 +6771,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 41.6
+  m_fontSize: 33.4
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -12853,7 +12856,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 30.15
+  m_fontSize: 26
   m_fontSizeBase: 90
   m_fontWeight: 400
   m_enableAutoSizing: 1

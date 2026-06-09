@@ -20,6 +20,5 @@ MonoBehaviour:
   - {fileID: 11400000, guid: cf62a6e62166a904e8e8523d03670787, type: 2}
   - {fileID: 11400000, guid: a1a434cfb88095f45b83b9f8e9098be9, type: 2}
   - {fileID: 11400000, guid: 686c6c96d00b25c4c94700cec1b58d5f, type: 2}
-  - {fileID: 11400000, guid: 7fe6127315e23b842ae593c2f8186660, type: 2}
   cardStallPrefab: {fileID: 1064654524942162060, guid: 9b599bae7af97e447a90b75ad8b90f20, type: 3}
   cardContainer: {fileID: 335300896698448989, guid: 14939c9581b538b49ba94711e41514db, type: 3}

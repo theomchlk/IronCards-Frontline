@@ -21,7 +21,7 @@ public class MillItemLogic : IItem
     public void Purchase(PurchaseContext context)
     {
         context.playerState.RemoveMoney(Cost(context));
-        context.playerState.NewCostItemByMultiplier(context.playerState.millCost,_data.costMultiplier);
+        context.playerState.NewCostItemByGeometrical(context.playerState.millCost,_data.costMultiplier);
         context.playerState.IncreaseNbItem(context.playerState.nbMills);
     }
 
