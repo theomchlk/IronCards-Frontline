@@ -1356,6 +1356,7 @@ MonoBehaviour:
   _networkObjectCache: {fileID: 0}
   lobbyCanvas: {fileID: 1939099422}
   preparationDuration: 30
+  scenes: {fileID: 11400000, guid: 181b884c37219da44a54c1d674459ebd, type: 2}
 --- !u!4 &145974770
 Transform:
   m_ObjectHideFlags: 0
